@@ -1,0 +1,26 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+#content {
+    width: 960px;
+    margin: 0 auto;
+    padding-top: 20px;
+}
+
+#map {
+    display:block;
+    float:left;
+    width: 850px;
+}
+
+#players {
+    display:block;
+    float:left;
+    width: 110px;
+}
+
+#players .title {
+    margin-bottom: 15px;
+}

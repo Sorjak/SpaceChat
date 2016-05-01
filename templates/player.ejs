@@ -1,0 +1,54 @@
+<!doctype html>
+<html ng-app="SpaceChat">
+    <head>
+        <title>SpaceChat | <%= playerName %></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="mobile-web-app-capable" content="yes">
+        <link href="/static/css/player.css" rel="stylesheet">
+    </head>
+    <body>
+        <div id="content" ng-controller="PlayerCtrl">
+            <div id="player-controls" ng-controller="ControlAreaCtrl">
+            </div>
+
+            <div id="information">
+                <p id="username">Playing as: 
+                    <strong ng-bind="player.name"></strong>,
+                    who is a(n):
+                    <strong ng-if="player.isTraitor">TRAITOR</strong>
+                    <strong ng-if="!player.isTraitor">INNOCENT</strong>
+                </p>
+                <p>Current room is: <strong ng-bind="player.room"></strong>
+            </div>
+            <div ng-show="player.isTraitor" id="tools">
+                <button ng-click="sabotage();">Sabotage</button>
+            </div>
+
+            <div id="messages">
+                <input ng-model="chat" id="chat-input">
+                <button ng-click="sendChat();">SEND</button>
+                <button ng-click="clearChat();">CLEAR</button>
+            </div>
+        </div>
+
+
+        <!-- ALL THE JS STUFF -->
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/static/js/lib/pixi/bin/pixi.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+
+
+        <!--<script data-main="/static/js/player/main.js" src="/static/js/lib/require.js"></script>-->
+        <script type="text/javascript">
+            // var require = {
+            //     urlArgs : "bust="+(new Date()).getTime()
+            // };
+            var app = angular.module('SpaceChat', []);
+            var INPUT_NAME = "<%= playerName %>";
+        </script>
+
+        <script src="/static/js/player/services.js"></script>
+        <script src="/static/js/player/controllers.js"></script>
+    </body>
+</html>

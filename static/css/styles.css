@@ -1,0 +1,13 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#messages {
+    list-style-type:none;
+
+}
+
+#messages li {
+    color: blue;
+}
