@@ -18,6 +18,9 @@ app.factory('SocketService', function ($rootScope) {
                     }
                 });
             })
+        },
+        disconnect: function() {
+            socket.disconnect();
         }
     };
 })
