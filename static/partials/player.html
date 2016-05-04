@@ -1,0 +1,24 @@
+<div id="player-view" ng-controller="PlayerCtrl">
+    <div id="player-controls" ng-controller="ControlAreaCtrl">
+    </div>
+
+    <div id="information">
+        <p id="username">Playing as: 
+            <strong ng-bind="player.name"></strong>,
+            who is a(n):
+            <strong ng-if="player.isTraitor">TRAITOR</strong>
+            <strong ng-if="!player.isTraitor">INNOCENT</strong>
+        </p>
+        <p>Current room is: <strong ng-bind="player.room"></strong>
+    </div>
+    <div ng-show="player.isTraitor" id="tools">
+        <button ng-click="sabotage();">Sabotage</button>
+    </div>
+
+    <div id="messages">
+        <input ng-model="chat" id="chat-input">
+        <button ng-click="sendChat();">SEND</button>
+        <button ng-click="clearChat();">CLEAR</button>
+    </div>
+</div>
+

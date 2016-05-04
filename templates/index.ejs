@@ -1,23 +1,30 @@
 <!doctype html>
-<html>
-  <head>
-    <title>SpaceChat</title>
-    <link href="/static/css/styles.css" rel="stylesheet">
-  </head>
-  <body>
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        var socket = io();
-        $('form').submit(function(e) {
-            e.preventDefault();
-            socket.emit('chat message', $("#m").val());
-            $("#m").val('');
-        });
-    </script>
-  </body>
+<html >
+    <head>
+        <title>SpaceChat | Home</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="mobile-web-app-capable" content="yes">
+        <link href="/static/css/styles.css" rel="stylesheet">
+    </head>
+    <body ng-app="SpaceChat">
+        <div id="content">
+            <div ui-view></div>
+        </div>
+
+
+        <!-- ALL THE JS STUFF -->
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/static/js/lib/pixi/bin/pixi.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.18/angular-ui-router.js"></script>
+
+
+        <!--<script data-main="/static/js/player/main.js" src="/static/js/lib/require.js"></script>-->
+
+
+        <script src="/static/js/player/app.js"></script>
+        <script src="/static/js/player/services.js"></script>
+        <script src="/static/js/player/controllers.js"></script>
+    </body>
 </html>

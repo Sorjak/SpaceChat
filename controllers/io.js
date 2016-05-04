@@ -57,6 +57,8 @@ playerSocket.on('connection', function(socket) {
             if (player != null) {
                 console.log("player " + player.name + " disconnected");
                 player.id = null;
+
+                // socket.emit("update player", {'player' : player});
             }
         });
 
@@ -71,7 +73,7 @@ playerSocket.on('connection', function(socket) {
                 player = game.getPlayerByName(username);
                 if (player.id == null) {
                     player.id = socket.id;
-                    return player;
+
                     socket.emit("update player", {'player' : player});
 
                 } else {

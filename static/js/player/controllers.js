@@ -1,29 +1,39 @@
-app.controller('PlayerCtrl', ['$scope', 'SocketService', 'Player'
-    , function($scope, SocketService, Player) {
+app.controller('PlayerCtrl', ['$scope', '$state', '$stateParams','PlayerSocket', 'Player'
+    , function($scope, $state, $stateParams, PlayerSocket, Player) {
 
-    $scope.player = new Player(INPUT_NAME);
-    $scope.chat = "";
+    if ($stateParams.player_name == null || $stateParams.player_name == undefined) {
+        $state.go('index');
 
-    SocketService.emit('player connected', INPUT_NAME);
+    } else {
 
-    SocketService.on('update player', function (data) {
-        $scope.player.isTraitor = data.player.isTraitor;
-        $scope.player.room = data.player.room;
-    });
 
-    SocketService.on('spacechat-error', function(error) {
-        if (error.errorCode == 0) {
-            SocketService.disconnect();
-        } else if (error.errorCode == 1) {
-        }
-    });
+        $scope.player = null;
+        $scope.chat = "";
+
+        PlayerSocket.emit('player connected', $stateParams.player_name);
+
+        PlayerSocket.on('update player', function (data) {
+            if ($scope.player == null)
+                $scope.player = new Player($stateParams.player_name);
+
+            $scope.player.isTraitor = data.player.isTraitor;
+            $scope.player.room = data.player.room;
+        });
+
+        PlayerSocket.on('spacechat-error', function(error) {
+            if (error.errorCode == 0) {
+                PlayerSocket.disconnect();
+            } else if (error.errorCode == 1) {
+            }
+        });
+    }
 
     $scope.sabotage = function() {
         console.log("SABOTAGE");
     }
 
     $scope.sendChat = function() {
-        SocketService.emit('player message', $scope.chat);
+        PlayerSocket.emit('player message', $scope.chat);
     }
 
     $scope.clearChat = function() {
@@ -32,8 +42,8 @@ app.controller('PlayerCtrl', ['$scope', 'SocketService', 'Player'
 
 }])
 
-.controller('ControlAreaCtrl', ['$scope', 'SocketService', 'ControlArea'
-    , function($scope, SocketService, ControlArea) {
+.controller('ControlAreaCtrl', ['$scope', 'PlayerSocket', 'ControlArea'
+    , function($scope, PlayerSocket, ControlArea) {
     $scope.GAME_WIDTH = window.innerWidth;
     $scope.GAME_HEIGHT = window.innerWidth * .9;
 
@@ -50,12 +60,10 @@ app.controller('PlayerCtrl', ['$scope', 'SocketService', 'Player'
         autoResize: true,
     }
     $scope.RENDERER = new PIXI.autoDetectRenderer($scope.GAME_WIDTH, $scope.GAME_HEIGHT, rendererOptions);
-
-    // The renderer will create a canvas element for you that you can then insert into the DOM.
-    
     $scope.STAGE = new PIXI.Container();
-    
     $("#player-controls").append($scope.RENDERER.view);
+
+
     $scope.background = new PIXI.Graphics();
 
     $scope.background.beginFill(0x0000FF);
@@ -72,11 +80,9 @@ app.controller('PlayerCtrl', ['$scope', 'SocketService', 'Player'
     $scope.debugText.position = new PIXI.Point(0, $scope.STAGE.height - 30);
     $scope.STAGE.addChild($scope.debugText);
 
-
-
     $scope.updatePlayerMove = function(playerInput) {
         var to_send = {'x' : playerInput.x, 'y' : playerInput.y}
-        SocketService.emit('move player', to_send);
+        PlayerSocket.emit('move player', to_send);
     }
 
     $scope.mainLoop = function() {
@@ -86,14 +92,41 @@ app.controller('PlayerCtrl', ['$scope', 'SocketService', 'Player'
             $scope.debugText.text = "X: " + $scope.control_area.input.x + ", Y:" + $scope.control_area.input.y;
             $scope.updatePlayerMove($scope.control_area.input);
 
-        // debugText.text = "WINDOW: " + window.innerWidth + ", " + window.innerHeight +
-        // " | $scope.RENDERER: " + Math.floor($scope.RENDERER.width) + ", " + Math.floor($scope.RENDERER.height) + 
-        // " | STAGE: " + STAGE.width + ", " + STAGE.height;
-
-
-
         $scope.RENDERER.render($scope.STAGE);
     }
 
     $scope.mainLoop();
-}]);
+}])
+
+.controller('IndexCtrl', ['$scope', '$state', function($scope, $state) {
+    $scope.player_name = "";
+
+    $scope.submitName = function() {
+
+        $state.go('player', {player_name: $scope.player_name});
+
+    }
+
+
+}])
+
+.controller('MapCtrl', ['$scope', '$state', 'MapSocket', function($scope, $state, MapSocket) {
+    $scope.players = [];
+
+    MapSocket.on('update players', function (data) {
+        $scope.players = data.players;
+    });
+
+    $("#player-list").on('click', 'li a', function(e) {
+        e.preventDefault();
+        var id = $(this).attr('href');
+
+        console.log($scope.players[id]);
+    });
+
+    $scope.resetPlayers = function() {
+        MapSocket.emit("remove all players");
+    }
+}])
+
+;

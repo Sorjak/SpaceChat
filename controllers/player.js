@@ -13,7 +13,6 @@ function Player(id, name) {
 
     this.isTraitor = false;
 
-
 }
 // class methods
 
