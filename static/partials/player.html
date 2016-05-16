@@ -1,24 +1,31 @@
 <div id="player-view" ng-controller="PlayerCtrl">
-    <div id="player-controls" ng-controller="ControlAreaCtrl">
+
+    <div ng-show="connected">
+        <div id="player-controls" ng-controller="ControlAreaCtrl" class="row">
+        </div>
+
+        <div id="information" class="col-xs-12">
+            <p id="username">Playing as: 
+                <strong ng-bind="player.name"></strong>,
+                who is a(n):
+                <strong ng-if="player.isTraitor">TRAITOR</strong>
+                <strong ng-if="!player.isTraitor">INNOCENT</strong>
+            </p>
+            <p>Current room is: <strong ng-bind="player.room == '' ? 'None' : player.room"></strong></p>
+        </div>
+        <div ng-show="player.isTraitor" id="tools" class="col-xs-12">
+            <button ng-click="sabotage();">Sabotage</button>
+        </div>
+
+        <div id="messages" class="col-xs-12">
+            <input ng-model="chat" id="chat-input">
+            <button ng-click="sendChat();" class="btn btn-primary">SEND</button>
+            <button ng-click="clearChat();" class="btn btn-primary">CLEAR</button>
+        </div>
     </div>
 
-    <div id="information">
-        <p id="username">Playing as: 
-            <strong ng-bind="player.name"></strong>,
-            who is a(n):
-            <strong ng-if="player.isTraitor">TRAITOR</strong>
-            <strong ng-if="!player.isTraitor">INNOCENT</strong>
-        </p>
-        <p>Current room is: <strong ng-bind="player.room"></strong>
-    </div>
-    <div ng-show="player.isTraitor" id="tools">
-        <button ng-click="sabotage();">Sabotage</button>
-    </div>
-
-    <div id="messages">
-        <input ng-model="chat" id="chat-input">
-        <button ng-click="sendChat();">SEND</button>
-        <button ng-click="clearChat();">CLEAR</button>
+    <div ng-hide="connected" id="error" class="row">
+        <p ng-bind="errorMessage"></p>
     </div>
 </div>
 

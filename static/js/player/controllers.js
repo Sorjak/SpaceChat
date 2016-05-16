@@ -1,12 +1,9 @@
 app.controller('PlayerCtrl', ['$scope', '$state', '$interval', '$stateParams','PlayerSocket', 'Player'
     , function($scope, $state, $interval, $stateParams, PlayerSocket, Player) {
 
-    if ($stateParams.player_name == null || $stateParams.player_name == undefined) {
-        $state.go('index');
-
-    } else {
-
-
+    $scope.init = function() {
+        $scope.connected = true;
+        $scope.errorMessage = "";
         $scope.player = null;
         $scope.chat = "";
 
@@ -21,12 +18,15 @@ app.controller('PlayerCtrl', ['$scope', '$state', '$interval', '$stateParams','P
         });
 
         PlayerSocket.on('spacechat-error', function(error) {
-            console.log(error);
+            $scope.errorMessage = error.errorMessage;
+
             if (error.errorCode == 0) {
+                $scope.connected = false;
 
             } else if (error.errorCode == 1) {
+                $scope.connected = false;
                 PlayerSocket.disconnect();
-                
+
             } else if (error.errorCode == 2) {
 
             }
@@ -49,14 +49,15 @@ app.controller('PlayerCtrl', ['$scope', '$state', '$interval', '$stateParams','P
         $scope.chat = "";
     }
 
+    $scope.init();
     heartbeat = $interval($scope.sendHeartbeat, 1000 * 15);
 
 }])
 
 .controller('ControlAreaCtrl', ['$scope', 'PlayerSocket', 'ControlArea'
     , function($scope, PlayerSocket, ControlArea) {
-    $scope.GAME_WIDTH = window.innerWidth;
-    $scope.GAME_HEIGHT = window.innerWidth * .9;
+    $scope.GAME_WIDTH = Math.min(window.innerWidth, 768);
+    $scope.GAME_HEIGHT = $scope.GAME_WIDTH * .9;
 
     $scope.background = null
 
@@ -117,7 +118,6 @@ app.controller('PlayerCtrl', ['$scope', '$state', '$interval', '$stateParams','P
         $cookies.put('player_name', $scope.player_name);
         $state.go('player', {player_name: $scope.player_name});
     }
-
 
 }])
 

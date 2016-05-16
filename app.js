@@ -10,6 +10,9 @@ var ejs = require('ejs');
 var urls = require('./controllers/urls');
 var io = require('./controllers/io');
 
+var SpaceChat = require('./controllers/spacechat');
+var Player = require('./controllers/player');
+
 const socketFile = "/var/www/spacechat/run/spacechat.sock";
 
 // check for socket file and delete if exists

@@ -1,7 +1,9 @@
-<div id="index-view" ng-controller="IndexCtrl">
-    <h2 class="index-title">Welcome to SpaceChat! (working title)</h2>
+<div id="index-view" ng-controller="IndexCtrl" class="row">
+    <h2 class="index-title col-xs-12">Welcome to SpaceChat!</h2>
 
-    <input class="player-name" type="text" placeholder="What's your name?" ng-model="player_name" />
-    <button class="index-submit" ng-click="submitName()">Submit</button>
+    <div class="col-xs-12">
+        <input class="player-name " type="text" placeholder="What's your name?" ng-model="player_name" />
+        <button class="index-submit btn btn-primary" ng-click="submitName()">Submit</button>
+    </div>
 
 </div>

@@ -6,11 +6,7 @@
 /* INDEX STYLES */
 
 #index-view {
-    display:block;
-    margin: 0 auto;
-    width: 300px;
 
-    margin-top: 200px;
 }
 
 #index-view .index-title {
@@ -18,32 +14,24 @@
 }
 
 #index-view .player-name {
-    padding: 10px 10px;
-    border: 1px solid blue;
+    padding: 10px;
+    border: 1px solid #2e6da4;
+    background-color: rgba(46, 109, 164, .1);
+    width: 325px;
 }
 
 #index-view .index-submit {
-    padding: 10px 10px;
+    padding: 8px;
 }
 
 /* PLAYER PAGE STYLES */
 
-
-#messages {
-    list-style-type:none;
-
-}
-
-#messages li {
-    color: blue;
-}
-
-#player-controls {
+/*#player-view #player-controls {
     display:block;
     float: left;
-}
+}*/
 
-#information {
+/*#player-view #information {
     display: block;
     float:left;
     padding: 0 10px;
@@ -51,7 +39,7 @@
     width: 100%;
 }
 
-#tools {
+#player-view #tools {
     display:block;
     float:left;
     padding: 0 10px;
@@ -59,10 +47,16 @@
     width: 100%;
 }
 
-#messages {
+#player-view #messages {
     display:block;
     float:left;
     padding: 0 10px;
     margin-top: 10px;
     width: 100%;
+}*/
+
+#player-view #messages #chat-input {
+    padding: 10px;
+    border: 1px solid #2e6da4;
+    background-color: rgba(46, 109, 164, .1);
 }
