@@ -1,4 +1,4 @@
-var app = angular.module('SpaceChat', ['ui.router']);
+var app = angular.module('SpaceChat', ['ui.router', 'ngCookies']);
 
 app.config(function($stateProvider, $urlRouterProvider) {
 
@@ -14,9 +14,32 @@ app.config(function($stateProvider, $urlRouterProvider) {
         },
         templateUrl: "/static/partials/player.html"
     })
-    .state('map', {
-        url: "/map",
-        templateUrl: "/static/partials/map.html"
-    })
+
+});
+
+app.run(function ($rootScope, $state, $cookies) {
+
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+        if (toState.name == "index") {
+            var playerName = $cookies.get('player_name');
+
+            if (playerName) {
+                event.preventDefault();
+                toParams.player_name = playerName;
+                $state.go('player');
+            }
+
+        } else if (toState.name == "player") {
+            var playerName = $cookies.get('player_name');
+            
+            if (playerName) {
+                toParams.player_name = playerName;
+            } else {
+                event.preventDefault();
+                $state.go('index');
+            }
+
+        }
+    });
 
 });

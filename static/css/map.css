@@ -9,18 +9,29 @@
     padding-top: 20px;
 }
 
-#map {
+#map-view {
     display:block;
     float:left;
     width: 850px;
+    padding: 10px 30px;
 }
 
 #players {
     display:block;
     float:left;
-    width: 110px;
+    width: 400px;
 }
 
 #players .title {
     margin-bottom: 15px;
+}
+
+#players .more-info {
+    margin-left: 30px;
+}
+
+
+#controls {
+    display:block;
+    float:left;
 }

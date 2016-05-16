@@ -12,3 +12,7 @@ __app.get('/', function(req, res){
     res.render('index');
 });
 
+__app.get('/map', function(req, res){
+    res.render('map');
+});
+

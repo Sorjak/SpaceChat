@@ -1,5 +1,5 @@
-app.controller('PlayerCtrl', ['$scope', '$state', '$stateParams','PlayerSocket', 'Player'
-    , function($scope, $state, $stateParams, PlayerSocket, Player) {
+app.controller('PlayerCtrl', ['$scope', '$state', '$interval', '$stateParams','PlayerSocket', 'Player'
+    , function($scope, $state, $interval, $stateParams, PlayerSocket, Player) {
 
     if ($stateParams.player_name == null || $stateParams.player_name == undefined) {
         $state.go('index');
@@ -21,11 +21,20 @@ app.controller('PlayerCtrl', ['$scope', '$state', '$stateParams','PlayerSocket',
         });
 
         PlayerSocket.on('spacechat-error', function(error) {
+            console.log(error);
             if (error.errorCode == 0) {
-                PlayerSocket.disconnect();
+
             } else if (error.errorCode == 1) {
+                PlayerSocket.disconnect();
+                
+            } else if (error.errorCode == 2) {
+
             }
         });
+    }
+
+    $scope.sendHeartbeat = function() {
+        PlayerSocket.emit('heartbeat');
     }
 
     $scope.sabotage = function() {
@@ -39,6 +48,8 @@ app.controller('PlayerCtrl', ['$scope', '$state', '$stateParams','PlayerSocket',
     $scope.clearChat = function() {
         $scope.chat = "";
     }
+
+    heartbeat = $interval($scope.sendHeartbeat, 1000 * 15);
 
 }])
 
@@ -66,7 +77,7 @@ app.controller('PlayerCtrl', ['$scope', '$state', '$stateParams','PlayerSocket',
 
     $scope.background = new PIXI.Graphics();
 
-    $scope.background.beginFill(0x0000FF);
+    $scope.background.beginFill(0xEEEEEE);
     $scope.background.drawRect(0, 0, $scope.GAME_WIDTH, $scope.GAME_HEIGHT);
 
     $scope.STAGE.addChild($scope.background);
@@ -98,35 +109,16 @@ app.controller('PlayerCtrl', ['$scope', '$state', '$stateParams','PlayerSocket',
     $scope.mainLoop();
 }])
 
-.controller('IndexCtrl', ['$scope', '$state', function($scope, $state) {
+.controller('IndexCtrl', ['$scope', '$state', '$cookies', function($scope, $state, $cookies) {
     $scope.player_name = "";
 
     $scope.submitName = function() {
 
+        $cookies.put('player_name', $scope.player_name);
         $state.go('player', {player_name: $scope.player_name});
-
     }
 
 
-}])
-
-.controller('MapCtrl', ['$scope', '$state', 'MapSocket', function($scope, $state, MapSocket) {
-    $scope.players = [];
-
-    MapSocket.on('update players', function (data) {
-        $scope.players = data.players;
-    });
-
-    $("#player-list").on('click', 'li a', function(e) {
-        e.preventDefault();
-        var id = $(this).attr('href');
-
-        console.log($scope.players[id]);
-    });
-
-    $scope.resetPlayers = function() {
-        MapSocket.emit("remove all players");
-    }
 }])
 
 ;
