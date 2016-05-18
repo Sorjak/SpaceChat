@@ -2,6 +2,9 @@ app.factory('PlayerSocket', function ($rootScope) {
 
     var socket = io('/player');
     return {
+        reconnect: function() {
+            socket = io('/player');
+        },
         on: function (eventName, callback) {
             socket.on(eventName, function () {  
                 var args = arguments;

@@ -1,31 +1,41 @@
-<div id="player-view" ng-controller="PlayerCtrl">
+<div id="player-view" ng-controller="PlayerCtrl" class="container">
 
     <div ng-show="connected">
         <div id="player-controls" ng-controller="ControlAreaCtrl" class="row">
         </div>
 
-        <div id="information" class="col-xs-12">
-            <p id="username">Playing as: 
-                <strong ng-bind="player.name"></strong>,
-                who is a(n):
-                <strong ng-if="player.isTraitor">TRAITOR</strong>
-                <strong ng-if="!player.isTraitor">INNOCENT</strong>
-            </p>
-            <p>Current room is: <strong ng-bind="player.room == '' ? 'None' : player.room"></strong></p>
+        <div id="information" class="row">
+            <div class="col-sm-12">
+                <p id="username">Playing as: 
+                    <strong ng-bind="player.name"></strong>,
+                    who is
+                    <strong ng-if="player.isTraitor">a TRAITOR</strong>
+                    <strong ng-if="!player.isTraitor">INNOCENT</strong>
+                </p>
+                <p>Current room is: <strong ng-bind="player.room == '' ? 'None' : player.room"></strong></p>
+            </div>
         </div>
-        <div ng-show="player.isTraitor" id="tools" class="col-xs-12">
-            <button ng-click="sabotage();">Sabotage</button>
+        <div ng-show="player.isTraitor" id="tools" class="row">
+            <div class="col-sm-12">
+                <button ng-click="sabotage();" class="btn btn-primary">Sabotage Current Room</button>
+            </div>
         </div>
 
-        <div id="messages" class="col-xs-12">
-            <input ng-model="chat" id="chat-input">
-            <button ng-click="sendChat();" class="btn btn-primary">SEND</button>
-            <button ng-click="clearChat();" class="btn btn-primary">CLEAR</button>
+        <div id="messages" class="row">
+            <p class="col-sm-12"><strong>Chat:</strong></p>
+            <div class="col-sm-12">
+                <input ng-model="chat" id="chat-input">
+            </div>
+            <div class="col-sm-12">
+                <button ng-click="sendChat();"  class="btn btn-primary">SEND</button>
+                <button ng-click="clearChat();" class="btn btn-primary">CLEAR</button>
+            </div>
         </div>
     </div>
 
     <div ng-hide="connected" id="error" class="row">
         <p ng-bind="errorMessage"></p>
+        <button ng-click="reload();" class="btn btn-primary">Reload Page</button>
     </div>
 </div>
 

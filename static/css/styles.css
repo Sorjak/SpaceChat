@@ -3,6 +3,16 @@
     padding: 0;
 }
 
+strong {
+    color: #337ab7;
+}
+
+/* HEADER STYLES */
+
+.navbar {
+    margin-bottom: 0px;
+}
+
 /* INDEX STYLES */
 
 #index-view {
@@ -17,46 +27,30 @@
     padding: 10px;
     border: 1px solid #2e6da4;
     background-color: rgba(46, 109, 164, .1);
-    width: 325px;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 #index-view .index-submit {
     padding: 8px;
+    float: right;
 }
 
 /* PLAYER PAGE STYLES */
 
-/*#player-view #player-controls {
-    display:block;
-    float: left;
-}*/
-
-/*#player-view #information {
-    display: block;
-    float:left;
-    padding: 0 10px;
-    margin-top: 10px;
-    width: 100%;
-}
-
 #player-view #tools {
-    display:block;
-    float:left;
-    padding: 0 10px;
-    margin-top: 10px;
-    width: 100%;
+    margin-bottom: 10px;
 }
-
-#player-view #messages {
-    display:block;
-    float:left;
-    padding: 0 10px;
-    margin-top: 10px;
-    width: 100%;
-}*/
 
 #player-view #messages #chat-input {
     padding: 10px;
     border: 1px solid #2e6da4;
     background-color: rgba(46, 109, 164, .1);
+    width: 100%;
+}
+
+#player-view #messages .btn-primary {
+    margin-top: 4px;
+    margin-left: 10px;
+    float: right;
 }

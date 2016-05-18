@@ -71,6 +71,15 @@ playerSocket.on('connection', function(socket) {
             }
         });
 
+        socket.on('sabotage room', function() {
+            if (player != null && player.id == socket.id) {
+                if (player.room != "") 
+                    console.log(player.name + " is sabotaging room: " + player.room);
+                else 
+                    console.log(player.name + " isn't in a sabotageable room");
+            }
+        });
+
         socket.on('player message', function(message) {
             if (player != null && player.id == socket.id) {
                 console.log(player.name + " set message to: " + message);
