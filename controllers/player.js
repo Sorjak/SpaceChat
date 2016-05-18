@@ -25,7 +25,7 @@ playerSocket.on('connection', function(socket) {
     var player = null;
 
     if (__game == null) {
-        socket.emit("spacechat-error", {"errorCode" : 0, "errorMessage" : "game hasn't started"});
+        socket.emit("spacechat_error", {"errorCode" : 0, "errorMessage" : "game hasn't started"});
 
     } else {
         socket.on('disconnect', function() {
@@ -35,23 +35,23 @@ playerSocket.on('connection', function(socket) {
             }
         });
 
-        socket.on('player connected', function(username) {
+        socket.on('player_connected', function(username) {
             console.log('player provided username: ' + username);
             if (!__game.PlayerExists(username)) {
                 player = new Player(socket.id, username);
                 __game.AddPlayer(player);
-                socket.emit("update player", {'player' : player});
+                socket.emit("update_player", {'player' : player});
 
             } else {
                 player = __game.getPlayerByName(username);
                 if (player.id == null) {
                     player.id = socket.id;
 
-                    socket.emit("update player", {'player' : player});
+                    socket.emit("update_player", {'player' : player});
 
                 } else {
                     console.log("player " + username + " already connected");
-                    socket.emit("spacechat-error", {"errorCode" : 1, "errorMessage" : "player already connected"});
+                    socket.emit("spacechat_error", {"errorCode" : 1, "errorMessage" : "player already connected"});
 
                 }
             }
@@ -59,28 +59,26 @@ playerSocket.on('connection', function(socket) {
         });
 
         // Expects an object with x and y, both floats between (-1, 1)
-        socket.on('move player', function(playerInput) {
+        socket.on('move_player', function(playerInput) {
             if (player != null && player.id == socket.id) {
                 if (__game.PlayerExists(player.name)) {
                     player.currentInput = playerInput;
 
-                    socket.emit("update player", {'player' : player});
+                    socket.emit("update_player", {'player' : player});
                 } else {
-                    socket.emit("spacechat-error", {"errorCode" : 2, "message" : "player not in game"});
+                    socket.emit("spacechat_error", {"errorCode" : 2, "message" : "player not in game"});
                 }
             }
         });
 
-        socket.on('sabotage room', function() {
+        socket.on('sabotage_room', function() {
             if (player != null && player.id == socket.id) {
                 if (player.room != "") 
                     console.log(player.name + " is sabotaging room: " + player.room);
-                else 
-                    console.log(player.name + " isn't in a sabotageable room");
             }
         });
 
-        socket.on('player message', function(message) {
+        socket.on('player_message', function(message) {
             if (player != null && player.id == socket.id) {
                 console.log(player.name + " set message to: " + message);
                 player.message = message;

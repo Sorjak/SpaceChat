@@ -2,8 +2,9 @@ app.controller('MapCtrl', ['$scope', 'MapSocket', function($scope, MapSocket) {
     $scope.players = [];
     $scope.latest = [];
     $scope.showing = false;
+    $scope.roomName = "";
 
-    MapSocket.on('update players', function (data) {
+    MapSocket.on('update_players', function (data) {
         // $scope.latest = data.players;
         angular.forEach(data.players, function(player, index) {
             var local_player = null;
@@ -23,20 +24,18 @@ app.controller('MapCtrl', ['$scope', 'MapSocket', function($scope, MapSocket) {
         });
     });
 
-    // $("#player-list").on('click', 'li a', function(e) {
-    //     e.preventDefault();
-    //     var id = $(this).attr('href');
-
-    //     console.log($scope.players[id]);
-    // });
-
     $scope.refreshPlayers = function() {
         $scope.players = $scope.latest;
     }
 
     $scope.resetPlayers = function() {
-        MapSocket.emit("remove all players");
+        MapSocket.emit("remove_all_players");
     }
+
+    $scope.updateRoom = function(player, roomName) {
+        console.log(player.name + " moving into " + roomName);
+        MapSocket.emit("update_player_room", {'name' : player.name, 'room' : roomName});
+    } 
 
     function sanitizeInput(input) {
         return {

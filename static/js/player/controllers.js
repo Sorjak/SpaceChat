@@ -1,7 +1,11 @@
-app.controller('HeaderCtrl', function($scope, $state, $cookies, PlayerSocket) {
+app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, PlayerSocket) {
     $scope.logout = function() {
         $cookies.remove("player_name");
         PlayerSocket.disconnect();
+
+        if ($rootScope.animFrame != undefined) {
+            cancelAnimationFrame($rootScope.animFrame);
+        }
 
         $state.go("index");
     }
@@ -17,9 +21,9 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, PlayerSocket) {
         $scope.chat = "";
 
         PlayerSocket.reconnect();
-        PlayerSocket.emit('player connected', $stateParams.player_name);
+        PlayerSocket.emit('player_connected', $stateParams.player_name);
 
-        PlayerSocket.on('update player', function (data) {
+        PlayerSocket.on('update_player', function (data) {
             if ($scope.player == null) {
                 $scope.player = new Player($stateParams.player_name);
             }
@@ -31,15 +35,19 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, PlayerSocket) {
         PlayerSocket.on('spacechat_error', function(error) {
             $scope.errorMessage = error.errorMessage;
 
+            // Game hasn't started
             if (error.errorCode == 0) {
                 $scope.connected = false;
 
+            // Player name is already connected to server
             } else if (error.errorCode == 1) {
                 $scope.connected = false;
                 PlayerSocket.disconnect();
 
+            // Player not in game
             } else if (error.errorCode == 2) {
-
+                $scope.connected = false;
+                // This shouldn't ever happen, but who knows!
             }
         });
 
@@ -54,11 +62,11 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, PlayerSocket) {
     }
 
     $scope.sabotage = function() {
-        PlayerSocket.emit('sabotage room');
+        PlayerSocket.emit('sabotage_room');
     }
 
     $scope.sendChat = function() {
-        PlayerSocket.emit('player message', $scope.chat);
+        PlayerSocket.emit('player_message', $scope.chat);
     }
 
     $scope.clearChat = function() {
@@ -79,8 +87,8 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, PlayerSocket) {
 
 }])
 
-.controller('ControlAreaCtrl', ['$scope', 'PlayerSocket', 'ControlArea'
-    , function($scope, PlayerSocket, ControlArea) {
+.controller('ControlAreaCtrl', ['$scope', '$rootScope', 'ControlArea'
+    , function($scope, $rootScope, ControlArea) {
 
     $scope.control_element = $("#player-controls");
     $scope.GAME_WIDTH = Math.min($scope.control_element.width(), 768);
@@ -96,7 +104,7 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, PlayerSocket) {
         transparent: false,
         resolution: window.devicePixelRatio,
         autoResize: true,
-    }
+    };
     $scope.RENDERER = new PIXI.autoDetectRenderer($scope.GAME_WIDTH, $scope.GAME_HEIGHT, rendererOptions);
     $scope.STAGE = new PIXI.Container();
     $scope.control_element.append($scope.RENDERER.view);
@@ -114,11 +122,6 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, PlayerSocket) {
     $scope.debugText.position = new PIXI.Point(10, $scope.STAGE.height - 30);
     $scope.STAGE.addChild($scope.debugText);
 
-    $scope.updatePlayerMove = function(playerInput) {
-        var to_send = {'x' : playerInput.x, 'y' : playerInput.y}
-        PlayerSocket.emit('move player', to_send);
-    }
-
     $scope.getControlAreaWidth = function() {
         return $scope.control_element.width();
     }
@@ -129,11 +132,11 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, PlayerSocket) {
     }, true);
 
     $scope.mainLoop = function() {
-        requestAnimationFrame($scope.mainLoop);
+        $rootScope.animFrame = requestAnimationFrame($scope.mainLoop);
 
-        if ($scope.control_area.input != null)
-            $scope.debugText.text = "X: " + $scope.control_area.input.x + ", Y: " + $scope.control_area.input.y;
-            $scope.updatePlayerMove($scope.control_area.input);
+        $scope.debugText.text = "X: " + $scope.control_area.input.x + ", Y: " + $scope.control_area.input.y;
+            
+        $scope.control_area.update(PIXI.ticker.shared.deltaTime);
 
         $scope.RENDERER.render($scope.STAGE);
     }

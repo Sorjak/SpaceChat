@@ -21,7 +21,12 @@
                             <a ng-click="showing=!showing">{{player.name}}</a>
                             <div class="more-info" ng-show="showing">
                                 <p ng-repeat="(key, val) in player"><strong>{{key}}</strong> : {{val}}</p>
+                                <div class="change-room">
+                                    <input type="text" ng-model="roomName">
+                                    <button ng-click="updateRoom(player, roomName);">update</button>
+                                </div>
                             </div>
+
                         </li>
                     </ul>
                 </div>

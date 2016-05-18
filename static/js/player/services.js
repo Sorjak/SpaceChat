@@ -29,7 +29,7 @@ app.factory('PlayerSocket', function ($rootScope) {
     };
 })
 
-.factory('ControlArea', function() {
+.factory('ControlArea', function(PlayerSocket) {
 
     function ControlArea(container, position, size) {
 
@@ -145,6 +145,10 @@ app.factory('PlayerSocket', function ($rootScope) {
     }
 
     ControlArea.prototype.update = function(deltaTime) {
+        if (this.input != null) {
+            var to_send = {'x' : this.input.x, 'y' : this.input.y}
+            PlayerSocket.emit('move_player', to_send);
+        }
     }
 
     return ControlArea;

@@ -56,7 +56,7 @@ module.exports = SpaceChat;
 
 var map = __io.of('/map');
 map.on('connection', function(socket){
-    console.log("map connected");
+    console.log("map_connected");
     if (__game == null) {
         console.log("starting new game");
         __game = new SpaceChat();
@@ -67,20 +67,26 @@ map.on('connection', function(socket){
     setInterval(updateMap, 10, socket);
     setInterval(heartbeat, 30000);
 
-    socket.on("update player position", function(data) {
+    socket.on("update_player_position", function(data) {
         var player = __game.getPlayerByName(data.id);
         player.positionX = data.index.x;
         player.positionY = data.index.y;
     });
 
-    socket.on("remove all players", function(data) {
+    socket.on("update_player_room", function(data) {
+        console.log(data.name + " moving into " + data.room)
+        var player = __game.getPlayerByName(data.name);
+        player.room = data.room;
+    });
+
+    socket.on("remove_all_players", function(data) {
         console.log("removing all players");
         __game.RemoveAllPlayers();
     });
 });
 
 function updateMap(socket) {
-    socket.emit('update players', {'players' : __game.players});
+    socket.emit('update_players', {'players' : __game.players});
 }
 
 function heartbeat() {

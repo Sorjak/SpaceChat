@@ -12,12 +12,16 @@
                     <strong ng-if="player.isTraitor">a TRAITOR</strong>
                     <strong ng-if="!player.isTraitor">INNOCENT</strong>
                 </p>
-                <p>Current room is: <strong ng-bind="player.room == '' ? 'None' : player.room"></strong></p>
+            </div>
+            <div class="col-sm-12">
+                <p>Current Room: <strong>{{player.room == '' ? "None" : player.room}}</strong></p>
             </div>
         </div>
         <div ng-show="player.isTraitor" id="tools" class="row">
             <div class="col-sm-12">
-                <button ng-click="sabotage();" class="btn btn-primary">Sabotage Current Room</button>
+                <button ng-click="sabotage();" class="btn btn-primary" ng-disabled="player.room == ''">
+                    Sabotage {{player.room}}
+                </button>
             </div>
         </div>
 
@@ -34,8 +38,10 @@
     </div>
 
     <div ng-hide="connected" id="error" class="row">
-        <p ng-bind="errorMessage"></p>
-        <button ng-click="reload();" class="btn btn-primary">Reload Page</button>
+        <div class="col-sm-12">
+            <p ng-bind="errorMessage"></p>
+            <button ng-click="reload();" class="btn btn-primary">Reload Page</button>
+        </div>
     </div>
 </div>
 
