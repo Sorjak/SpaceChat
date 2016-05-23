@@ -28,6 +28,14 @@ app.factory('Ball', function(MovingObject) {
         this.velocity.add(friction);
 
         MovingObject.prototype.update.call(this, deltaTime);
+
+        if (this.position.x > this.container.width ||
+            this.position.x < 0 ||
+            this.position.y > this.container.height ||
+            this.position.y < 0) {
+
+            this.reset();
+        }
     }
 
     Ball.prototype.getCollisionArea = function() {

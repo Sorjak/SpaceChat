@@ -4,7 +4,7 @@
 }
 
 #content {
-    width: 960px;
+    /*width: 960px;*/
     margin: 0 auto;
     padding-top: 20px;
 }
@@ -12,7 +12,7 @@
 #map-view {
     display:block;
     float:left;
-    width: 850px;
+    width: 1260px;
     padding: 10px 30px;
 }
 

@@ -9,7 +9,7 @@ app.factory('Player', function (MovingObject) {
         this.graphics = new PIXI.Graphics();
         this.updateInfo(playerObject);
 
-        this.speedModifier = 2;
+        this.speedModifier = 3.5;
 
         var hitArea = new PIXI.Rectangle(-11, -14, 24, 38);
         this.initSprite("/static/images/nasa_astronaut.png", hitArea);
@@ -36,16 +36,26 @@ app.factory('Player', function (MovingObject) {
     // Overrides
 
     Player.prototype.update = function(deltaTime) {
-        this.velocity.x = this.currentInput.x * deltaTime * this.speedModifier;
-        this.velocity.y = -this.currentInput.y * deltaTime * this.speedModifier;
+        this.velocity.x = this.currentInput.x * this.speedModifier;
+        this.velocity.y = -this.currentInput.y * this.speedModifier;
 
         if (this.colliding && this.collisionVector != null) {
-            this.velocity.x = this.collisionVector.x * deltaTime;
-            this.velocity.y = this.collisionVector.y * deltaTime;
+            this.velocity.x = this.collisionVector.x;
+            this.velocity.y = this.collisionVector.y;
 
         }
 
         MovingObject.prototype.update.call(this, deltaTime);
+
+        if (this.position.x > this.container.width ||
+            this.position.x < 0 ||
+            this.position.y > this.container.height ||
+            this.position.y < 0) {
+
+
+            this.position = new Vector2(Math.random() * this.container.width, Math.random() * this.container.height);
+            this.velocity = new Vector2(0, 0);
+        }
     }
 
     Player.prototype.getCollisionArea = function() {

@@ -144,8 +144,7 @@ app.factory('Goal', function(StaticObject) {
     Goal.prototype.onCollide = function(collisionVector) {
         if (this.collider.name == "BallObject"){
             this.score++;
-            this.collider.reset()
-            console.log("ball entered");
+            this.collider.reset();
         }
 
         StaticObject.prototype.onCollide.call(this, collisionVector);
@@ -157,7 +156,7 @@ app.factory('Goal', function(StaticObject) {
             if (this.collider.name == "BallObject"){
                 return new Vector2(0, 0);
             } else 
-                return incomingVector;
+                return incomingVector.invert();
         }
     }
 

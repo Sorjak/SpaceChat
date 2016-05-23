@@ -34,11 +34,16 @@ app.factory('SpaceChat', function ($rootScope, MapSocket, Player, Ball, Wall, Go
         this.graphics = new PIXI.Graphics();
         player_container.addChild(this.graphics);
 
-        this.scoreboard = new PIXI.Text("", {font : '20px Arial', fill : 0xffffff, align : 'center'});
-        this.scoreboard.x = player_container.width / 2;
-        this.scoreboard.y = 20;
+        this.redScore = new PIXI.Text("", {font : '30px Arial', fill : 0xff0000, align : 'center'});
+        this.redScore.x = player_container.width - 40;
+        this.redScore.y = 20;
 
-        player_container.addChild(this.scoreboard);
+        this.blueScore = new PIXI.Text("", {font : '30px Arial', fill : 0x0000ff, align : 'center'});
+        this.blueScore.x = 20;
+        this.blueScore.y = 20;
+
+        player_container.addChild(this.redScore);
+        player_container.addChild(this.blueScore);
 
     }
 
@@ -56,7 +61,8 @@ app.factory('SpaceChat', function ($rootScope, MapSocket, Player, Ball, Wall, Go
             e.draw();
         });
 
-        this.scoreboard.text = this.blueGoal.score + " | " + this.redGoal.score;
+        this.blueScore.text = this.redGoal.score;
+        this.redScore.text = this.blueGoal.score;
     }
 
     SpaceChat.prototype.PlayerExists = function(playerName) {
