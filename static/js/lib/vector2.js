@@ -1,5 +1,5 @@
 
-define(function() {
+app.factory('Vector2', function() {
     /*
      * @class Vector2
      * @constructor 

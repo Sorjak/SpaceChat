@@ -25,3 +25,6 @@ app.factory('MapSocket', function ($rootScope) {
         }
     };
 })
+
+
+

@@ -1,47 +1,58 @@
-app.controller('MapCtrl', ['$scope', 'MapSocket', function($scope, MapSocket) {
-    $scope.players = [];
+app.controller('MapCtrl', ['$scope', '$rootScope', 'SpaceChat',
+    function($scope, $rootScope, SpaceChat) {
+    $scope.game = null;
     $scope.latest = [];
     $scope.showing = false;
     $scope.roomName = "";
 
-    MapSocket.on('update_players', function (data) {
-        // $scope.latest = data.players;
-        angular.forEach(data.players, function(player, index) {
-            var local_player = null;
+    $scope.game_width = 1200;
+    $scope.game_height = 600;
 
-            if ($scope.players[index]) {
-                local_player = $scope.players[index];
-            } else {
-                local_player = player;
-                $scope.players[index] = local_player;
-            }
+    $scope.renderer = null;
+    $scope.stage = null;
 
-            local_player.currentInput = sanitizeInput(player.currentInput);
-            local_player.id = player.id;
-            local_player.room = player.room;
-            local_player.message = player.message;
-            local_player.last_updated = player.last_updated;
-        });
-    });
-
-    $scope.refreshPlayers = function() {
-        $scope.players = $scope.latest;
-    }
-
-    $scope.resetPlayers = function() {
-        MapSocket.emit("remove_all_players");
-    }
-
-    $scope.updateRoom = function(player, roomName) {
-        console.log(player.name + " moving into " + roomName);
-        MapSocket.emit("update_player_room", {'name' : player.name, 'room' : roomName});
-    } 
-
-    function sanitizeInput(input) {
-        return {
-            x : Math.floor(input.x * 100) / 100,
-            y : Math.floor(input.y * 100) / 100
+    $scope.initPIXI = function() {
+        var rendererOptions = {
+            antialiasing: true,
+            transparent: false,
+            resolution: window.devicePixelRatio,
+            autoResize: true,
         };
-
+        $scope.renderer = new PIXI.autoDetectRenderer($scope.game_width, $scope.game_height, rendererOptions);
+        $scope.stage = new PIXI.Container();
+        $("#map").append($scope.renderer.view);
     }
+
+    $scope.init = function()  {
+        $scope.initPIXI();
+        var background = new PIXI.Graphics();
+        background.beginFill(0x337ab7);
+        background.drawRect(0, 0, $scope.game_width, $scope.game_height);
+        $scope.stage.addChild(background);
+
+        $scope.game = new SpaceChat($scope.stage);
+    }
+
+    // $scope.resetPlayers = function() {
+    //     MapSocket.emit("remove_all_players");
+    // }
+
+    // $scope.updateRoom = function(player, roomName) {
+    //     console.log(player.name + " moving into " + roomName);
+    //     MapSocket.emit("update_player_room", {'name' : player.name, 'room' : roomName});
+    // } 
+
+
+    $scope.mainLoop = function() {
+        $rootScope.animFrame = requestAnimationFrame($scope.mainLoop);
+           
+        $scope.game.update(PIXI.ticker.shared.deltaTime);
+
+        $scope.renderer.render($scope.stage);
+    }
+
+    $scope.init();
+    $scope.mainLoop();
+
+    
 }]);

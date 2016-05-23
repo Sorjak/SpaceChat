@@ -21,6 +21,8 @@ SpaceChat.prototype.AddPlayer = function(playerObj) {
         }
     }
 
+    playerObj.team = this.players.length % 2 == 0 ? "red" : "blue";
+
     this.players.push(playerObj);
 };
 

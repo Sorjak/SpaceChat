@@ -13,6 +13,7 @@ function Player(id, name) {
     this.message = "";
 
     this.isTraitor = false;
+    this.team = "red";
 
 }
 // class methods
