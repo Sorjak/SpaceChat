@@ -1,4 +1,4 @@
-app.factory('Player', function (MovingObject) {
+app.factory('Player', function (MovingObject, MapSocket) {
 
 
     // Astronaut player
@@ -26,8 +26,16 @@ app.factory('Player', function (MovingObject) {
         nameplate.y = 25;
         this.sprite.addChild(nameplate);
 
-        this.messageText = new PIXI.Text(this.message, {font : '12px Arial', fill : 0xFFFFFF, align : 'left'});
+        this.sprite.addChild(this.graphics);
+
+        this.messageText = new PIXI.Text("", {font : '12px Arial', fill : 0xFFFFFF, align : 'left'});
+        this.messageText.x = -10;
+        this.messageText.y = -30;
         this.sprite.addChild(this.messageText);
+
+        this.message = "";
+        this.messageUpTime = 100;
+        this.messageTimer = 0;
     }
 
     Player.prototype = Object.create(MovingObject.prototype);
@@ -56,6 +64,16 @@ app.factory('Player', function (MovingObject) {
             this.position = new Vector2(Math.random() * this.container.width, Math.random() * this.container.height);
             this.velocity = new Vector2(0, 0);
         }
+
+        if (this.message != "") {
+            this.messageText.text = this.message;
+
+            this.messageTimer = this.messageUpTime;
+            this.message = "";
+        }
+
+        if (this.messageTimer > 0) 
+            this.messageTimer -= deltaTime;
     }
 
     Player.prototype.getCollisionArea = function() {
@@ -82,6 +100,7 @@ app.factory('Player', function (MovingObject) {
             this.graphics.lineStyle(1, 0xFF0000, 1);
         else 
             this.graphics.lineStyle(1, 0x0000FF, 1);
+
         this.graphics.drawRect(
             this.sprite.hitArea.x, 
             this.sprite.hitArea.y, 
@@ -89,28 +108,7 @@ app.factory('Player', function (MovingObject) {
             this.sprite.hitArea.height
         );
         
-        if (this.message != "") {
-            this.sprite.removeChild(this.messageText);
-            this.messageText = new PIXI.Text(this.message, {font : '12px Arial', fill : 0xFFFFFF, align : 'left'});
-            // this.messageText.text = this.message;
-            this.messageText.x = -10;
-            this.messageText.y = -30;
-
-            
-            this.graphics.lineStyle(0, 0x000000, 1);
-            this.graphics.beginFill(0x000000, 1);
-            this.graphics.drawRect(
-                this.messageText.x,
-                this.messageText.y, 
-                Math.max(this.messageText.width, 20), 
-                this.messageText.height
-            );
-            this.graphics.endFill();
-        }
-
-        this.sprite.addChild(this.graphics);
-        
-        this.sprite.addChild(this.messageText);
+        this.messageText.visible = (this.messageTimer > 0);
 
         this.sprite.position = new PIXI.Point(this.position.x, this.position.y);
     }
@@ -127,13 +125,21 @@ app.factory('Player', function (MovingObject) {
         this.name = updatedPlayer.name;
         this.id = updatedPlayer.id;
 
-        this.message = updatedPlayer.message;
+        if (updatedPlayer.message != "") {
+            this.message = updatedPlayer.message;
+
+            var tosend = angular.toJson({'name' : this.name});
+            MapSocket.emit("ack_message", tosend);
+        }
+        
 
         this.team = updatedPlayer.team;
     }
 
     Player.prototype.onDown = function() {
-        console.log(this);
+        console.log('updating player room');
+        var tosend = angular.toJson({'name' : this.name, 'room' : "shah"});
+        MapSocket.emit("update_player_room", tosend);
     }
 
     Player.prototype.sanitizeInput = function (input) {

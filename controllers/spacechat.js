@@ -70,15 +70,35 @@ map.on('connection', function(socket){
     setInterval(heartbeat, 30000);
 
     socket.on("update_player_position", function(data) {
-        var player = __game.getPlayerByName(data.id);
-        player.positionX = data.index.x;
-        player.positionY = data.index.y;
+        var _data = JSON.parse(data);
+
+        var player = __game.getPlayerByName(_data.id);
+        player.positionX = _data.index.x;
+        player.positionY = _data.index.y;
     });
 
     socket.on("update_player_room", function(data) {
-        console.log(data.name + " moving into " + data.room)
-        var player = __game.getPlayerByName(data.name);
-        player.room = data.room;
+        var _data = JSON.parse(data);
+
+        console.log(_data.name + " moving into " + _data.room);
+        var player = __game.getPlayerByName(_data.name);
+        player.room = _data.room;
+    });
+
+    socket.on("ack_message", function(data) {
+        var _data = JSON.parse(data);
+
+        console.log(_data.name + " acknowledged message");
+        var player = __game.getPlayerByName(_data.name);
+        player.message = "";
+    });
+
+    socket.on("ack_sabotage", function(data) {
+        var _data = JSON.parse(data);
+
+        console.log(_data.name + " sabotaging " + _data.room);
+        var player = __game.getPlayerByName(_data.name);
+        player.isSabotaging = false;
     });
 
     socket.on("remove_all_players", function(data) {

@@ -67,6 +67,7 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, Play
 
     $scope.sendChat = function() {
         PlayerSocket.emit('player_message', $scope.chat);
+        $scope.chat = "";
     }
 
     $scope.clearChat = function() {

@@ -13,6 +13,7 @@ function Player(id, name) {
     this.message = "";
 
     this.isTraitor = false;
+    this.isSabotaging = false;
     this.team = "red";
 
 }
@@ -74,8 +75,11 @@ playerSocket.on('connection', function(socket) {
 
         socket.on('sabotage_room', function() {
             if (player != null && player.id == socket.id) {
-                if (player.room != "") 
+                if (player.room != "") {
                     console.log(player.name + " is sabotaging room: " + player.room);
+                    player.isSabotaging = true;
+                }
+
             }
         });
 
