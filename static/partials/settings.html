@@ -1,0 +1,16 @@
+<div id="settings-view" ng-controller="SettingsCtrl" class="container">
+
+    <div ng-show="connected">
+        <div id="player-list">
+            
+        </div>
+    </div>
+
+    <div ng-hide="connected" id="error" class="row">
+        <div class="col-sm-12">
+            <p ng-bind="errorMessage"></p>
+            <button ng-click="reload();" class="btn btn-primary">Reload Page</button>
+        </div>
+    </div>
+</div>
+
