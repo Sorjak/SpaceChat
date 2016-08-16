@@ -4,6 +4,7 @@
         <title>SpaceChat | Home</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link href="/static/css/bootstrap.min.css" rel="stylesheet">
         <link href="/static/css/styles.css" rel="stylesheet">
     </head>
@@ -11,21 +12,15 @@
         <nav class="navbar navbar-default" ng-controller="HeaderCtrl">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                    </button>
                     <a class="navbar-brand" href="#">SpaceChat</a>
+                    <a class="header-action" ng-click="settings();">
+                        <i class="material-icons settings-icon">more_vert</i>
+                    </a>
+                    <a class="header-action" ng-click="logout();">
+                        <i class="material-icons logout-icon">exit_to_app</i>
+                    </a>
+
                 </div>
-                <div id="navbar" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li data-toggle="collapse" data-target="#navbar">
-                            <a ng-click="logout();">Logout</a>
-                        </li>
-                    </ul>
-                </div><!--/.nav-collapse -->
             </div><!--/.container-fluid -->
         </nav>
         <div id="content">

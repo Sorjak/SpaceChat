@@ -1,4 +1,5 @@
 app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, PlayerSocket) {
+
     $scope.logout = function() {
         $cookies.remove("player_name");
         PlayerSocket.disconnect();
@@ -8,6 +9,14 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, Play
         }
 
         $state.go("index");
+    }
+
+    $scope.settings = function() {
+        if ($rootScope.animFrame != undefined) {
+            cancelAnimationFrame($rootScope.animFrame);
+        }
+
+        $state.go("settings");
     }
 })
 
@@ -20,8 +29,10 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, Play
         $scope.player = null;
         $scope.chat = "";
 
-        PlayerSocket.reconnect();
-        PlayerSocket.emit('player_connected', $stateParams.player_name);
+        if ($stateParams.reconnect) {
+            PlayerSocket.reconnect();
+            PlayerSocket.emit('player_connected', $stateParams.player_name);
+        }
 
         PlayerSocket.on('update_player', function (data) {
             if ($scope.player == null) {
@@ -119,9 +130,9 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, Play
     var control_area_center = new PIXI.Point(0, 0);
     $scope.control_area = new ControlArea($scope.STAGE, control_area_center, control_area_size);
 
-    $scope.debugText = new PIXI.Text("", {font:"12px Arial", fill:"black"});
-    $scope.debugText.position = new PIXI.Point(10, $scope.STAGE.height - 30);
-    $scope.STAGE.addChild($scope.debugText);
+    // $scope.debugText = new PIXI.Text("", {font:"12px Arial", fill:"black"});
+    // $scope.debugText.position = new PIXI.Point(10, $scope.STAGE.height - 30);
+    // $scope.STAGE.addChild($scope.debugText);
 
     $scope.getControlAreaWidth = function() {
         return $scope.control_element.width();
@@ -135,7 +146,7 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, Play
     $scope.mainLoop = function() {
         $rootScope.animFrame = requestAnimationFrame($scope.mainLoop);
 
-        $scope.debugText.text = "X: " + $scope.control_area.input.x + ", Y: " + $scope.control_area.input.y;
+        // $scope.debugText.text = "X: " + $scope.control_area.input.x + ", Y: " + $scope.control_area.input.y;
             
         $scope.control_area.update(PIXI.ticker.shared.deltaTime);
 
@@ -151,8 +162,26 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, Play
     $scope.submitName = function() {
 
         $cookies.put('player_name', $scope.player_name);
+        $scope.goFullScreen();
         $state.go('player', {player_name: $scope.player_name});
     }
+
+
+    $scope.goFullScreen = function() {
+        var doc = window.document;
+        var docEl = doc.documentElement;
+
+        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+
+        if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+            requestFullScreen.call(docEl);
+        }
+    }
+
+}])
+
+.controller('SettingsCtrl',  ['$scope', '$state', '$cookies', function($scope, $state, $cookies, PlayerSocket) {
+    $scope.connected = true;
 
 }])
 

@@ -13,6 +13,19 @@ strong {
     margin-bottom: 0px;
 }
 
+.navbar-header .header-action {
+    display: block;
+    float: right;
+    margin-right: 10px;
+}
+
+.navbar-header i {
+    margin-top: 10px;
+}
+
+.navbar-header i.logout-icon {
+    transform: rotate(180deg);
+}
 /* INDEX STYLES */
 
 #index-view {

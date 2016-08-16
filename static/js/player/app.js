@@ -10,16 +10,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
     .state('player', {
         url: "/player",
         params: {
-            player_name: null
+            player_name: null, 
+            reconnect: true
         },
         templateUrl: "/static/partials/player.html"
     })
+    .state('settings', {
+        url: "/settings",
+        templateUrl: "/static/partials/settings.html"
+    });
 
 });
 
 app.run(function ($rootScope, $state, $cookies) {
 
-    $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
         if (toState.name == "index") {
             var playerName = $cookies.get('player_name');
 
@@ -38,6 +43,9 @@ app.run(function ($rootScope, $state, $cookies) {
                 event.preventDefault();
                 $state.go('index');
             }
+
+            if (fromState.name == "settings")
+                toParams.reconnect = false;
 
         }
     });
