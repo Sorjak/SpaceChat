@@ -9,24 +9,8 @@
         <link href="/static/css/styles.css" rel="stylesheet">
     </head>
     <body ng-app="SpaceChat">
-        <nav class="navbar navbar-default" ng-controller="HeaderCtrl">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="#">SpaceChat</a>
-                    <a class="header-action" ng-click="settings();">
-                        <i class="material-icons settings-icon">more_vert</i>
-                    </a>
-                    <a class="header-action" ng-click="logout();">
-                        <i class="material-icons logout-icon">exit_to_app</i>
-                    </a>
 
-                </div>
-            </div><!--/.container-fluid -->
-        </nav>
-        <div id="content">
-            <div ui-view></div>
-        </div>
-
+        <div id="content" ui-view></div>
 
         <!-- TOP LEVEL JS STUFF -->
         <script src="/socket.io/socket.io.js"></script>

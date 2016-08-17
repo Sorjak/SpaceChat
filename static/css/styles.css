@@ -13,10 +13,31 @@ strong {
     margin-bottom: 0px;
 }
 
-.navbar-header .header-action {
+/*.navbar-header .header-action {
     display: block;
     float: right;
     margin-right: 10px;
+}*/
+
+.navbar-username {
+    display: inline-block;
+    text-align: right;
+    margin-right: 10px;
+    width: 130px;
+}
+
+.navbar-username span {
+    font-size: 28px;
+    color: #337ab7;
+}
+
+.navbar-actions {
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.navbar-action {
+    margin-left: 10px;
 }
 
 .navbar-header i {

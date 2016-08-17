@@ -3,7 +3,9 @@ app.factory('PlayerSocket', function ($rootScope) {
     var socket = io('/player');
     return {
         reconnect: function() {
-            socket = io('/player');
+            if (!socket.connected) {
+                socket = io('/player');
+            }
         },
         on: function (eventName, callback) {
             socket.on(eventName, function () {  
@@ -25,6 +27,9 @@ app.factory('PlayerSocket', function ($rootScope) {
         },
         disconnect: function() {
             socket.disconnect();
+        },
+        isConnected: function() {
+            return socket.connected;
         }
     };
 })

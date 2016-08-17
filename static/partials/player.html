@@ -1,3 +1,4 @@
+<div id="header" ng-include src="'/static/partials/header.html'"></div>
 <div id="player-view" ng-controller="PlayerCtrl" class="container">
 
     <div ng-show="connected">
@@ -5,9 +6,8 @@
 
         <div id="information" class="row">
             <div class="col-sm-12">
-                <p id="username">Playing as: 
-                    <strong ng-bind="player.name"></strong>,
-                    who is
+                <p id="username">
+                    You are 
                     <strong ng-if="player.isTraitor">a TRAITOR</strong>
                     <strong ng-if="!player.isTraitor">INNOCENT</strong>
                 </p>

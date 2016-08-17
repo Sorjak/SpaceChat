@@ -1,0 +1,20 @@
+<nav class="navbar navbar-default" ng-controller="HeaderCtrl">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">SpaceChat</a>
+            <div class="navbar-username" ng-show="player_name">
+                <span>{{player_name}}</span>
+
+            </div>
+            <div class="navbar-actions">
+                <a class="navbar-action" ng-show="player_name" ng-click="logout();">
+                    <i class="material-icons logout-icon">exit_to_app</i>
+                </a>
+                <a class="navbar-action" ng-click="settings();">
+                    <i class="material-icons settings-icon">group</i>
+                </a>
+            </div>
+
+        </div>
+    </div><!--/.container-fluid -->
+</nav>

@@ -1,4 +1,5 @@
 app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, PlayerSocket) {
+    $scope.player_name = $cookies.get('player_name');
 
     $scope.logout = function() {
         $cookies.remove("player_name");
@@ -29,7 +30,7 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, Play
         $scope.player = null;
         $scope.chat = "";
 
-        if ($stateParams.reconnect) {
+        if (!PlayerSocket.isConnected()) {
             PlayerSocket.reconnect();
             PlayerSocket.emit('player_connected', $stateParams.player_name);
         }
