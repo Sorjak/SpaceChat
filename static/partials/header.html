@@ -1,12 +1,18 @@
 <nav class="navbar navbar-default" ng-controller="HeaderCtrl">
-    <div class="container-fluid">
+    <!-- <div class="container-fluid"> -->
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">SpaceChat</a>
-            <div class="navbar-username" ng-show="player_name">
-                <span>{{player_name}}</span>
-
+            <div class="navbar-logo col-xs-6">
+                <div class="back-icon" ng-show="current_page == 'settings'">
+                    <a ng-click="goToPlayer();">
+                        <i class="material-icons">chevron_left</i>
+                    </a>
+                </div>
+                <div class="logo-text">
+                    <a href="#">SpaceChat</a>
+                </div>
             </div>
-            <div class="navbar-actions">
+            
+            <div class="navbar-actions col-xs-6">
                 <a class="navbar-action" ng-show="player_name" ng-click="logout();">
                     <i class="material-icons logout-icon">exit_to_app</i>
                 </a>
@@ -15,6 +21,7 @@
                 </a>
             </div>
 
+
         </div>
-    </div><!--/.container-fluid -->
+    <!--</div>/.container-fluid -->
 </nav>

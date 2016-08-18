@@ -1,11 +1,22 @@
-app.factory('PlayerSocket', function ($rootScope) {
-
+app.factory('PlayerSocket', function ($rootScope, $q) {
+    console.log("starting socket");
     var socket = io('/player');
+    var playerObj = null;
+    var connected = false;
     return {
-        reconnect: function() {
+        connect: function(playername) {
+            console.log("connecting as " + playername);
             if (!socket.connected) {
                 socket = io('/player');
             }
+            return $q(function(resolve, reject) {
+                socket.emit('player_connected', playername, function(data) {
+                    connected = true;
+                    playerObj = data;
+                    resolve(playerObj);
+                });
+            });
+
         },
         on: function (eventName, callback) {
             socket.on(eventName, function () {  
@@ -29,7 +40,10 @@ app.factory('PlayerSocket', function ($rootScope) {
             socket.disconnect();
         },
         isConnected: function() {
-            return socket.connected;
+            return socket.connected && connected;
+        },
+        getPlayer: function() {
+            return playerObj;
         }
     };
 })

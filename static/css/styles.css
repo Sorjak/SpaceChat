@@ -19,29 +19,54 @@ strong {
     margin-right: 10px;
 }*/
 
-.navbar-username {
+.navbar-logo {
+    height: 50px;
+}
+
+.navbar-logo .logo-text {
     display: inline-block;
+    float: left;
+}
+
+.navbar-logo .logo-text a{
+    font-size: 20px;
+    line-height: 50px;
+}
+
+.navbar-logo .back-icon {
+    display: inline-block;
+    float: left;
+}
+
+
+.navbar-logo .back-icon i {
+    font-size: 40px;
+    line-height: 50px
+}
+
+/*.navbar-username {
+    height: 50px;
     text-align: right;
-    margin-right: 10px;
-    width: 130px;
 }
 
 .navbar-username span {
     font-size: 28px;
     color: #337ab7;
-}
+    line-height: 50px;
+}*/
 
 .navbar-actions {
-    display: inline-block;
-    margin-right: 15px;
+    height: 50px;
+    text-align: right;
 }
 
-.navbar-action {
+.navbar-actions a {
     margin-left: 10px;
 }
 
-.navbar-header i {
-    margin-top: 10px;
+.navbar-actions a i{
+    font-size: 32px;
+    line-height: 50px;
 }
 
 .navbar-header i.logout-icon {
@@ -87,4 +112,11 @@ strong {
     margin-top: 4px;
     margin-left: 10px;
     float: right;
+}
+
+/* SETTINGS PAGE STYLES */
+
+#settings-view .traitor-tag {
+    color: red;
+    text-transform: uppercase;
 }

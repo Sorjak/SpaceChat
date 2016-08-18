@@ -37,19 +37,21 @@ playerSocket.on('connection', function(socket) {
             }
         });
 
-        socket.on('player_connected', function(username) {
+        socket.on('player_connected', function(username, callback) {
             console.log('player provided username: ' + username);
             if (!__game.PlayerExists(username)) {
                 player = new Player(socket.id, username);
                 __game.AddPlayer(player);
-                socket.emit("update_player", {'player' : player});
+                // socket.emit("update_player", {'player' : player});
+                callback(player);
 
             } else {
                 player = __game.getPlayerByName(username);
                 if (player.id == null) {
                     player.id = socket.id;
 
-                    socket.emit("update_player", {'player' : player});
+                    // socket.emit("update_player", {'player' : player});
+                    callback(player);
 
                 } else {
                     console.log("player " + username + " already connected");
@@ -94,6 +96,11 @@ playerSocket.on('connection', function(socket) {
             if (player != null && player.id == socket.id) {
                 player.last_updated = new Date(); // reset last_updated to now
             }
+        });
+
+        socket.on('get_all_players', function(args, callback) {
+            console.log("list of all players requested");
+            callback(__game.players);
         });
     }
 

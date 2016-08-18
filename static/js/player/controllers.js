@@ -1,5 +1,6 @@
 app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, PlayerSocket) {
     $scope.player_name = $cookies.get('player_name');
+    $scope.current_page = $state.current.name;
 
     $scope.logout = function() {
         $cookies.remove("player_name");
@@ -19,6 +20,10 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, Play
 
         $state.go("settings");
     }
+
+    $scope.goToPlayer = function() {
+        $state.go("player");
+    }
 })
 
 .controller('PlayerCtrl', ['$scope', '$state', '$interval', '$stateParams','PlayerSocket', 'Player'
@@ -31,17 +36,17 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, Play
         $scope.chat = "";
 
         if (!PlayerSocket.isConnected()) {
-            PlayerSocket.reconnect();
-            PlayerSocket.emit('player_connected', $stateParams.player_name);
+            PlayerSocket.connect($stateParams.player_name)
+            .then(function(server_player) {
+                console.log(server_player);
+                $scope.player = server_player;
+            });
+        } else {
+            $scope.player = PlayerSocket.getPlayer();
         }
 
         PlayerSocket.on('update_player', function (data) {
-            if ($scope.player == null) {
-                $scope.player = new Player($stateParams.player_name);
-            }
-
-            $scope.player.isTraitor = data.player.isTraitor;
-            $scope.player.room = data.player.room;
+            $scope.player = data.player;
         });
 
         PlayerSocket.on('spacechat_error', function(error) {
@@ -181,8 +186,21 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, Play
 
 }])
 
-.controller('SettingsCtrl',  ['$scope', '$state', '$cookies', function($scope, $state, $cookies, PlayerSocket) {
-    $scope.connected = true;
+.controller('SettingsCtrl',  ['$scope', '$state', '$cookies', 'PlayerSocket'
+    , function($scope, $state, $cookies, PlayerSocket) {
+
+    $scope.connected = PlayerSocket.isConnected();
+    $scope.server_player = null;
+    $scope.players = [];
+
+    if ($scope.connected) {
+        $scope.server_player = PlayerSocket.getPlayer();
+        PlayerSocket.emit('get_all_players', null, function(data) {
+            $scope.players = data;
+        });
+    } else {
+        $state.go('player');
+    }
 
 }])
 
