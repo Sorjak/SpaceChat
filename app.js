@@ -5,6 +5,8 @@ global.__app = express();
 var server = require('http').Server(__app);
 global.__io = require('socket.io')(server);
 
+global.__game = null;
+
 var ejs = require('ejs');
 
 var urls = require('./controllers/urls');
@@ -13,7 +15,7 @@ var io = require('./controllers/io');
 var SpaceChat = require('./controllers/spacechat');
 var Player = require('./controllers/player');
 
-const socketFile = "/var/www/spacechat/run/spacechat.sock";
+const socketFile = "/home/uli/SpaceChat/run/spacechat.sock";
 
 // check for socket file and delete if exists
 
