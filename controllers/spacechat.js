@@ -10,18 +10,9 @@ SpaceChat.prototype.PlayerExists = function(playerName) {
 }
 
 SpaceChat.prototype.AddPlayer = function(playerObj) {
-    if (this.traitors.length < this.players.length / 4) {
-        // not enough traitors
-        var ratio = ((this.players.length % 4) + 1) / 4;
-        var ran = Math.random();
+    this.assignPlayerFaction(playerObj, this.players.length, this.traitors.length);
 
-        if (ran < ratio) {
-            playerObj.isTraitor = true;
-            this.traitors.push(playerObj);
-        }
-    }
-
-    playerObj.team = this.players.length % 2 == 0 ? "red" : "blue";
+    if (playerObj.isTraitor) this.traitors.push(playerObj);
 
     this.players.push(playerObj);
 };
@@ -50,6 +41,36 @@ SpaceChat.prototype.getPlayerByName = function(playerName) {
     });
 
     return output;
+}
+
+SpaceChat.prototype.assignPlayerFaction = function(playerObj, totalPlayers, totalTraitors) {
+    if (totalTraitors < totalPlayers / 4) {
+        // not enough traitors
+        var ratio = ((totalPlayers % 4) + 1) / 4;
+        var ran = Math.random();
+
+        if (ran < ratio) {
+            playerObj.isTraitor = true;
+        }
+    }
+
+    playerObj.team = totalPlayers % 2 == 0 ? "red" : "blue";
+}
+
+SpaceChat.prototype.scramblePlayerFactions = function() {
+    var self = this;
+    shuffle(this.players);
+    this.traitors = [];
+
+    this.players.forEach(function(player, idx) {
+        player.isTraitor = false;
+
+        self.assignPlayerFaction(player, idx + 1, self.traitors.length);
+
+        if (player.isTraitor) {
+            self.traitors.push(player);
+        }
+    });
 }
     
 
@@ -105,6 +126,11 @@ map.on('connection', function(socket){
         console.log("removing all players");
         __game.RemoveAllPlayers();
     });
+
+    socket.on("scramble_players", function(data) {
+        console.log("scrambling player factions");
+        __game.scramblePlayerFactions();
+    });
 });
 
 function updateMap(socket) {
@@ -126,4 +152,19 @@ function heartbeat() {
 
     console.log("Current game has: " + __game.players.length + " players");
     
+}
+
+/**
+ * Stolen from SO: http://stackoverflow.com/a/6274381
+ * Shuffles array in place.
+ * @param {Array} The array containing the items.
+ */
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i--) {
+        j = Math.floor(Math.random() * i);
+        x = a[i - 1];
+        a[i - 1] = a[j];
+        a[j] = x;
+    }
 }

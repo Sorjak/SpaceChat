@@ -1,5 +1,5 @@
-app.controller('MapCtrl', ['$scope', '$rootScope', 'SpaceChat',
-    function($scope, $rootScope, SpaceChat) {
+app.controller('MapCtrl', ['$scope', '$rootScope', 'SpaceChat', 'MapSocket',
+    function($scope, $rootScope, SpaceChat, MapSocket) {
     $scope.game = null;
     $scope.latest = [];
     $scope.showing = false;
@@ -33,14 +33,18 @@ app.controller('MapCtrl', ['$scope', '$rootScope', 'SpaceChat',
         $scope.game = new SpaceChat($scope.stage);
     }
 
-    // $scope.resetPlayers = function() {
-    //     MapSocket.emit("remove_all_players");
-    // }
+    $scope.resetPlayers = function() {
+        MapSocket.emit("remove_all_players");
+    }
 
-    // $scope.updateRoom = function(player, roomName) {
-    //     console.log(player.name + " moving into " + roomName);
-    //     MapSocket.emit("update_player_room", {'name' : player.name, 'room' : roomName});
-    // } 
+    $scope.updateRoom = function(player, roomName) {
+        console.log(player.name + " moving into " + roomName);
+        MapSocket.emit("update_player_room", {'name' : player.name, 'room' : roomName});
+    }
+
+    $scope.scramblePlayers = function() {
+        MapSocket.emit("scramble_players");
+    }
 
 
     $scope.mainLoop = function() {
