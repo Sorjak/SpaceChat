@@ -3,3 +3,5 @@ sftp-config.json
 *.sublime-workspace
 node_modules/
 node_modules/*
+logs/
+logs/*
