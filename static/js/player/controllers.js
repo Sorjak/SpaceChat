@@ -1,6 +1,7 @@
-app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, PlayerSocket) {
+app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, $stateParams, PlayerSocket) {
     $scope.player_name = $cookies.get('player_name');
     $scope.current_page = $state.current.name;
+    $scope.page_title = $stateParams.title;
 
     $scope.logout = function() {
         $cookies.remove("player_name");
@@ -38,7 +39,6 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, Play
         if (!PlayerSocket.isConnected()) {
             PlayerSocket.connect($stateParams.player_name)
             .then(function(server_player) {
-                console.log(server_player);
                 $scope.player = server_player;
             });
         } else {

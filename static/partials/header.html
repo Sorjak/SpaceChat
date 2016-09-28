@@ -8,16 +8,18 @@
                     </a>
                 </div>
                 <div class="logo-text">
-                    <a href="#">SpaceChat</a>
+                    <a href="#" ng-bind="page_title"></a>
                 </div>
             </div>
             
             <div class="navbar-actions col-xs-6">
                 <a class="navbar-action" ng-show="player_name" ng-click="logout();">
-                    <i class="material-icons logout-icon">exit_to_app</i>
+                    <!-- <i class="material-icons logout-icon">exit_to_app</i> -->
+                    <span>logout</span>
                 </a>
                 <a class="navbar-action" ng-click="settings();">
-                    <i class="material-icons settings-icon">group</i>
+                    <!-- <i class="material-icons settings-icon">group</i> -->
+                    <span>player list</span>
                 </a>
             </div>
 

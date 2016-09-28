@@ -106,6 +106,10 @@ strong {
     line-height: 50px;
 }
 
+.navbar-actions a span {
+    line-height: 50px;
+}
+
 .navbar-header i.logout-icon {
     transform: rotate(180deg);
 }

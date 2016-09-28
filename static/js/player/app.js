@@ -6,18 +6,25 @@ app.config(function($stateProvider, $urlRouterProvider) {
     $stateProvider.state('index', {
         url: "/",
         templateUrl: "/static/partials/index.html",
+        params: {
+            title: "SpaceChat"
+        }
     })
     .state('player', {
         url: "/player",
         params: {
             player_name: null, 
-            reconnect: true
+            reconnect: true,
+            title: "SpaceChat"
         },
         templateUrl: "/static/partials/player.html"
     })
     .state('settings', {
         url: "/settings",
-        templateUrl: "/static/partials/settings.html"
+        templateUrl: "/static/partials/settings.html",
+        params: {
+            title: "Player List"
+        }
     });
 
 });

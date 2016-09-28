@@ -27,12 +27,14 @@
         <div id="messages" class="row">
             <p class="col-sm-12"><strong>Chat:</strong></p>
             <div class="col-sm-12">
-                <input ng-model="chat" id="chat-input">
+                <form ng-submit="sendChat();">
+                    <input ng-model="chat" id="chat-input">
+                </form>
             </div>
-            <div class="col-sm-12">
+<!--             <div class="col-sm-12">
                 <button ng-click="sendChat();"  class="btn btn-primary">SEND</button>
                 <button ng-click="clearChat();" class="btn btn-primary">CLEAR</button>
-            </div>
+            </div> -->
         </div>
     </div>
 
