@@ -48,14 +48,17 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
     };
 })
 
-.factory('ControlArea', function(PlayerSocket) {
+.factory('ControlArea', function(PlayerSocket, Vector2) {
 
     function ControlArea(container, position, size) {
+
+        this.thumb_circle_radius = 40;
 
         this.container = container;
         this.sprite = null;
         this.holding = false;
-        this.border = null;
+        this.thumb_circle = null;
+        this.bounding_circle = null;
         this.input = new PIXI.Point(0, 0);
 
         this.initSprite(position, size);
@@ -63,11 +66,12 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
         this.bindListeners(this);
 
         this.container.addChild(this.sprite);
-        this.container.addChild(this.border);
+        this.sprite.addChild(this.thumb_circle);
+        this.thumb_circle.visible = false;
     };
 
     ControlArea.prototype.initSprite = function(position, size) {
-        this.sprite = new PIXI.Sprite.fromImage("/static/images/compass_rose.png");
+        this.sprite = new PIXI.Sprite.fromImage("/static/images/joystick_background_arrows.png");
 
         this.sprite.width = size.x;
         this.sprite.height = size.y;
@@ -78,13 +82,13 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
         this.sprite.interactive = true;
         this.sprite.anchor = new PIXI.Point(.5, .5);
 
-        var circle = new PIXI.Circle(realCenter.x, realCenter.y, (this.sprite.width / 2) - 40);
+        this.bounding_circle = new PIXI.Circle(realCenter.x, realCenter.y, (this.sprite.width / 2) - 25);
         // console.log(circle.x + " " + circle.y + " " + circle.radius);
         // this.sprite.hitArea = circle;
 
-        this.border = new PIXI.Graphics();
-        this.border.lineStyle(3, 0xFF0000);
-        // this.border.drawCircle(this.sprite.hitArea.x, this.sprite.hitArea.y, this.sprite.hitArea.radius);
+        this.thumb_circle = new PIXI.Graphics();
+        this.thumb_circle.lineStyle(2, 0xFF0000);
+        this.thumb_circle.drawCircle(0, 0, this.thumb_circle_radius);
 
 
         // this.sprite.hitArea = new PIXI.Circle(realCenter.x, realCenter.y, 40);
@@ -127,6 +131,7 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
 
     ControlArea.prototype.onDown = function(mouseData) {
         this.holding = true;
+        this.thumb_circle.visible = true;
         // this.processInput(mouseData.data.getLocalPosition(this.sprite));
         this.processInput(mouseData.data.global);
     }
@@ -134,6 +139,7 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
     ControlArea.prototype.onUp = function(mouseData) {
         this.holding = false;
         this.input = new PIXI.Point(0, 0);
+        this.resetThumbCircle();
     }
 
     ControlArea.prototype.onMove = function(mouseData) {
@@ -144,6 +150,7 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
     }
 
     ControlArea.prototype.processInput = function(rawPosition) {
+        this.updateThumbCircle(rawPosition);
         var deltaX = (this.sprite.position.x - rawPosition.x) * -1;
         var deltaY = (this.sprite.position.y - rawPosition.y);
 
@@ -161,6 +168,29 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
             cappedY
         );
         this.input = vec;
+        
+    }
+
+    ControlArea.prototype.updateThumbCircle = function(rawPosition) {
+        var localX = (this.sprite.position.x - rawPosition.x) * -1;
+        var localY = (this.sprite.position.y - rawPosition.y) * -1;
+        var localPos = new Vector2(localX, localY);
+
+        var normalPos = localPos.clone().normalize();
+        var maxPos = normalPos.multiplyScalar(this.bounding_circle.radius);
+
+        if (localPos.length() > maxPos.length()) {
+            this.thumb_circle.position = new PIXI.Point(maxPos.x, maxPos.y);
+        } else {
+            this.thumb_circle.position = new PIXI.Point(localPos.x, localPos.y);
+        }
+
+    }
+
+    ControlArea.prototype.resetThumbCircle = function() {
+        this.thumb_circle.position.x = 0;
+        this.thumb_circle.position.y = 0;
+        this.thumb_circle.visible = false;
     }
 
     ControlArea.prototype.update = function(deltaTime) {
