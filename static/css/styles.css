@@ -157,6 +157,26 @@ strong {
 
 /* SETTINGS PAGE STYLES */
 
+#settings-view .player-list-header {
+  margin-bottom: 10px;
+  margin-top: 5px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #337ab7;
+}
+
+
+#settings-view .player-list {
+  /*margin-bottom: 15px;*/
+}
+
+#settings-view .player-list .player-container {
+  margin-bottom: 10px;
+}
+
+#settings-view .player-list .player-container .player-name{
+  font-size: 16px;
+}
+
 #settings-view .traitor-tag {
     color: red;
     text-transform: uppercase;

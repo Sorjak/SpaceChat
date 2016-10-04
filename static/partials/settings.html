@@ -2,18 +2,20 @@
 <div id="settings-view" ng-controller="SettingsCtrl" class="container">
 
     <div ng-show="connected">
-        <div id="player-list" class="row">
-            <ul>
-                <li class="col-xs-12" ng-repeat="player in players">
-                    <div ng-show="server_player.isTraitor">
-                        <span class="traitor-tag" ng-if="player.isTraitor">[TRAITOR]</span>{{player.name}} 
-                    </div>
-                    <div ng-show="!server_player.isTraitor">
-                        {{player.name}} 
-                    </div>
+        <div class="player-list-header row">
+            <h4 class="col-xs-12"><strong>Current Players</strong></h4>
+        </div>
+        <div class="player-list row">
+            <div class="player-container col-xs-12" ng-repeat="player in players">
+                <div ng-show="server_player.isTraitor">
+                    <span class="traitor-tag" ng-if="player.isTraitor">[TRAITOR]</span> 
+                    <span class="player-name">{{player.name}}</span>
+                </div>
+                <div ng-show="!server_player.isTraitor">
+                    <span class="player-name">{{player.name}}</span>
+                </div>
 
-                </li>
-            </ul>
+            </div>
         </div>
     </div>
 
