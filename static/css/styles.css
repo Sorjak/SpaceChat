@@ -44,10 +44,21 @@ strong {
     color: #337ab7;
 }
 
+html, body {
+  background-color: #FF9000;
+  font-family: "Lucida Console", Monaco, monospace;
+}
+
+body a {
+  color: #FFF;
+}
+
 /* HEADER STYLES */
 
 .navbar {
     margin-bottom: 0px;
+    background-color: rgba(0, 0, 0, .2);
+    border: none;
 }
 
 /*.navbar-header .header-action {
@@ -68,6 +79,7 @@ strong {
 .navbar-logo .logo-text a{
     font-size: 20px;
     line-height: 50px;
+    color: #000;
 }
 
 .navbar-logo .back-icon {
@@ -120,15 +132,27 @@ strong {
 }
 
 #index-view .index-title {
+    margin-top: 150px;
     margin-bottom: 20px;
+    text-align: right;
+}
+
+#index-view .index-title h2{
+  font-size: 50px;
+  color: #FFF;
 }
 
 #index-view .player-name {
     padding: 10px;
-    border: 1px solid #2e6da4;
+    border: 1px solid #FFF;
     background-color: rgba(46, 109, 164, .1);
     width: 100%;
     margin-bottom: 10px;
+    color: #FFF;
+}
+
+#index-view .player-name::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, .5);
 }
 
 #index-view .index-submit {
@@ -142,18 +166,29 @@ strong {
     margin-bottom: 10px;
 }
 
-#player-view #messages #chat-input {
-    padding: 10px;
-    border: 1px solid #2e6da4;
-    background-color: rgba(46, 109, 164, .1);
-    width: 100%;
+#player-view #tools .sabotage-button {
+  width: 100%;
+  border-radius: 6px;
+  padding: 6px 12px;
+  text-align: center;
+  border: 1px solid transparent;
+  background-image: none;
+  background-color: rgba(0, 0, 0, .4);
+  color: #FFF;
 }
 
-#player-view #messages .btn-primary {
-    margin-top: 4px;
-    margin-left: 10px;
-    float: right;
+#player-view #messages #chat-input {
+    padding: 10px;
+    border: 1px solid #FFF;
+    background-color: rgba(46, 109, 164, .1);
+    width: 100%;
+    color: #FFF;
 }
+
+#player-view #messages #chat-input::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, .5);
+}
+
 
 /* SETTINGS PAGE STYLES */
 

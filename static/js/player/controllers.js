@@ -1,49 +1,54 @@
-app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, $stateParams, PlayerSocket) {
-    $scope.player_name = $cookies.get('player_name');
-    $scope.current_page = $state.current.name;
-    $scope.page_title = $stateParams.title;
+app.controller('AppCtrl', ['$scope', '$state', '$cookies', 'PlayerSocket', function($scope, $state, $cookies, PlayerSocket) {
 
     $scope.logout = function() {
         $cookies.remove("player_name");
         PlayerSocket.disconnect();
-
-        if ($rootScope.animFrame != undefined) {
-            cancelAnimationFrame($rootScope.animFrame);
-        }
-
         $state.go("index");
     }
 
-    $scope.settings = function() {
-        if ($rootScope.animFrame != undefined) {
-            cancelAnimationFrame($rootScope.animFrame);
-        }
-
-        $state.go("settings");
+    $scope.crew_list = function() {
+        $state.go("crew_list");
     }
 
-    $scope.goToPlayer = function() {
+    $scope.controls = function() {
         $state.go("player");
     }
-})
 
-.controller('PlayerCtrl', ['$scope', '$state', '$interval', '$stateParams','PlayerSocket', 'Player'
-    , function($scope, $state, $interval, $stateParams, PlayerSocket, Player) {
+}])
+
+
+.controller('IndexCtrl', ['$scope', '$state', '$cookies', function($scope, $state, $cookies) {
+    $scope.player_name = "";
+
+    $scope.submitName = function() {
+
+        $cookies.put('player_name', $scope.player_name);
+        $scope.goFullScreen();
+        $state.go('crew_list');
+    }
+
+
+    $scope.goFullScreen = function() {
+        var doc = window.document;
+        var docEl = doc.documentElement;
+
+        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+
+        if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+            requestFullScreen.call(docEl);
+        }
+    }
+
+}])
+
+.controller('PlayerCtrl', ['$rootScope', '$scope', '$state', '$interval', '$stateParams','PlayerSocket', 'Player'
+    , function($rootScope, $scope, $state, $interval, $stateParams, PlayerSocket, Player) {
 
     $scope.init = function() {
-        $scope.connected = true;
+        $scope.player = $rootScope.player;
+        $scope.connected = PlayerSocket.isConnected();
         $scope.errorMessage = "";
-        $scope.player = null;
         $scope.chat = "";
-
-        if (!PlayerSocket.isConnected()) {
-            PlayerSocket.connect($stateParams.player_name)
-            .then(function(server_player) {
-                $scope.player = server_player;
-            });
-        } else {
-            $scope.player = PlayerSocket.getPlayer();
-        }
 
         PlayerSocket.on('update_player', function (data) {
             $scope.player = data.player;
@@ -95,12 +100,7 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, $sta
         $state.reload();
     }
 
-    if ($stateParams.player_name != null && $stateParams.player_name != "") {
-        $scope.init();
-    }
-    else {
-        console.log("no player name provided");
-    }
+    $scope.init();
     heartbeat = $interval($scope.sendHeartbeat, 1000 * 15);
 
 }])
@@ -128,7 +128,7 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, $sta
     $scope.control_element.append($scope.RENDERER.view);
 
     $scope.background = new PIXI.Graphics();
-    $scope.background.beginFill(0x337ab7);
+    $scope.background.beginFill(0xFF9000);
     $scope.background.drawRect(0, 0, $scope.GAME_WIDTH, $scope.GAME_HEIGHT);
     $scope.STAGE.addChild($scope.background);
 
@@ -162,45 +162,29 @@ app.controller('HeaderCtrl', function($scope, $state, $cookies, $rootScope, $sta
     $scope.mainLoop();
 }])
 
-.controller('IndexCtrl', ['$scope', '$state', '$cookies', function($scope, $state, $cookies) {
-    $scope.player_name = "";
-
-    $scope.submitName = function() {
-
-        $cookies.put('player_name', $scope.player_name);
-        $scope.goFullScreen();
-        $state.go('player', {player_name: $scope.player_name});
-    }
 
 
-    $scope.goFullScreen = function() {
-        var doc = window.document;
-        var docEl = doc.documentElement;
+.controller('CrewListCtrl',  ['$rootScope', '$scope', '$state', '$stateParams', '$cookies', 'PlayerSocket'
+    , function($rootScope, $scope, $state, $stateParams, $cookies, PlayerSocket) {
 
-        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-
-        if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-            requestFullScreen.call(docEl);
-        }
-    }
-
-}])
-
-.controller('SettingsCtrl',  ['$scope', '$state', '$cookies', 'PlayerSocket'
-    , function($scope, $state, $cookies, PlayerSocket) {
-
-    $scope.connected = PlayerSocket.isConnected();
-    $scope.server_player = null;
     $scope.players = [];
+    $scope.player = $rootScope.player;
+    $scope.connected = PlayerSocket.isConnected();
+    $scope.errorMessage = "";
 
-    if ($scope.connected) {
-        $scope.server_player = PlayerSocket.getPlayer();
+    PlayerSocket.on('connect_error', function(error) {
+        $scope.errorMessage = "Lost connection to server";
+        $scope.connected = false;
+    });
+
+    $scope.showPlayers = function() {
+        $scope.players = [];
         PlayerSocket.emit('get_all_players', null, function(data) {
             $scope.players = data;
         });
-    } else {
-        $state.go('player');
     }
+
+    $scope.showPlayers();
 
 }])
 

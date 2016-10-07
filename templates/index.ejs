@@ -10,7 +10,7 @@
     </head>
     <body ng-app="SpaceChat">
 
-        <div id="content" ui-view></div>
+        <div id="content" ng-controller="AppCtrl" ui-view></div>
 
         <!-- TOP LEVEL JS STUFF -->
         <script src="/socket.io/socket.io.js"></script>

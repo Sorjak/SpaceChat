@@ -1,29 +1,22 @@
-<nav class="navbar navbar-default" ng-controller="HeaderCtrl">
-    <!-- <div class="container-fluid"> -->
-        <div class="navbar-header">
-            <div class="navbar-logo col-xs-6">
-                <div class="back-icon" ng-show="current_page == 'settings'">
-                    <a ng-click="goToPlayer();">
-                        <i class="material-icons">chevron_left</i>
-                    </a>
-                </div>
-                <div class="logo-text">
-                    <a href="#" ng-bind="page_title"></a>
-                </div>
+<nav class="navbar navbar-default">
+    <div class="navbar-header">
+        <div class="navbar-logo col-xs-3">
+            <div class="logo-text">
+                <a href="#">{{player.name}}</a>
             </div>
-            
-            <div class="navbar-actions col-xs-6">
-                <a class="navbar-action" ng-show="player_name" ng-click="logout();">
-                    <!-- <i class="material-icons logout-icon">exit_to_app</i> -->
-                    <span>logout</span>
-                </a>
-                <a class="navbar-action" ng-click="settings();">
-                    <!-- <i class="material-icons settings-icon">group</i> -->
-                    <span>player list</span>
-                </a>
-            </div>
-
+        </div>
+        
+        <div class="navbar-actions col-xs-9">
+            <a class="navbar-action" ng-click="controls();">
+                <span>Controls</span>
+            </a>
+            <a class="navbar-action" ng-click="crew_list();">
+                <span>Crew List</span>
+            </a>
+            <a class="navbar-action" ng-click="logout();">
+                <span>Logout</span>
+            </a>
 
         </div>
-    <!--</div>/.container-fluid -->
+    </div>
 </nav>

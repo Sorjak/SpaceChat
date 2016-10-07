@@ -6,54 +6,61 @@ app.config(function($stateProvider, $urlRouterProvider) {
     $stateProvider.state('index', {
         url: "/",
         templateUrl: "/static/partials/index.html",
-        params: {
-            title: "SpaceChat"
-        }
     })
     .state('player', {
         url: "/player",
-        params: {
-            player_name: null, 
-            reconnect: true,
-            title: "SpaceChat"
-        },
         templateUrl: "/static/partials/player.html"
     })
-    .state('settings', {
-        url: "/settings",
-        templateUrl: "/static/partials/settings.html",
-        params: {
-            title: "Player List"
-        }
+    .state('crew_list', {
+        url: "/crew-list",
+        templateUrl: "/static/partials/crew_list.html",
     });
 
 });
 
-app.run(function ($rootScope, $state, $cookies) {
+app.run(function ($rootScope, $state, $cookies, PlayerSocket) {
+
+    function fetchPlayerFromServer(playerName, toState) {
+        PlayerSocket.connect(playerName)
+        .then(function(server_player) {
+            $rootScope.player = server_player;
+            $state.go(toState);
+        }).catch(function(data, status) {
+            console.log(status);
+        });
+    }
 
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
-        if (toState.name == "index") {
+        if (toState.name != "index") {
             var playerName = $cookies.get('player_name');
 
             if (playerName) {
-                event.preventDefault();
-                toParams.player_name = playerName;
-                $state.go('player');
-            }
+                // Player name exists in cookies
 
-        } else if (toState.name == "player") {
-            var playerName = $cookies.get('player_name');
-            
-            if (playerName) {
-                toParams.player_name = playerName;
+                if ($rootScope.player) {
+                    // root player is not null
+
+                    if ($rootScope.player.name == playerName) {
+                        // root player equals cookie player - good to go
+
+                    } else {
+                        // root player does not equal cookie player - fetch player from server
+                        event.preventDefault();
+                        fetchPlayerFromServer(playerName, toState);
+                    }
+
+                } else {
+                    // root player is null - fetch new player
+                    event.preventDefault();
+                    fetchPlayerFromServer(playerName, toState);
+                }
+
+
             } else {
+                // No player name in db
                 event.preventDefault();
-                $state.go('index');
+                $state.go("index");
             }
-
-            if (fromState.name == "settings")
-                toParams.reconnect = false;
-
         }
     });
 

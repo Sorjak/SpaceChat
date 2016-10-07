@@ -1,5 +1,4 @@
 app.factory('PlayerSocket', function ($rootScope, $q) {
-    console.log("starting socket");
     var socket = io('/player');
     var playerObj = null;
     var connected = false;
@@ -67,20 +66,22 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
 
         this.container.addChild(this.sprite);
         this.sprite.addChild(this.thumb_circle);
-        this.thumb_circle.visible = false;
+        
     };
 
     ControlArea.prototype.initSprite = function(position, size) {
-        this.sprite = new PIXI.Sprite.fromImage("/static/images/joystick_background_arrows.png");
+        this.sprite = new PIXI.Sprite.fromImage("/static/images/joystick_orange_bg.png");
 
         this.sprite.width = size.x;
         this.sprite.height = size.y;
 
-        var realCenter = new PIXI.Point((this.container.width / 2), (this.sprite.height / 2));
+        var realCenter = new PIXI.Point((this.container.width / 2), (this.container.height / 2));
 
         this.sprite.position = realCenter;
         this.sprite.interactive = true;
         this.sprite.anchor = new PIXI.Point(.5, .5);
+
+        console.log(this.sprite);
 
         this.bounding_circle = new PIXI.Circle(realCenter.x, realCenter.y, (this.sprite.width / 2) - 25);
         // console.log(circle.x + " " + circle.y + " " + circle.radius);
@@ -89,7 +90,9 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
         this.thumb_circle = new PIXI.Graphics();
         this.thumb_circle.lineStyle(2, 0xFF0000);
         this.thumb_circle.drawCircle(0, 0, this.thumb_circle_radius);
+        this.thumb_circle.visible = false;
 
+        
 
         // this.sprite.hitArea = new PIXI.Circle(realCenter.x, realCenter.y, 40);
     }

@@ -1,15 +1,14 @@
-<div id="header" ng-include src="'/static/partials/header.html'"></div>
 <div id="index-view" ng-controller="IndexCtrl" class="container">
     <div class="index-title row">
-        <h2 class="col-sm-12">Welcome to SpaceChat!</h2>
+        <h2 class="col-sm-12">SpaceChat</h2>
     </div>
 
     <div class="row">
         <div class="col-sm-12">
-            <input class="player-name " type="text" placeholder="What's your name?" ng-model="player_name" />
-        </div>
-        <div class="col-sm-12">
-            <button class="index-submit btn btn-primary" ng-click="submitName()">Submit</button>
+            <p>What's your name?</p>
+            <form ng-submit="submitName();">
+                <input class="player-name" type="text" ng-model="player_name" />
+            </form>
         </div>
     </div>
 
