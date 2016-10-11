@@ -1,7 +1,7 @@
 
 <div id="player-view" ng-controller="PlayerCtrl" >
     <div id="header" ng-include src="'/static/partials/header.html'"></div>
-    <div class="container" ng-show="connected">
+    <div class="container">
         <div id="player-controls" ng-controller="ControlAreaCtrl" class="row"></div>
 
         <div ng-show="player.isTraitor" id="tools" class="row">
@@ -22,11 +22,11 @@
         </div>
     </div>
 
-    <div ng-hide="connected" id="error" class="row">
+<!--     <div ng-hide="connected" id="error" class="row">
         <div class="col-sm-12">
             <p ng-bind="errorMessage"></p>
             <button ng-click="reload();" class="btn btn-primary">Reload Page</button>
         </div>
-    </div>
+    </div> -->
 </div>
 

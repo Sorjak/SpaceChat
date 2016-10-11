@@ -1,8 +1,13 @@
-app.controller('AppCtrl', ['$scope', '$state', '$cookies', 'PlayerSocket', function($scope, $state, $cookies, PlayerSocket) {
+app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cookies', 'PlayerSocket', 
+    function($scope, $rootScope, $interval, $state, $cookies, PlayerSocket) {
+    $scope.errorMessage = "";
+    $rootScope.connected = false;
 
     $scope.logout = function() {
         $cookies.remove("player_name");
         PlayerSocket.disconnect();
+        $interval.cancel($rootScope.heartbeat);
+        
         $state.go("index");
     }
 
@@ -14,11 +19,52 @@ app.controller('AppCtrl', ['$scope', '$state', '$cookies', 'PlayerSocket', funct
         $state.go("player");
     }
 
+    $scope.sendHeartbeat = function() {
+        PlayerSocket.emit('heartbeat');
+    }
+
+    PlayerSocket.on('spacechat_error', function(error) {
+        $scope.errorMessage = error.errorMessage;
+        $rootScope.error = error;
+
+        // Game hasn't started
+        if (error.errorCode == 0) {
+            $rootScope.connected = false;
+
+        // Player name is already connected to server
+        } else if (error.errorCode == 1) {
+            $rootScope.connected = false;
+            PlayerSocket.disconnect();
+
+        // Player not in game
+        } else if (error.errorCode == 2) {
+            $rootScope.connected = false;
+            // This shouldn't ever happen, but who knows!
+        }
+
+        // $scope.logout();
+    });
+
+    PlayerSocket.on('connect_error', function(error) {
+        $scope.errorMessage = "Lost connection to server";
+        $rootScope.connected = false;
+
+        $scope.logout();
+    });
+
+    $scope.$watch(function() {return $rootScope.error}, function() {
+        if ($rootScope.error) {
+            $scope.errorMessage = $rootScope.error.errorMessage;
+            $state.go("index");
+        }
+    });
+
 }])
 
 
-.controller('IndexCtrl', ['$scope', '$state', '$cookies', function($scope, $state, $cookies) {
+.controller('IndexCtrl', ['$scope', '$rootScope', '$state', '$cookies', function($scope, $rootScope, $state, $cookies) {
     $scope.player_name = "";
+
 
     $scope.submitName = function() {
 
@@ -44,43 +90,26 @@ app.controller('AppCtrl', ['$scope', '$state', '$cookies', 'PlayerSocket', funct
 .controller('PlayerCtrl', ['$rootScope', '$scope', '$state', '$interval', '$stateParams','PlayerSocket', 'Player'
     , function($rootScope, $scope, $state, $interval, $stateParams, PlayerSocket, Player) {
 
+    $scope.page = $state.current.name;
+
+    $scope.$watch(function() {return $rootScope.player}, function() {
+        $scope.player = $rootScope.player;
+    });
+
+    $scope.connected = $rootScope.connected;
+
+    $scope.$watch(function() {return $rootScope.connected}, function() {
+        $scope.connected = $rootScope.connected;
+    });
+
     $scope.init = function() {
         $scope.player = $rootScope.player;
-        $scope.connected = PlayerSocket.isConnected();
-        $scope.errorMessage = "";
         $scope.chat = "";
 
         PlayerSocket.on('update_player', function (data) {
             $scope.player = data.player;
         });
 
-        PlayerSocket.on('spacechat_error', function(error) {
-            $scope.errorMessage = error.errorMessage;
-
-            // Game hasn't started
-            if (error.errorCode == 0) {
-                $scope.connected = false;
-
-            // Player name is already connected to server
-            } else if (error.errorCode == 1) {
-                $scope.connected = false;
-                PlayerSocket.disconnect();
-
-            // Player not in game
-            } else if (error.errorCode == 2) {
-                $scope.connected = false;
-                // This shouldn't ever happen, but who knows!
-            }
-        });
-
-        PlayerSocket.on('connect_error', function(error) {
-            $scope.errorMessage = "Lost connection to server";
-            $scope.connected = false;
-        });
-    }
-
-    $scope.sendHeartbeat = function() {
-        PlayerSocket.emit('heartbeat');
     }
 
     $scope.sabotage = function() {
@@ -101,7 +130,10 @@ app.controller('AppCtrl', ['$scope', '$state', '$cookies', 'PlayerSocket', funct
     }
 
     $scope.init();
-    heartbeat = $interval($scope.sendHeartbeat, 1000 * 15);
+
+    $interval.cancel($rootScope.heartbeat);
+    $rootScope.heartbeat = $interval($scope.sendHeartbeat, 1000 * 15);
+    
 
 }])
 
@@ -164,17 +196,26 @@ app.controller('AppCtrl', ['$scope', '$state', '$cookies', 'PlayerSocket', funct
 
 
 
-.controller('CrewListCtrl',  ['$rootScope', '$scope', '$state', '$stateParams', '$cookies', 'PlayerSocket'
-    , function($rootScope, $scope, $state, $stateParams, $cookies, PlayerSocket) {
+.controller('CrewListCtrl',  ['$rootScope', '$scope', '$state', '$interval', '$cookies', 'PlayerSocket'
+    , function($rootScope, $scope, $state, $interval, $cookies, PlayerSocket) {
 
     $scope.players = [];
     $scope.player = $rootScope.player;
-    $scope.connected = PlayerSocket.isConnected();
-    $scope.errorMessage = "";
+    $scope.page = $state.current.name;
+
+    $scope.$watch(function() {return $rootScope.player}, function() {
+        $scope.player = $rootScope.player;
+    });
+
+    $scope.connected = $rootScope.connected;
+
+    $scope.$watch(function() {return $rootScope.connected}, function() {
+        $scope.connected = $rootScope.connected;
+    });
 
     PlayerSocket.on('connect_error', function(error) {
         $scope.errorMessage = "Lost connection to server";
-        $scope.connected = false;
+        $rootScope.connected = false;
     });
 
     $scope.showPlayers = function() {
@@ -185,6 +226,8 @@ app.controller('AppCtrl', ['$scope', '$state', '$cookies', 'PlayerSocket', funct
     }
 
     $scope.showPlayers();
+    $interval.cancel($rootScope.heartbeat);
+    $rootScope.heartbeat = $interval($scope.sendHeartbeat, 1000 * 15);
 
 }])
 

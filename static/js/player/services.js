@@ -4,18 +4,37 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
     var connected = false;
     return {
         connect: function(playername) {
-            console.log("connecting as " + playername);
             if (!socket.connected) {
                 socket = io('/player');
             }
             return $q(function(resolve, reject) {
                 socket.emit('player_connected', playername, function(data) {
-                    connected = true;
-                    playerObj = data;
-                    resolve(playerObj);
+                    if (data) {
+                        connected = true;
+                        playerObj = data;
+                        resolve(playerObj);
+                    } else {
+                        reject(null);
+                    }
                 });
             });
 
+        },
+        reconnect: function(playername) {
+            if (!socket.connected) {
+                socket = io('/player');
+            }
+            return $q(function(resolve, reject) {
+                socket.emit('player_reconnect', playername, function(data) {
+                    if (data) {
+                        connected = true;
+                        playerObj = data;
+                        resolve(playerObj);
+                    } else {
+                        reject(null);
+                    }
+                });
+            });
         },
         on: function (eventName, callback) {
             socket.on(eventName, function () {  
@@ -36,6 +55,7 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
             })
         },
         disconnect: function() {
+            connected = false;
             socket.disconnect();
         },
         isConnected: function() {
@@ -81,18 +101,13 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
         this.sprite.interactive = true;
         this.sprite.anchor = new PIXI.Point(.5, .5);
 
-        console.log(this.sprite);
-
-        this.bounding_circle = new PIXI.Circle(realCenter.x, realCenter.y, (this.sprite.width / 2) - 25);
-        // console.log(circle.x + " " + circle.y + " " + circle.radius);
+        this.bounding_circle = new PIXI.Circle(realCenter.x, realCenter.y, this.sprite.width - 25);
         // this.sprite.hitArea = circle;
 
         this.thumb_circle = new PIXI.Graphics();
         this.thumb_circle.lineStyle(2, 0xFF0000);
         this.thumb_circle.drawCircle(0, 0, this.thumb_circle_radius);
         this.thumb_circle.visible = false;
-
-        
 
         // this.sprite.hitArea = new PIXI.Circle(realCenter.x, realCenter.y, 40);
     }
@@ -217,3 +232,14 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
 
     return Player;
 })
+
+.directive('autoFocus', function($timeout) {
+    return {
+        restrict: 'AC',
+        link: function(_scope, _element) {
+            $timeout(function(){
+                _element[0].focus();
+            }, 0);
+        }
+    };
+});

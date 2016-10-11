@@ -1,16 +1,16 @@
 <nav class="navbar navbar-default">
     <div class="navbar-header">
-        <div class="navbar-logo col-xs-3">
+        <div class="navbar-logo col-xs-6">
             <div class="logo-text">
                 <a href="#">{{player.name}}</a>
             </div>
         </div>
         
-        <div class="navbar-actions col-xs-9">
-            <a class="navbar-action" ng-click="controls();">
+        <div class="navbar-actions col-xs-6">
+            <a class="navbar-action" ng-click="controls();" ng-hide="page == 'player'">
                 <span>Controls</span>
             </a>
-            <a class="navbar-action" ng-click="crew_list();">
+            <a class="navbar-action" ng-click="crew_list();" ng-hide="page == 'crew_list'">
                 <span>Crew List</span>
             </a>
             <a class="navbar-action" ng-click="logout();">
