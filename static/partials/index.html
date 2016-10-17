@@ -1,15 +1,18 @@
 <div id="index-view" ng-controller="IndexCtrl" class="container">
+    <div class="alert alert-danger" ng-show="error">
+        {{error.errorMessage}}
+    </div>
     <div class="index-title row">
         <h2 class="col-sm-12">SpaceChat</h2>
     </div>
 
     <div class="row">
-        <div class="col-sm-12">
+        <div class="index-content col-sm-12">
             <p>What's your name?</p>
             <form ng-submit="submitName();" >
                 <input class="player-name" type="text" ng-model="player_name" auto-focus />
             </form>
-            <p class="error" ng-show="errorMessage">{{errorMessage}}</p>
+            <!-- <p class="error" ng-show="errorMessage">{{errorMessage}}</p> -->
         </div>
     </div>
 

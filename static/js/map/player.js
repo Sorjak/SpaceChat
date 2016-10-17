@@ -134,6 +134,7 @@ app.factory('Player', function (MovingObject, MapSocket) {
         
 
         this.team = updatedPlayer.team;
+        this.room = "soccer";
     }
 
     Player.prototype.onDown = function() {

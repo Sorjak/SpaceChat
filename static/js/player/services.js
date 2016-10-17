@@ -1,77 +1,145 @@
-app.factory('PlayerSocket', function ($rootScope, $q) {
-    var socket = io('/player');
-    var playerObj = null;
-    var connected = false;
-    return {
-        connect: function(playername) {
-            if (!socket.connected) {
-                socket = io('/player');
-            }
-            return $q(function(resolve, reject) {
-                socket.emit('player_connected', playername, function(data) {
-                    if (data) {
-                        connected = true;
-                        playerObj = data;
-                        resolve(playerObj);
-                    } else {
-                        reject(null);
-                    }
-                });
-            });
+// app.factory('PlayerSocket', function ($rootScope, $q) {
+//     var socket = io('/player');
+//     var playerObj = null;
+//     var connected = false;
+//     return {
+//         connect: function(playername) {
+//             if (!socket.connected) {
+//                 socket = io('/player');
+//             }
+//             return $q(function(resolve, reject) {
+//                 socket.emit('player_connected', playername, function(data) {
+//                     if (data) {
+//                         connected = true;
+//                         playerObj = data;
+//                         resolve(playerObj);
+//                     } else {
+//                         reject(null);
+//                     }
+//                 });
+//             });
 
-        },
-        reconnect: function(playername) {
-            if (!socket.connected) {
-                socket = io('/player');
-            }
-            return $q(function(resolve, reject) {
-                socket.emit('player_reconnect', playername, function(data) {
-                    if (data) {
-                        connected = true;
-                        playerObj = data;
-                        resolve(playerObj);
-                    } else {
-                        reject(null);
-                    }
-                });
-            });
-        },
-        on: function (eventName, callback) {
-            socket.on(eventName, function () {  
-                var args = arguments;
-                $rootScope.$apply(function () {
-                    callback.apply(socket, args);
-                });
-            });
-        },
-        emit: function (eventName, data, callback) {
-            socket.emit(eventName, data, function () {
-                var args = arguments;
-                $rootScope.$apply(function () {
-                    if (callback) {
-                        callback.apply(socket, args);
-                    }
-                });
-            })
-        },
-        disconnect: function() {
-            connected = false;
-            socket.disconnect();
-        },
-        isConnected: function() {
-            return socket.connected && connected;
-        },
-        getPlayer: function() {
-            return playerObj;
+//         },
+//         reconnect: function(playername) {
+//             if (!socket.connected) {
+//                 socket = io('/player');
+//             }
+//             return $q(function(resolve, reject) {
+//                 socket.emit('player_reconnect', playername, function(data) {
+//                     if (data) {
+//                         connected = true;
+//                         playerObj = data;
+//                         resolve(playerObj);
+//                     } else {
+//                         reject(null);
+//                     }
+//                 });
+//             });
+//         },
+//         on: function (eventName, callback) {
+//             socket.on(eventName, function () {  
+//                 var args = arguments;
+//                 $rootScope.$apply(function () {
+//                     callback.apply(socket, args);
+//                 });
+//             });
+//         },
+//         emit: function (eventName, data, callback) {
+//             socket.emit(eventName, data, function () {
+//                 var args = arguments;
+//                 $rootScope.$apply(function () {
+//                     if (callback) {
+//                         callback.apply(socket, args);
+//                     }
+//                 });
+//             })
+//         },
+//         disconnect: function() {
+//             connected = false;
+//             socket.disconnect();
+//         },
+//         isConnected: function() {
+//             return socket.connected && connected;
+//         },
+//         getPlayer: function() {
+//             return playerObj;
+//         }
+//     };
+// })
+
+app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
+
+    function PlayerSocket() {
+        this.socket = io('/player');
+        this.connected = false;
+    }
+
+    PlayerSocket.prototype.connect = function(playername) {
+        var self = this;
+
+        if (!this.socket.connected) {
+            this.socket = io('/player');
         }
-    };
+        return $q(function(resolve, reject) {
+            self.emit('player_connected', playername, function(data) {
+                if (data) {
+                    self.connected = true;
+                    $rootScope.player = data;
+                    $rootScope.heartbeat = $interval(self.reconnect, 1000 * 1, 0, true, self, playername);
+                    resolve(data);
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
+    PlayerSocket.prototype.reconnect = function(self, playername) {
+        return $q(function(resolve, reject) {
+            self.emit('player_reconnect', playername, function(data) {
+                if (data) {
+                    self.connected = true;
+                    $rootScope.player = data;
+                    resolve(data);
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
+    PlayerSocket.prototype.on = function (eventName, callback) {
+        this.socket.on(eventName, function () {  
+            var args = arguments;
+            $rootScope.$apply(function () {
+                callback.apply(this.socket, args);
+            });
+        });
+    }
+    PlayerSocket.prototype.emit = function (eventName, data, callback) {
+        this.socket.emit(eventName, data, function () {
+            var args = arguments;
+            $rootScope.$apply(function () {
+                if (callback) {
+                    callback.apply(this.socket, args);
+                }
+            });
+        })
+    },
+    PlayerSocket.prototype.disconnect =function() {
+        this.connected = false;
+        this.socket.disconnect();
+    }
+    PlayerSocket.prototype.isConnected = function() {
+        return this.socket.connected && this.connected;
+    }
+
+    return PlayerSocket;
 })
 
 .factory('ControlArea', function(PlayerSocket, Vector2) {
 
     function ControlArea(container, position, size) {
 
-        this.thumb_circle_radius = 40;
+        this.thumb_circle_radius = 80;
 
         this.container = container;
         this.sprite = null;
@@ -105,7 +173,7 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
         // this.sprite.hitArea = circle;
 
         this.thumb_circle = new PIXI.Graphics();
-        this.thumb_circle.lineStyle(2, 0xFF0000);
+        this.thumb_circle.lineStyle(4, 0xFFFFFF);
         this.thumb_circle.drawCircle(0, 0, this.thumb_circle_radius);
         this.thumb_circle.visible = false;
 
@@ -211,12 +279,12 @@ app.factory('PlayerSocket', function ($rootScope, $q) {
         this.thumb_circle.visible = false;
     }
 
-    ControlArea.prototype.update = function(deltaTime) {
-        if (this.input != null) {
-            var to_send = {'x' : this.input.x, 'y' : this.input.y}
-            PlayerSocket.emit('move_player', to_send);
-        }
-    }
+    // ControlArea.prototype.update = function(deltaTime) {
+    //     if (this.input != null) {
+    //         var to_send = {'x' : this.input.x, 'y' : this.input.y}
+    //         PlayerSocket.emit('move_player', to_send);
+    //     }
+    // }
 
     return ControlArea;
 })

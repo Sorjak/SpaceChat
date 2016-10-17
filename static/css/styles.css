@@ -46,7 +46,7 @@ strong {
 
 html, body {
   background-color: #FF9000;
-  font-family: "Lucida Console", Monaco, monospace;
+  font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
 body a {
@@ -158,6 +158,10 @@ body a {
 #index-view .index-submit {
     padding: 8px;
     float: right;
+}
+
+#index-view .index-content p{
+  font-weight: bold;
 }
 
 /* PLAYER PAGE STYLES */

@@ -26,6 +26,16 @@ var playerSocket = __io.of('/player');
 playerSocket.on('connection', function(socket) {
     var player = null;
 
+    function sendError(code) {
+        if (code == 0) {
+            socket.emit("spacechat_error", {"errorCode" : 0, "errorMessage" : "Game hasn't started."});
+        } else if (code == 1) {
+            socket.emit("spacechat_error", {"errorCode" : 1, "errorMessage" : "This name is taken by someone else."});
+        } else if (code == 2) {
+            socket.emit("spacechat_error", {"errorCode" : 2, "message" : "Player name not in game."});
+        }
+    }
+
     socket.on('disconnect', function() {
 
         if (player != null && player.id == socket.id) {
@@ -39,27 +49,25 @@ playerSocket.on('connection', function(socket) {
 
         if (__game == null) {
             console.log("error, game hasn't started");
-            socket.emit("spacechat_error", {"errorCode" : 0, "errorMessage" : "game hasn't started"});
+            sendError(0);
             callback(null);
 
         } else {
             if (!__game.PlayerExists(username)) {
                 player = new Player(socket.id, username);
                 __game.AddPlayer(player);
-                // socket.emit("update_player", {'player' : player});
                 callback(player);
 
             } else {
                 player = __game.getPlayerByName(username);
                 if (player.id == null) {
                     player.id = socket.id;
-
-                    // socket.emit("update_player", {'player' : player});
+                    player.last_updated = new Date();
                     callback(player);
 
                 } else {
                     console.log("player " + username + " already connected");
-                    socket.emit("spacechat_error", {"errorCode" : 1, "errorMessage" : "player already connected"});
+                    sendError(1);
                     callback(null);
                 }
             }
@@ -69,15 +77,16 @@ playerSocket.on('connection', function(socket) {
 
     socket.on('player_reconnect', function(username, callback) {
         if (__game == null) {
-            socket.emit("spacechat_error", {"errorCode" : 0, "errorMessage" : "game hasn't started"});
+            sendError(0);
 
         } else {
             player = __game.getPlayerByName(username);
             if (player) {
                 player.id = socket.id;
+                player.last_updated = new Date();
                 callback(player);
             } else {
-                socket.emit("spacechat_error", {"errorCode" : 2, "message" : "player not in game"});
+                sendError(2);
             }
         }
         
@@ -86,7 +95,7 @@ playerSocket.on('connection', function(socket) {
     // Expects an object with x and y, both floats between (-1, 1)
     socket.on('move_player', function(playerInput, callback) {
         if (__game == null) {
-            socket.emit("spacechat_error", {"errorCode" : 0, "errorMessage" : "game hasn't started"});
+            sendError(0);
 
         } else {
             if (player != null && player.id == socket.id) {
@@ -95,7 +104,7 @@ playerSocket.on('connection', function(socket) {
 
                     callback(player);
                 } else {
-                    socket.emit("spacechat_error", {"errorCode" : 2, "message" : "player not in game"});
+                    sendError(2);
                 }
             }
         }
@@ -103,7 +112,7 @@ playerSocket.on('connection', function(socket) {
 
     socket.on('sabotage_room', function() {
         if (__game == null) {
-            socket.emit("spacechat_error", {"errorCode" : 0, "errorMessage" : "game hasn't started"});
+            sendError(0);
 
         } else {
             if (player != null && player.id == socket.id) {
@@ -118,7 +127,7 @@ playerSocket.on('connection', function(socket) {
 
     socket.on('player_message', function(message) {
         if (__game == null) {
-            socket.emit("spacechat_error", {"errorCode" : 0, "errorMessage" : "game hasn't started"});
+            sendError(0);
 
         } else {        
             if (player != null && player.id == socket.id) {
@@ -128,23 +137,11 @@ playerSocket.on('connection', function(socket) {
         }
     });
 
-    socket.on('heartbeat', function() {
-        if (__game == null) {
-            socket.emit("spacechat_error", {"errorCode" : 0, "errorMessage" : "game hasn't started"});
-
-        } else {        
-            if (player != null && player.id == socket.id) {
-                player.last_updated = new Date(); // reset last_updated to now
-            }
-        }
-    });
-
     socket.on('get_all_players', function(args, callback) {
         if (__game == null) {
-            socket.emit("spacechat_error", {"errorCode" : 0, "errorMessage" : "game hasn't started"});
+            sendError(0);
 
         } else {        
-            console.log("list of all players requested");
             callback(__game.players);
         }
     });

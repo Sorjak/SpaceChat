@@ -85,6 +85,11 @@ map.on('connection', function(socket){
         __game = new SpaceChat();
     }
 
+    socket.on('disconnect', function() {
+        console.log("game client disconnected");
+        __game = null;
+    });
+
     console.log("Current game has: " + __game.players.length + " players");
 
     setInterval(updateMap, 10, socket);
