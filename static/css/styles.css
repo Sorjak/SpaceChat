@@ -53,6 +53,27 @@ body a {
   color: #FFF;
 }
 
+.spacechat-submit {
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid transparent;
+  background-image: none;
+  background-color: rgba(0, 0, 0, .4);
+  color: #FFF;
+}
+
+.spacechat-input {
+  border: 1px solid #FFF;
+  background-color: rgba(46, 109, 164, .1);
+  margin-bottom: 10px;
+  color: #FFF;
+}
+
+.spacechat-input::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, .5);
+}
+
+
 /* HEADER STYLES */
 
 .navbar {
@@ -60,12 +81,6 @@ body a {
     background-color: rgba(0, 0, 0, .2);
     border: none;
 }
-
-/*.navbar-header .header-action {
-    display: block;
-    float: right;
-    margin-right: 10px;
-}*/
 
 .navbar-logo {
     height: 50px;
@@ -92,17 +107,6 @@ body a {
     font-size: 40px;
     line-height: 50px
 }
-
-/*.navbar-username {
-    height: 50px;
-    text-align: right;
-}
-
-.navbar-username span {
-    font-size: 28px;
-    color: #337ab7;
-    line-height: 50px;
-}*/
 
 .navbar-actions {
     height: 50px;
@@ -144,20 +148,10 @@ body a {
 
 #index-view .player-name {
     padding: 10px;
-    border: 1px solid #FFF;
-    background-color: rgba(46, 109, 164, .1);
-    width: 100%;
-    margin-bottom: 10px;
-    color: #FFF;
-}
-
-#index-view .player-name::-webkit-input-placeholder {
-  color: rgba(255, 255, 255, .5);
 }
 
 #index-view .index-submit {
-    padding: 8px;
-    float: right;
+  padding: 10px 12px;
 }
 
 #index-view .index-content p{
@@ -172,25 +166,15 @@ body a {
 
 #player-view #tools .sabotage-button {
   width: 100%;
-  border-radius: 6px;
   padding: 6px 12px;
-  text-align: center;
-  border: 1px solid transparent;
-  background-image: none;
-  background-color: rgba(0, 0, 0, .4);
-  color: #FFF;
 }
 
-#player-view #messages #chat-input {
-    padding: 10px;
-    border: 1px solid #FFF;
-    background-color: rgba(46, 109, 164, .1);
-    width: 100%;
-    color: #FFF;
+#player-view #messages .chat-input {
+  padding: 10px;
 }
 
-#player-view #messages #chat-input::-webkit-input-placeholder {
-  color: rgba(255, 255, 255, .5);
+#player-view #messages .chat-submit {
+  padding: 10px 12px;
 }
 
 
@@ -237,11 +221,5 @@ body a {
 
 #crewlist-view .crew-list-controls .controls-button{
   width: 100%;
-  border-radius: 6px;
   padding: 6px 12px;
-  text-align: center;
-  border: 1px solid transparent;
-  background-image: none;
-  background-color: rgba(0, 0, 0, .2);
-  color: #FFF;
 }

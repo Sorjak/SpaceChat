@@ -47,15 +47,19 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.player_name = "";
 
     $scope.submitName = function() {
-        $cookies.put('player_name', $scope.player_name);
-        $scope.goFullScreen();
+        if ($scope.player_name) {
+            $cookies.put('player_name', $scope.player_name);
+            $scope.goFullScreen();
 
-        if (!$rootScope.socket.isConnected()) {
-            $rootScope.socket.connect($scope.player_name).then(function() {
+            if (!$rootScope.socket.isConnected()) {
+                $rootScope.socket.connect($scope.player_name).then(function() {
+                    $state.go('crew_list');
+                });
+            } else {
                 $state.go('crew_list');
-            });
+            }
         } else {
-            $state.go('crew_list');
+            $rootScope.error = {'errorMessage' : "Must provide name to join game."}
         }
         
     }

@@ -10,7 +10,8 @@
         <div class="index-content col-sm-12">
             <p>What's your name?</p>
             <form ng-submit="submitName();" >
-                <input class="player-name" type="text" ng-model="player_name" auto-focus />
+                <input class="player-name spacechat-input col-xs-9" type="text" ng-model="player_name" auto-focus />
+                <input class="index-submit spacechat-submit col-xs-offset-1 col-xs-2" type="submit" value="Go" />
             </form>
             <!-- <p class="error" ng-show="errorMessage">{{errorMessage}}</p> -->
         </div>

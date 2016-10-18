@@ -96,66 +96,84 @@ map.on('connection', function(socket){
     setInterval(heartbeat, 30000);
 
     socket.on("update_player_position", function(data) {
-        var _data = JSON.parse(data);
+        if (__game !== null) {
+            var _data = JSON.parse(data);
 
-        var player = __game.getPlayerByName(_data.id);
-        player.positionX = _data.index.x;
-        player.positionY = _data.index.y;
+            var player = __game.getPlayerByName(_data.id);
+            player.positionX = _data.index.x;
+            player.positionY = _data.index.y;
+        }
     });
 
     socket.on("update_player_room", function(data) {
-        var _data = JSON.parse(data);
+        if (__game !== null) {
+            var _data = JSON.parse(data);
 
-        console.log(_data.name + " moving into " + _data.room);
-        var player = __game.getPlayerByName(_data.name);
-        player.room = _data.room;
+            console.log(_data.name + " moving into " + _data.room);
+            var player = __game.getPlayerByName(_data.name);
+            player.room = _data.room;
+        }
     });
 
     socket.on("ack_message", function(data) {
-        var _data = JSON.parse(data);
+        if (__game !== null) {
+            var _data = JSON.parse(data);
 
-        console.log(_data.name + " acknowledged message");
-        var player = __game.getPlayerByName(_data.name);
-        player.message = "";
+            console.log(_data.name + " acknowledged message");
+            var player = __game.getPlayerByName(_data.name);
+            player.message = "";
+        }
     });
 
     socket.on("ack_sabotage", function(data) {
-        var _data = JSON.parse(data);
+        if (__game !== null) {
+            var _data = JSON.parse(data);
 
-        console.log(_data.name + " sabotaging " + _data.room);
-        var player = __game.getPlayerByName(_data.name);
-        player.isSabotaging = false;
+            console.log(_data.name + " sabotaging " + _data.room);
+            var player = __game.getPlayerByName(_data.name);
+            player.isSabotaging = false;
+        }
     });
 
     socket.on("remove_all_players", function(data) {
-        console.log("removing all players");
-        __game.RemoveAllPlayers();
+        if (__game !== null) {
+            console.log("removing all players");
+            __game.RemoveAllPlayers();
+        }
     });
 
     socket.on("scramble_players", function(data) {
-        console.log("scrambling player factions");
-        __game.scramblePlayerFactions();
+        if (__game !== null) {
+            console.log("scrambling player factions");
+            __game.scramblePlayerFactions();
+        }
     });
 });
 
 function updateMap(socket) {
-    socket.emit('update_players', {'players' : __game.players});
+    if (__game !== null) {
+        socket.emit('update_players', {'players' : __game.players});
+    }
 }
 
 function heartbeat() {
-    now = new Date();
+    if (__game !== null) {
+        now = new Date();
 
-    // check if all players who have an ID are still active
-    __game.players.forEach(function(player) {
-        if (player.id != null) {
-            if (now - player.last_updated > (1000 * 60)) {
-                console.log("Player " + player.name + " timed out.");
-                player.id = null;
+        // check if all players who have an ID are still active
+        __game.players.forEach(function(player) {
+            if (player.id != null) {
+                if (now - player.last_updated > (1000 * 60)) {
+                    console.log("Player " + player.name + " timed out.");
+                    player.id = null;
+                }
             }
-        }
-    });
+        });
 
-    console.log("Current game has: " + __game.players.length + " players");
+        console.log("Current game has: " + __game.players.length + " players");
+    } else {
+        console.log("Game hasn't started.");
+    }
     
 }
 

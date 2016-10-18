@@ -3,11 +3,11 @@
     <div class="container">
         <div class="crew-list-header row">
             <div class="crew-list-info col-xs-12" ng-if="!player.isTraitor">
-                <h3>You are Innocent</h3>
-                <p>Prevent the traitors from destroying the ship.</p>
+                <h3>You are a Crewmate.</h3>
+                <p>Prevent the saboteurs from destroying the ship.</p>
             </div>
             <div class="crew-list-info col-xs-12" ng-if="player.isTraitor">
-                <h3>You are a Traitor</h3>
+                <h3>You are a Saboteur.</h3>
                 <p>Sabotage the ship to destroy it.</p>
             </div>
         </div>
@@ -30,7 +30,7 @@
         </div>
 
         <div class="crew-list-controls">
-            <button ng-click="controls();" class="controls-button">
+            <button ng-click="controls();" class="controls-button spacechat-submit">
                 Got it
             </button>
         </div>
