@@ -42,7 +42,8 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 }])
 
 
-.controller('IndexCtrl', ['$scope', '$rootScope', '$state', '$cookies', function($scope, $rootScope, $state, $cookies) {
+.controller('IndexCtrl', ['$scope', '$rootScope', '$state', '$cookies', 
+    function($scope, $rootScope, $state, $cookies) {
     $scope.player_name = "";
 
     $scope.submitName = function() {
@@ -75,7 +76,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     }
 
     $scope.changeClass = function() {
-        var result = document.getElementsByClassName("spacechat-input-container");
+        var result = $(".spacechat-input-container");
         var elem = angular.element(result);
         if ($scope.player_name == '') {
             elem.removeClass("col-xs-10 padded");
@@ -116,7 +117,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     }
 
     $scope.changeClass = function() {
-        var result = document.getElementsByClassName("spacechat-input-container");
+        var result = $(".spacechat-input-container");
         var elem = angular.element(result);
         if ($scope.chat == '') {
             elem.removeClass("col-xs-10 padded");

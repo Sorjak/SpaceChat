@@ -1,72 +1,3 @@
-// app.factory('PlayerSocket', function ($rootScope, $q) {
-//     var socket = io('/player');
-//     var playerObj = null;
-//     var connected = false;
-//     return {
-//         connect: function(playername) {
-//             if (!socket.connected) {
-//                 socket = io('/player');
-//             }
-//             return $q(function(resolve, reject) {
-//                 socket.emit('player_connected', playername, function(data) {
-//                     if (data) {
-//                         connected = true;
-//                         playerObj = data;
-//                         resolve(playerObj);
-//                     } else {
-//                         reject(null);
-//                     }
-//                 });
-//             });
-
-//         },
-//         reconnect: function(playername) {
-//             if (!socket.connected) {
-//                 socket = io('/player');
-//             }
-//             return $q(function(resolve, reject) {
-//                 socket.emit('player_reconnect', playername, function(data) {
-//                     if (data) {
-//                         connected = true;
-//                         playerObj = data;
-//                         resolve(playerObj);
-//                     } else {
-//                         reject(null);
-//                     }
-//                 });
-//             });
-//         },
-//         on: function (eventName, callback) {
-//             socket.on(eventName, function () {  
-//                 var args = arguments;
-//                 $rootScope.$apply(function () {
-//                     callback.apply(socket, args);
-//                 });
-//             });
-//         },
-//         emit: function (eventName, data, callback) {
-//             socket.emit(eventName, data, function () {
-//                 var args = arguments;
-//                 $rootScope.$apply(function () {
-//                     if (callback) {
-//                         callback.apply(socket, args);
-//                     }
-//                 });
-//             })
-//         },
-//         disconnect: function() {
-//             connected = false;
-//             socket.disconnect();
-//         },
-//         isConnected: function() {
-//             return socket.connected && connected;
-//         },
-//         getPlayer: function() {
-//             return playerObj;
-//         }
-//     };
-// })
-
 app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
 
     function PlayerSocket() {
@@ -139,7 +70,7 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
 
     function ControlArea(container, position, size) {
 
-        this.thumb_circle_radius = 80;
+        this.thumb_circle_radius = 40;
 
         this.container = container;
         this.sprite = null;
@@ -153,7 +84,7 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
         this.bindListeners(this);
 
         this.container.addChild(this.sprite);
-        this.sprite.addChild(this.thumb_circle);
+        this.container.addChild(this.thumb_circle);
         
     };
 
@@ -169,12 +100,12 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
         this.sprite.interactive = true;
         this.sprite.anchor = new PIXI.Point(.5, .5);
 
-        this.bounding_circle = new PIXI.Circle(realCenter.x, realCenter.y, this.sprite.width - 25);
+        this.bounding_circle = new PIXI.Circle(realCenter.x, realCenter.y, this.sprite.width / 2);
         // this.sprite.hitArea = circle;
 
         this.thumb_circle = new PIXI.Graphics();
-        this.thumb_circle.lineStyle(4, 0xFFFFFF);
-        this.thumb_circle.drawCircle(0, 0, this.thumb_circle_radius);
+        this.thumb_circle.lineStyle(2, 0xFFFFFF);
+        this.thumb_circle.drawCircle(realCenter.x, realCenter.y, this.thumb_circle_radius);
         this.thumb_circle.visible = false;
 
         // this.sprite.hitArea = new PIXI.Circle(realCenter.x, realCenter.y, 40);
@@ -258,18 +189,19 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
     }
 
     ControlArea.prototype.updateThumbCircle = function(rawPosition) {
-        var localX = (this.sprite.position.x - rawPosition.x) * -1;
-        var localY = (this.sprite.position.y - rawPosition.y) * -1;
+        var localX = rawPosition.x - this.sprite.position.x;
+        var localY = rawPosition.y - this.sprite.position.y;
         var localPos = new Vector2(localX, localY);
 
         var normalPos = localPos.clone().normalize();
-        var maxPos = normalPos.multiplyScalar(this.bounding_circle.radius);
+        var maxPos = normalPos.multiplyScalar(this.bounding_circle.radius - this.thumb_circle_radius);
 
         if (localPos.length() > maxPos.length()) {
             this.thumb_circle.position = new PIXI.Point(maxPos.x, maxPos.y);
         } else {
             this.thumb_circle.position = new PIXI.Point(localPos.x, localPos.y);
         }
+
 
     }
 
@@ -278,13 +210,6 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
         this.thumb_circle.position.y = 0;
         this.thumb_circle.visible = false;
     }
-
-    // ControlArea.prototype.update = function(deltaTime) {
-    //     if (this.input != null) {
-    //         var to_send = {'x' : this.input.x, 'y' : this.input.y}
-    //         PlayerSocket.emit('move_player', to_send);
-    //     }
-    // }
 
     return ControlArea;
 })
