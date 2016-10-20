@@ -106,6 +106,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $rootScope.socket.emit('player_message', $scope.chat);
         $scope.chat = "";
         $scope.changeClass();
+        $scope.showControls();
     }
 
     $scope.clearChat = function() {
@@ -124,6 +125,15 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         } else {
             elem.addClass("col-xs-10 padded");
         }
+    }
+
+    $scope.shrinkControls = function() {
+        $("#player-controls").hide();
+    }
+
+    $scope.showControls = function() {
+        $("#player-controls").show();
+        $(".chat-input").blur();
     }
     
 
