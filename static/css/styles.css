@@ -215,17 +215,26 @@ body a {
 }
 
 #crewlist-view .crew-list h4{
+  font-weight: bold;
   color: #000;
+}
+
+#crewlist-view .crew-list .crew {
+  margin-bottom: 5px;
+  display:block;
+  height: 18px;
 }
 
 #crewlist-view .crew-list .crew .player-name {
   color: #FFF;
+  font-size: 18px;
+  line-height: 18px;
 }
 
 #crewlist-view .crew-list .crew .traitor-tag {
-  color: red;
+  color: #000;
   position: relative;
-  left:30px;
+  left:20px;
 }
 
 #crewlist-view .crew-list-controls .controls-button{
