@@ -1,7 +1,6 @@
 app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cookies', 'PlayerSocket', 
     function($scope, $rootScope, $interval, $state, $cookies, PlayerSocket) {
     $scope.errorMessage = "";
-    $rootScope.connected = false;
 
     $rootScope.socket = new PlayerSocket();
 
@@ -75,6 +74,16 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         }
     }
 
+    $scope.changeClass = function() {
+        var result = document.getElementsByClassName("spacechat-input-container");
+        var elem = angular.element(result);
+        if ($scope.player_name == '') {
+            elem.removeClass("col-xs-10 padded");
+        } else {
+            elem.addClass("col-xs-10 padded");
+        }
+    }
+
 }])
 
 .controller('PlayerCtrl', ['$rootScope', '$scope', '$state', '$interval', '$stateParams','PlayerSocket', 'Player'
@@ -95,6 +104,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.sendChat = function() {
         $rootScope.socket.emit('player_message', $scope.chat);
         $scope.chat = "";
+        $scope.changeClass();
     }
 
     $scope.clearChat = function() {
@@ -103,6 +113,16 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
     $scope.reload = function() {
         $state.reload();
+    }
+
+    $scope.changeClass = function() {
+        var result = document.getElementsByClassName("spacechat-input-container");
+        var elem = angular.element(result);
+        if ($scope.chat == '') {
+            elem.removeClass("col-xs-10 padded");
+        } else {
+            elem.addClass("col-xs-10 padded");
+        }
     }
     
 
@@ -179,11 +199,6 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
     $scope.$watch(function() {return $rootScope.player}, function() {
         $scope.player = $rootScope.player;
-    });
-
-    $rootScope.socket.on('connect_error', function(error) {
-        $scope.errorMessage = "Lost connection to server";
-        $rootScope.connected = false;
     });
 
     $scope.showPlayers = function() {

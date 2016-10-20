@@ -5,18 +5,23 @@
         <div id="player-controls" ng-controller="ControlAreaCtrl" class="row"></div>
 
         <div ng-show="player.isTraitor" id="tools" class="row">
-            <div class="col-sm-12">
-                <button ng-click="sabotage();" class="sabotage-button spacechat-submit" ng-hide="player.room == ''">
+            <div class="col-xs-12" ng-hide="player.room == ''">
+                <button ng-click="sabotage();" class="sabotage-button spacechat-submit" >
                     Sabotage {{player.room}}
                 </button>
             </div>
+            <div class="col-xs-12" ng-show="player.room == ''" style="height:34px"></div>
         </div>
 
         <div id="messages" class="row">
-            <div class="col-sm-12">
+            <div class="col-xs-12">
                 <form ng-submit="sendChat();">
-                    <input type="text" ng-model="chat" class="chat-input spacechat-input col-xs-8" placeholder="Message Everyone">
-                    <input type="submit" class="chat-submit spacechat-submit col-xs-3 col-xs-offset-1" value="Send" />
+                    <div class="spacechat-input-container">
+                        <input type="text" ng-model="chat" class="chat-input spacechat-input" placeholder="Message Everyone"
+                        ng-change="changeClass();">
+                    </div>
+                    <input type="submit" class="chat-submit spacechat-submit col-xs-2" value="Send"
+                            ng-show="chat != ''" />
                 </form>
             </div>
 

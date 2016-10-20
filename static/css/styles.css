@@ -62,11 +62,20 @@ body a {
   color: #FFF;
 }
 
+.spacechat-input-container {
+  padding-left: 0px;
+}
+
+.padded {
+  padding-right: 5px;
+}
+
 .spacechat-input {
   border: 1px solid #FFF;
   background-color: rgba(46, 109, 164, .1);
   margin-bottom: 10px;
   color: #FFF;
+  width: 100%;
 }
 
 .spacechat-input::-webkit-input-placeholder {
