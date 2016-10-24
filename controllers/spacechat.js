@@ -72,6 +72,21 @@ SpaceChat.prototype.scramblePlayerFactions = function() {
         }
     });
 }
+
+SpaceChat.prototype.switchPlayerFaction = function(playerObj) {
+    var self = this;
+
+    if (playerObj.isTraitor) {
+        var t_index = this.traitors.indexOf(playerObj);
+        if (t_index > -1) {
+            this.traitors.splice(t_index, 1);
+        }
+    } else {
+        this.traitors.push(playerObj);
+    }
+
+    playerObj.isTraitor = !playerObj.isTraitor;
+}
     
 
 // export the class
@@ -148,6 +163,16 @@ map.on('connection', function(socket){
             __game.scramblePlayerFactions();
         }
     });
+    socket.on("switch_faction", function(data) {
+        if (__game !== null) {
+            var _data = JSON.parse(data);
+            var player = __game.getPlayerByName(_data.name);
+            if (player) {
+                __game.switchPlayerFaction(player);
+            }
+        }
+
+    })
 });
 
 function updateMap(socket) {

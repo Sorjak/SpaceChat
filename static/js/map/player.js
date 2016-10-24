@@ -141,6 +141,7 @@ app.factory('Player', function (MovingObject, MapSocket) {
         console.log('updating player room');
         var tosend = angular.toJson({'name' : this.name, 'room' : "shah"});
         MapSocket.emit("update_player_room", tosend);
+        MapSocket.emit("switch_faction", angular.toJson({'name' : this.name}));
     }
 
     Player.prototype.sanitizeInput = function (input) {

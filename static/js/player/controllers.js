@@ -49,7 +49,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.submitName = function() {
         if ($scope.player_name) {
             $cookies.put('player_name', $scope.player_name);
-            $scope.goFullScreen();
+            //$scope.goFullScreen();
 
             if (!$rootScope.socket.isConnected()) {
                 $rootScope.socket.connect($scope.player_name).then(function() {
