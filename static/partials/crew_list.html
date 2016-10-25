@@ -1,6 +1,7 @@
 <div id="crewlist-view" ng-controller="CrewListCtrl" >
     <div id="header" ng-include src="'/static/partials/header.html'"></div>
     <div class="container">
+
         <div class="crew-list-header row">
             <div class="crew-list-info col-xs-12" ng-if="!player.isTraitor">
                 <h3>You are a Crewmate.</h3>
@@ -12,6 +13,7 @@
             </div>
         </div>
         <div class="crew-list row">
+        
             <h4 class="col-xs-offset-4 col-xs-8">Crew List</h4>
             <div class="player-container col-xs-12" ng-show="player.isTraitor">
                 <div class="crew" ng-repeat="p in players">

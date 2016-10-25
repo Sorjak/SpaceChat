@@ -12,9 +12,13 @@ SpaceChat.prototype.PlayerExists = function(playerName) {
 SpaceChat.prototype.AddPlayer = function(playerObj) {
     this.assignPlayerFaction(playerObj, this.players.length, this.traitors.length);
 
-    if (playerObj.isTraitor) this.traitors.push(playerObj);
+    if (playerObj.isTraitor) {
+        this.traitors.push(playerObj);
+    }
 
     this.players.push(playerObj);
+
+    console.log("Added player " + playerObj.name + " as " + playerObj.isTraitor);
 };
 
 SpaceChat.prototype.RemovePlayer = function(playerObj) {
@@ -190,7 +194,8 @@ function heartbeat() {
             if (player.id != null) {
                 if (now - player.last_updated > (1000 * 60)) {
                     console.log("Player " + player.name + " timed out.");
-                    player.id = null;
+                    // player.id = null;
+                    __game.RemovePlayer(player);
                 }
             }
         });

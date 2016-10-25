@@ -1,15 +1,22 @@
-app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cookies', 'PlayerSocket', 
-    function($scope, $rootScope, $interval, $state, $cookies, PlayerSocket) {
-    $scope.errorMessage = "";
+app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cookies', 'PlayerSocket', '$mdDialog',
+    function($scope, $rootScope, $interval, $state, $cookies, PlayerSocket, $mdDialog) {
+    console.log("loaded app");
 
     $rootScope.socket = new PlayerSocket();
+    $rootScope.player = null;
+    $rootScope.player_list = null;
+    $rootScope.connected = false;
 
     $scope.logout = function() {
-        $cookies.remove("player_name");
+        // $cookies.remove("player_name");
         $rootScope.socket.disconnect();
         $interval.cancel($rootScope.heartbeat);
         
         $state.go("index");
+    }
+
+    $scope.sendHeartbeat = function() {
+        $rootScope.socket.emit('heartbeat');
     }
 
     $scope.crew_list = function() {
@@ -20,23 +27,67 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $state.go("player");
     }
 
+    $scope.showAlert = function(text) {
+        var alert = $mdDialog.alert({
+            title: 'Alert',
+            textContent: text,
+            ok: 'Close'
+        });
+
+        $mdDialog.show( alert )
+        .finally(function() {
+            alert = undefined;
+        });
+    }
+
+    $scope.connect = function(nextState) {
+        var playerName = $cookies.get('player_name');
+        var playerKey  = $cookies.get('player_key');
+
+        $rootScope.socket.connect(playerName, playerKey).then(
+            function(result) {
+                $rootScope.player = result;
+                $rootScope.connected = true;
+                $rootScope.heartbeat = $interval($scope.sendHeartbeat, 1000);
+                if (nextState) $state.go(nextState);
+            }, function(failure) {
+                $rootScope.connected = false;
+                console.log("Failed to connect");
+            }
+        );
+    }
+
     $rootScope.socket.on('update_player', function (data) {
+        console.log("got update from server");
         $rootScope.player = data.player;
+        $rootScope.player_list = data.players;
+        $rootScope.connected = true;
     });
 
     $rootScope.socket.on('spacechat_error', function(error) {
-        $rootScope.error = error;
+        $scope.showAlert(error.errorMessage);
+        if (error.errorCode == 3) {
+            $cookies.put('player_name', null);
+            $cookies.put('player_key', null);
+            $state.go('index');
+        }
+
     });
 
     $rootScope.socket.on('connect_error', function(error) {
-        $scope.errorMessage = "Lost connection to server";
-        $rootScope.error = {'errorMessage' : "Lost connection to server."}
+        $rootScope.connected = false;
     });
 
-    $scope.$watch(function() {return $rootScope.error}, function() {
-        if ($rootScope.error) {
-            $state.go("index");
+    $scope.$watch(function() {return $rootScope.connected}, function(oldVal, newVal) {
+        if (!$rootScope.connected) {
+            if (oldVal !== newVal) {
+                $scope.showAlert("Disconnected from server.");
+            }
+
+            // $scope.connect('crew_list');
         }
+
+
     });
 
 }])
@@ -51,17 +102,16 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
             $cookies.put('player_name', $scope.player_name);
             //$scope.goFullScreen();
 
-            if (!$rootScope.socket.isConnected()) {
-                $rootScope.socket.connect($scope.player_name).then(function() {
-                    $state.go('crew_list');
-                });
-            } else {
-                $state.go('crew_list');
-            }
-        } else {
-            $rootScope.error = {'errorMessage' : "Must provide name to join game."}
+            $rootScope.socket.register($scope.player_name).then(
+                function(server_key) {
+                    $cookies.put('player_key', server_key);
+                    $scope.connect('crew_list');
+
+                }, function (failure) {
+                    $scope.showAlert("Player name is already taken");
+                }
+            );
         }
-        
     }
 
     $scope.goFullScreen = function() {
@@ -190,7 +240,9 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         var input = $scope.control_area.input;
         if (input != null) {
             var to_send = {'x' : input.x, 'y' : input.y}
-            $rootScope.socket.emit('move_player', to_send);
+            if ($rootScope.socket.isConnected()){
+                $rootScope.socket.emit('move_player', to_send);
+            }
         }
 
         $scope.RENDERER.render($scope.STAGE);
@@ -212,6 +264,10 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $scope.player = $rootScope.player;
     });
 
+    $scope.$watch(function() {return $rootScope.player_list}, function() {
+        $scope.players = $rootScope.player_list;
+    });
+
     $scope.showPlayers = function() {
         $scope.players = [];
         $rootScope.socket.emit('get_all_players', null, function(data) {
@@ -219,7 +275,16 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         });
     }
 
-    $scope.showPlayers();
+    // $scope.showPlayers();
+
+    // $rootScope.socket.connect($scope.player_name, server_key).then(
+    //     function(success) {
+    //         // $rootScope.connected = true;
+    //         $state.go('crew_list');
+    //     }, function(failure) {
+    //         $rootScope.connected = false;
+    //     }
+    // );
 
 }])
 

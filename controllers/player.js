@@ -8,6 +8,7 @@ function Player(id, name) {
 
     this.name = name;
     this.id = id;
+    this.key = Math.floor(Math.random() * 1000000);
 
     this.room = "";
     this.message = "";
@@ -32,7 +33,9 @@ playerSocket.on('connection', function(socket) {
         } else if (code == 1) {
             socket.emit("spacechat_error", {"errorCode" : 1, "errorMessage" : "This name is taken by someone else."});
         } else if (code == 2) {
-            socket.emit("spacechat_error", {"errorCode" : 2, "message" : "Player name not in game."});
+            socket.emit("spacechat_error", {"errorCode" : 2, "errorMessage" : "Player name not in game."});
+        } else if (code == 3) {
+            socket.emit("spacechat_error", {"errorCode" : 3, "errorMessage" : "Player not registered"});
         }
     }
 
@@ -44,52 +47,53 @@ playerSocket.on('connection', function(socket) {
         }
     });
 
-    socket.on('player_connected', function(username, callback) {
-        console.log('player provided username: ' + username);
-
+    socket.on('register_new_player', function(username, callback) {
         if (__game == null) {
             console.log("error, game hasn't started");
             sendError(0);
-            callback(null);
-
+            callback(false);
         } else {
+            console.log("registering " + username);
+
             if (!__game.PlayerExists(username)) {
-                player = new Player(socket.id, username);
+                player = new Player(null, username);
                 __game.AddPlayer(player);
-                callback(player);
-
+                console.log(player.key);
+                callback(player.key);
             } else {
-                player = __game.getPlayerByName(username);
-                if (player.id == null) {
-                    player.id = socket.id;
-                    player.last_updated = new Date();
-                    callback(player);
-
-                } else {
-                    console.log("player " + username + " already connected");
-                    sendError(1);
-                    callback(null);
-                }
+                console.log("player " + username + " already exists");
+                callback(false);
             }
         }
-
     });
 
-    socket.on('player_reconnect', function(username, callback) {
+    socket.on('player_connected', function(playerInfo, callback) {
         if (__game == null) {
+            console.log("error, game hasn't started");
             sendError(0);
-
+            callback(false);
         } else {
-            player = __game.getPlayerByName(username);
+
+            console.log(playerInfo);
+            player = __game.getPlayerByName(playerInfo.username);
             if (player) {
-                player.id = socket.id;
-                player.last_updated = new Date();
-                callback(player);
+                if (player.key == playerInfo.key) {
+                    player.id = socket.id;
+                    player.last_updated = new Date();
+
+                    console.log("starting interval update");
+                    setInterval(updatePlayer, 1000, socket, player);
+
+                    callback(player);
+                }
+
             } else {
-                sendError(2);
+                console.log("player " + playerInfo.username + " not registered");
+                sendError(3);
+                callback(false);
             }
         }
-        
+
     });
 
     // Expects an object with x and y, both floats between (-1, 1)
@@ -146,4 +150,16 @@ playerSocket.on('connection', function(socket) {
         }
     });
 
+    socket.on('heartbeat', function() {
+        if (player != null && player.id == socket.id) {
+            player.last_updated = new Date();
+        }
+    });
+
 });
+
+function updatePlayer(socket, player) {
+    if (__game !== null) {
+        socket.emit('update_player', {'player' : player,  'players' : __game.players});
+    }
+}

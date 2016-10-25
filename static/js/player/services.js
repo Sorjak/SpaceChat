@@ -2,37 +2,32 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
 
     function PlayerSocket() {
         this.socket = io('/player');
-        this.connected = false;
     }
 
-    PlayerSocket.prototype.connect = function(playername) {
+    PlayerSocket.prototype.register = function(playername) {
         var self = this;
-
-        if (!this.socket.connected) {
-            this.socket = io('/player');
-        }
         return $q(function(resolve, reject) {
-            self.emit('player_connected', playername, function(data) {
-                if (data) {
-                    self.connected = true;
-                    $rootScope.player = data;
-                    $rootScope.heartbeat = $interval(self.reconnect, 1000 * 1, 0, true, self, playername);
-                    resolve(data);
+            self.emit('register_new_player', playername, function(result) {
+                if (result) {
+                    resolve(result);
                 } else {
-                    reject(null);
+                    reject(false);
                 }
             });
         });
     }
-    PlayerSocket.prototype.reconnect = function(self, playername) {
+
+    PlayerSocket.prototype.connect = function(username, key) {
+        var self = this;
+
+        var playerInfo = {'username' : username, 'key' : key}
         return $q(function(resolve, reject) {
-            self.emit('player_reconnect', playername, function(data) {
-                if (data) {
-                    self.connected = true;
-                    $rootScope.player = data;
-                    resolve(data);
+            self.emit('player_connected', playerInfo, function(result) {
+                if (result) {
+                    console.log("connected as: " + playerInfo.username);
+                    resolve(result);
                 } else {
-                    reject(null);
+                    reject(false);
                 }
             });
         });
@@ -56,11 +51,10 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
         })
     },
     PlayerSocket.prototype.disconnect =function() {
-        this.connected = false;
         this.socket.disconnect();
     }
     PlayerSocket.prototype.isConnected = function() {
-        return this.socket.connected && this.connected;
+        return this.socket.connected;
     }
 
     return PlayerSocket;
