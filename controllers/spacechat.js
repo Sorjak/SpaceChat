@@ -1,5 +1,6 @@
 
-function SpaceChat() {
+function SpaceChat(max) {
+    this.max_players = max;
     this.players = [];
     this.traitors = [];
 }
@@ -10,6 +11,10 @@ SpaceChat.prototype.PlayerExists = function(playerName) {
 }
 
 SpaceChat.prototype.AddPlayer = function(playerObj) {
+    if (this.players.length >= this.max_players) {
+        return false;
+    }
+
     this.assignPlayerFaction(playerObj, this.players.length, this.traitors.length);
 
     if (playerObj.isTraitor) {
@@ -17,8 +22,11 @@ SpaceChat.prototype.AddPlayer = function(playerObj) {
     }
 
     this.players.push(playerObj);
-
     console.log("Added player " + playerObj.name + " as " + playerObj.isTraitor);
+
+    return true;
+
+    
 };
 
 SpaceChat.prototype.RemovePlayer = function(playerObj) {
@@ -101,7 +109,7 @@ map.on('connection', function(socket){
     console.log("map_connected");
     if (__game == null) {
         console.log("starting new game");
-        __game = new SpaceChat();
+        __game = new SpaceChat(64);
     }
 
     socket.on('disconnect', function() {
@@ -121,6 +129,15 @@ map.on('connection', function(socket){
             var player = __game.getPlayerByName(_data.id);
             player.positionX = _data.index.x;
             player.positionY = _data.index.y;
+        }
+    });
+
+    socket.on("update_max_players", function(data) {
+        if (__game !== null) {
+            var _data = JSON.parse(data);
+
+            console.log("changing max players to: " + _data.max);
+            __game.max_players = _data.max;
         }
     });
 
