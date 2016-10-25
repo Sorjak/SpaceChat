@@ -6,6 +6,9 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $rootScope.player = null;
     $rootScope.player_list = null;
     $rootScope.connected = false;
+    $rootScope.alert = undefined;
+
+    $scope.isTraitor = false;
 
     $scope.logout = function() {
         // $cookies.remove("player_name");
@@ -28,28 +31,29 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     }
 
     $scope.showAlert = function(text) {
-        var alert = $mdDialog.alert({
-            title: 'Alert',
-            textContent: text,
-            ok: 'Close'
-        });
+        if (!$rootScope.alert) {
+            $rootScope.alert = $mdDialog.alert({
+                title: 'Alert',
+                textContent: text,
+                ok: 'Close'
+            });
 
-        $mdDialog.show( alert )
-        .finally(function() {
-            alert = undefined;
-        });
+            $mdDialog.show( $rootScope.alert )
+            .finally(function() {
+                $rootScope.alert = undefined;
+            });
+        }
     }
 
-    $scope.connect = function(nextState) {
+    $scope.connect = function() {
         var playerName = $cookies.get('player_name');
         var playerKey  = $cookies.get('player_key');
 
-        $rootScope.socket.connect(playerName, playerKey).then(
+        return $rootScope.socket.connect(playerName, playerKey).then(
             function(result) {
                 $rootScope.player = result;
                 $rootScope.connected = true;
                 $rootScope.heartbeat = $interval($scope.sendHeartbeat, 1000);
-                if (nextState) $state.go(nextState);
             }, function(failure) {
                 $rootScope.connected = false;
                 console.log("Failed to connect");
@@ -58,19 +62,19 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     }
 
     $rootScope.socket.on('update_player', function (data) {
-        console.log("got update from server");
         $rootScope.player = data.player;
         $rootScope.player_list = data.players;
         $rootScope.connected = true;
+
+        $scope.isTraitor = $rootScope.player.isTraitor;
     });
 
     $rootScope.socket.on('spacechat_error', function(error) {
         $scope.showAlert(error.errorMessage);
-        if (error.errorCode == 3) {
-            $cookies.put('player_name', null);
-            $cookies.put('player_key', null);
-            $state.go('index');
-        }
+
+        $cookies.remove('player_name');
+        $cookies.remove('player_key');
+        $state.go('index');
 
     });
 
@@ -83,11 +87,13 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
             if (oldVal !== newVal) {
                 $scope.showAlert("Disconnected from server.");
             }
-
-            // $scope.connect('crew_list');
         }
+    });
 
-
+    $scope.$watch('isTraitor', function(oldVal, newVal) {
+        if ($scope.isTraitor && (oldVal !== newVal)) {
+            $scope.showAlert("You are a Saboteur!");
+        }
     });
 
 }])
@@ -105,7 +111,9 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
             $rootScope.socket.register($scope.player_name).then(
                 function(server_key) {
                     $cookies.put('player_key', server_key);
-                    $scope.connect('crew_list');
+                    $scope.connect().then(function() {
+                        $state.go("crew_list");
+                    });
 
                 }, function (failure) {
                     $scope.showAlert("Player name is already taken");
@@ -137,12 +145,13 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
 }])
 
-.controller('PlayerCtrl', ['$rootScope', '$scope', '$state', '$interval', '$stateParams','PlayerSocket', 'Player'
-    , function($rootScope, $scope, $state, $interval, $stateParams, PlayerSocket, Player) {
+.controller('PlayerCtrl', ['$rootScope', '$scope', '$state', '$interval', '$stateParams', '$mdDialog'
+    , function($rootScope, $scope, $state, $interval, $stateParams, $mdDialog) {
 
     $scope.page = $state.current.name;
     $scope.player = $rootScope.player;
     $scope.chat = "";
+    $scope.chatMode = false;
 
     $scope.$watch(function() {return $rootScope.player}, function() {
         $scope.player = $rootScope.player;
@@ -178,12 +187,28 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     }
 
     $scope.shrinkControls = function() {
-        $("#player-controls").hide();
+        $scope.chatMode = true;
     }
 
     $scope.showControls = function() {
-        $("#player-controls").show();
-        $(".chat-input").blur();
+        $scope.chatMode = false;
+    }
+
+    $scope.showPrompt = function(ev) {
+        // Appending dialog to document.body to cover sidenav in docs app
+        var confirm = $mdDialog.prompt()
+            .title('Send message to everyone.')
+            .placeholder('Enter message here.')
+            .ok('Send')
+            .cancel('Cancel');
+
+        $mdDialog.show(confirm).then(function(result) {
+            $rootScope.socket.emit('player_message', result);
+        }, function() {});
+    };
+
+    if (!$rootScope.connected) {
+        $scope.connect();
     }
     
 
@@ -240,7 +265,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         var input = $scope.control_area.input;
         if (input != null) {
             var to_send = {'x' : input.x, 'y' : input.y}
-            if ($rootScope.socket.isConnected()){
+            if ($rootScope.connected){
                 $rootScope.socket.emit('move_player', to_send);
             }
         }
@@ -275,16 +300,9 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         });
     }
 
-    // $scope.showPlayers();
-
-    // $rootScope.socket.connect($scope.player_name, server_key).then(
-    //     function(success) {
-    //         // $rootScope.connected = true;
-    //         $state.go('crew_list');
-    //     }, function(failure) {
-    //         $rootScope.connected = false;
-    //     }
-    // );
+    if (!$rootScope.connected) {
+        $scope.connect();
+    }
 
 }])
 

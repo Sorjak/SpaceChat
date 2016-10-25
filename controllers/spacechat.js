@@ -191,13 +191,12 @@ function heartbeat() {
 
         // check if all players who have an ID are still active
         __game.players.forEach(function(player) {
-            if (player.id != null) {
-                if (now - player.last_updated > (1000 * 60)) {
+            // if (player.id != null) {
+                if (now - player.last_updated > (1000 * 30)) {
                     console.log("Player " + player.name + " timed out.");
-                    // player.id = null;
                     __game.RemovePlayer(player);
                 }
-            }
+            // }
         });
 
         console.log("Current game has: " + __game.players.length + " players");

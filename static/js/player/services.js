@@ -24,7 +24,6 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
         return $q(function(resolve, reject) {
             self.emit('player_connected', playerInfo, function(result) {
                 if (result) {
-                    console.log("connected as: " + playerInfo.username);
                     resolve(result);
                 } else {
                     reject(false);
@@ -165,8 +164,8 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
         var deltaX = (this.sprite.position.x - rawPosition.x) * -1;
         var deltaY = (this.sprite.position.y - rawPosition.y);
 
-        var ratioX = deltaX / (this.sprite.width / 2);
-        var ratioY = deltaY / (this.sprite.height / 2);
+        var ratioX = deltaX / this.bounding_circle.radius;
+        var ratioY = deltaY / this.bounding_circle.radius;
 
         var cappedX = Math.min(ratioX , 1);
         cappedX = Math.max(cappedX, -1);
@@ -181,6 +180,7 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
         this.input = vec;
         
     }
+
 
     ControlArea.prototype.updateThumbCircle = function(rawPosition) {
         var localX = rawPosition.x - this.sprite.position.x;

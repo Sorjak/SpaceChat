@@ -15,14 +15,17 @@
 
         <div id="messages" class="row">
             <div class="col-xs-12">
-                <form ng-submit="sendChat();">
+<!--                 <form ng-submit="sendChat();">
                     <div class="spacechat-input-container">
                         <input type="text" ng-model="chat" class="chat-input spacechat-input" placeholder="Message Everyone"
                             ng-change="changeClass();" ng-focus="shrinkControls();">
                     </div>
                     <input type="submit" class="chat-submit spacechat-submit col-xs-2" value="Send"
                             ng-show="chat != ''" />
-                </form>
+                </form> -->
+                <button ng-click="showPrompt()" class="spacechat-submit" style="width: 100%; padding: 6px 12px;">
+                    Message Everyone
+                </button>
             </div>
 
         </div>

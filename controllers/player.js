@@ -58,7 +58,6 @@ playerSocket.on('connection', function(socket) {
             if (!__game.PlayerExists(username)) {
                 player = new Player(null, username);
                 __game.AddPlayer(player);
-                console.log(player.key);
                 callback(player.key);
             } else {
                 console.log("player " + username + " already exists");
@@ -81,7 +80,6 @@ playerSocket.on('connection', function(socket) {
                     player.id = socket.id;
                     player.last_updated = new Date();
 
-                    console.log("starting interval update");
                     setInterval(updatePlayer, 1000, socket, player);
 
                     callback(player);
