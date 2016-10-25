@@ -24,6 +24,15 @@ app.run(function ($rootScope, $state, $cookies, PlayerSocket) {
         var playerName = $cookies.get('player_name');
         var playerKey  = $cookies.get('player_key');
 
+        if (fromState.name == "player") {
+            if ($rootScope.animFrame) {
+                console.log('cancelling animation frame');
+                var cancelAnimFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+                cancelAnimFrame($rootScope.animFrame);
+            }
+        }
+        
+
         if (!playerName || !playerKey) {
             if (toState.name != "index") {
                 event.preventDefault();
