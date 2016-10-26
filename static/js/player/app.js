@@ -26,7 +26,6 @@ app.run(function ($rootScope, $state, $cookies, PlayerSocket) {
 
         if (fromState.name == "player") {
             if ($rootScope.animFrame) {
-                console.log('cancelling animation frame');
                 var cancelAnimFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
                 cancelAnimFrame($rootScope.animFrame);
             }

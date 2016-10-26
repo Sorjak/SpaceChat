@@ -141,7 +141,7 @@ body a {
 /* INDEX STYLES */
 
 #index-view {
-
+  
 }
 
 #index-view .index-title {
@@ -166,6 +166,22 @@ body a {
 #index-view .index-content p{
   font-weight: bold;
 }
+
+#index-view .index-orientation {
+  margin-top: 10px;
+  text-align: center;
+}
+
+#index-view .index-orientation .orientation-image {
+  height: 200px;
+  background: url("../images/hand_phone.png") no-repeat top center/200px;
+}
+
+#index-view .index-orientation .orientation-text {
+  text-align: center;
+  color: #FFF;
+}
+
 
 /* PLAYER PAGE STYLES */
 

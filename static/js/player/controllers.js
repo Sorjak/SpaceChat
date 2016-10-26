@@ -45,6 +45,21 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         }
     }
 
+    $scope.showTraitorMessage = function() {
+        if (!$rootScope.alert) {
+            $rootScope.alert = $mdDialog.alert({
+                title: 'NOTICE',
+                textContent: "You are now a SABOTEUR!",
+                ok: 'Ok'
+            });
+
+            $mdDialog.show( $rootScope.alert )
+            .finally(function() {
+                $rootScope.alert = undefined;
+            });
+        }
+    }
+
     $scope.connect = function() {
         var playerName = $cookies.get('player_name');
         var playerKey  = $cookies.get('player_key');
@@ -92,7 +107,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
     $scope.$watch('isTraitor', function(oldVal, newVal) {
         if ($scope.isTraitor && (oldVal !== newVal)) {
-            $scope.showAlert("You are a Saboteur!");
+            $scope.showTraitorMessage();
         }
     });
 
