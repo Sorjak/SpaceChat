@@ -126,9 +126,13 @@ map.on('connection', function(socket){
         if (__game !== null) {
             var _data = JSON.parse(data);
 
-            var player = __game.getPlayerByName(_data.id);
-            player.positionX = _data.index.x;
-            player.positionY = _data.index.y;
+            try {
+                var player = __game.getPlayerByName(_data.id);
+                player.positionX = _data.index.x;
+                player.positionY = _data.index.y;
+            } catch (ex) {
+                console.log("Player " + _data.name + " does not exist.");
+            }
         }
     });
 
@@ -146,8 +150,13 @@ map.on('connection', function(socket){
             var _data = JSON.parse(data);
 
             console.log(_data.name + " moving into " + _data.room);
-            var player = __game.getPlayerByName(_data.name);
-            player.room = _data.room;
+
+            try {
+                var player = __game.getPlayerByName(_data.name);
+                player.room = _data.room;
+            } catch (ex) {
+                console.log("Player " + _data.name + " does not exist.");
+            }
         }
     });
 
@@ -156,8 +165,13 @@ map.on('connection', function(socket){
             var _data = JSON.parse(data);
 
             console.log(_data.name + " acknowledged message");
-            var player = __game.getPlayerByName(_data.name);
-            player.message = "";
+
+            try {
+                var player = __game.getPlayerByName(_data.name);
+                player.message = "";
+            } catch (ex) {
+                console.log("Player " + _data.name + " does not exist.");
+            }
         }
     });
 
@@ -166,8 +180,12 @@ map.on('connection', function(socket){
             var _data = JSON.parse(data);
 
             console.log(_data.name + " sabotaging " + _data.room);
-            var player = __game.getPlayerByName(_data.name);
-            player.isSabotaging = false;
+            try {
+                var player = __game.getPlayerByName(_data.name);
+                player.isSabotaging = false;
+            } catch (ex) {
+                console.log("Player " + _data.name + " does not exist.");
+            }
         }
     });
 
@@ -187,9 +205,13 @@ map.on('connection', function(socket){
     socket.on("switch_faction", function(data) {
         if (__game !== null) {
             var _data = JSON.parse(data);
-            var player = __game.getPlayerByName(_data.name);
-            if (player) {
+
+            console.log(_data.name + " switching factions");
+            try {
+                var player = __game.getPlayerByName(_data.name);
                 __game.switchPlayerFaction(player);
+            } catch (ex) {
+                console.log("Player " + _data.name + " does not exist.");
             }
         }
 
