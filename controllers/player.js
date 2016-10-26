@@ -29,13 +29,15 @@ playerSocket.on('connection', function(socket) {
 
     function sendError(code) {
         if (code == 0) {
-            socket.emit("spacechat_error", {"errorCode" : 0, "errorMessage" : "Game hasn't started."});
+            socket.emit("spacechat_error", {"errorCode" : code, "errorMessage" : "Game hasn't started."});
         } else if (code == 1) {
-            socket.emit("spacechat_error", {"errorCode" : 1, "errorMessage" : "This name is taken by someone else."});
+            socket.emit("spacechat_error", {"errorCode" : code, "errorMessage" : "This name is taken by someone else."});
         } else if (code == 2) {
-            socket.emit("spacechat_error", {"errorCode" : 2, "errorMessage" : "Player name not in game."});
+            socket.emit("spacechat_error", {"errorCode" : code, "errorMessage" : "Player name not in game."});
         } else if (code == 3) {
-            socket.emit("spacechat_error", {"errorCode" : 3, "errorMessage" : "Player not registered"});
+            socket.emit("spacechat_error", {"errorCode" : code, "errorMessage" : "Player not registered"});
+        } else if (code == 4) {
+            socket.emit("spacechat_error", {"errorCode" : code, "errorMessage" : "Max player limit reached."});
         }
     }
 
@@ -57,8 +59,13 @@ playerSocket.on('connection', function(socket) {
 
             if (!__game.PlayerExists(username)) {
                 player = new Player(null, username);
-                __game.AddPlayer(player);
-                callback(player.key);
+                if (__game.AddPlayer(player)) {
+                    callback(player.key);
+                } else {
+                    sendError(4);
+                    callback(false);
+                }
+                
             } else {
                 console.log("player " + username + " already exists");
                 callback(false);
@@ -95,19 +102,13 @@ playerSocket.on('connection', function(socket) {
     });
 
     // Expects an object with x and y, both floats between (-1, 1)
-    socket.on('move_player', function(playerInput, callback) {
+    socket.on('move_player', function(playerInput) {
         if (__game == null) {
             sendError(0);
 
         } else {
             if (player != null && player.id == socket.id) {
-                if (__game.PlayerExists(player.name)) {
-                    player.currentInput = playerInput;
-
-                    callback(player);
-                } else {
-                    sendError(2);
-                }
+                player.currentInput = playerInput;
             }
         }
     });
