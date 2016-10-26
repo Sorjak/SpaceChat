@@ -116,7 +116,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
                     });
 
                 }, function (failure) {
-                    $scope.showAlert("Player name is already taken");
+                    $scope.showAlert("Could not register player: " + $scope.player_name);
                 }
             );
         }

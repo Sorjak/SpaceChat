@@ -102,19 +102,13 @@ playerSocket.on('connection', function(socket) {
     });
 
     // Expects an object with x and y, both floats between (-1, 1)
-    socket.on('move_player', function(playerInput, callback) {
+    socket.on('move_player', function(playerInput) {
         if (__game == null) {
             sendError(0);
 
         } else {
             if (player != null && player.id == socket.id) {
-                if (__game.PlayerExists(player.name)) {
-                    player.currentInput = playerInput;
-
-                    callback(player);
-                } else {
-                    sendError(2);
-                }
+                player.currentInput = playerInput;
             }
         }
     });
