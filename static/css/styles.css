@@ -60,6 +60,7 @@ body a {
   background-image: none;
   background-color: rgba(0, 0, 0, .4);
   color: #FFF;
+  font-size: 20px;
 }
 
 .spacechat-input-container {
@@ -124,6 +125,7 @@ body a {
 
 .navbar-actions a {
     margin-left: 10px;
+    font-size: 16px;
 }
 
 .navbar-actions a i{
@@ -184,6 +186,10 @@ body a {
 
 
 /* PLAYER PAGE STYLES */
+
+#player-controls {
+  text-align: center;
+}
 
 #player-view #tools {
     margin-bottom: 10px;

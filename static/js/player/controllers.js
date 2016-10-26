@@ -233,8 +233,10 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     , function($scope, $rootScope, ControlArea) {
 
     $scope.control_element = $("#player-controls");
-    $scope.GAME_WIDTH = Math.min($scope.control_element.width(), 768);
+    $scope.GAME_WIDTH = Math.min($scope.control_element.width(), 480);
     $scope.GAME_HEIGHT = $scope.GAME_WIDTH * .9;
+
+    console.log($scope.GAME_WIDTH);
 
     $scope.background = null
 
@@ -263,16 +265,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     // $scope.debugText = new PIXI.Text("", {font:"12px Arial", fill:"black"});
     // $scope.debugText.position = new PIXI.Point(10, $scope.STAGE.height - 30);
     // $scope.STAGE.addChild($scope.debugText);
-
-    $scope.getControlAreaWidth = function() {
-        return $scope.control_element.width();
-    }
-
-    $scope.$watch($scope.getControlAreaWidth, function(oldVal, newVal) {
-        $scope.RENDERER.view.style.width = newVal + "px";
-        $scope.RENDERER.view.style.height = (newVal * .9) + "px";
-    }, true);
-
+    
     $scope.mainLoop = function() {
         $rootScope.animFrame = requestAnimationFrame($scope.mainLoop);
 
