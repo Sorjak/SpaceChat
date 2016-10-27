@@ -236,8 +236,6 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.GAME_WIDTH = Math.min($scope.control_element.width(), 480);
     $scope.GAME_HEIGHT = $scope.GAME_WIDTH * .9;
 
-    console.log($scope.GAME_WIDTH);
-
     $scope.background = null
 
     $scope.control_area = null;
@@ -265,6 +263,24 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     // $scope.debugText = new PIXI.Text("", {font:"12px Arial", fill:"black"});
     // $scope.debugText.position = new PIXI.Point(10, $scope.STAGE.height - 30);
     // $scope.STAGE.addChild($scope.debugText);
+
+    $scope.getDimensions = function() {
+        var width = $('body').width();
+        var height = $('body').height();
+        return {'width' : width, 'height' : height};
+    }
+
+    $scope.$watch($scope.getDimensions, function(oldVal, newVal) {
+        var dims = $scope.getDimensions();
+
+        if (dims.width > dims.height) {
+            $scope.RENDERER.view.style.width = $scope.control_element.width() + "px";
+            $scope.RENDERER.view.style.height = $scope.control_element.height() + "px";
+        } else {
+            $scope.RENDERER.view.style.width = $scope.GAME_WIDTH + "px";
+            $scope.RENDERER.view.style.height = $scope.GAME_HEIGHT + "px";
+        }
+    }, true);
     
     $scope.mainLoop = function() {
         $rootScope.animFrame = requestAnimationFrame($scope.mainLoop);

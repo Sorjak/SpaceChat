@@ -84,6 +84,7 @@ body a {
 }
 
 
+
 /* HEADER STYLES */
 
 .navbar {
@@ -191,10 +192,6 @@ body a {
   text-align: center;
 }
 
-#player-view #tools {
-    margin-bottom: 10px;
-}
-
 #player-view #tools .sabotage-button {
   width: 100%;
   padding: 6px 12px;
@@ -208,6 +205,41 @@ body a {
   padding: 10px 12px;
 }
 
+@media only screen and (max-width: 479px) {
+    #player-controls {
+        width: 100%;
+    }
+
+    #tools {
+        width: 100%;
+    }
+
+}
+
+@media only screen and (min-width: 480px) and (max-width: 480px) {
+    #player-view .spacechat-submit {
+        font-size: 12px;
+    }
+}
+
+@media only screen and (min-width: 480px) {
+    #player-controls {
+        display: block;
+        float: left;
+        width: 55%;
+        margin-right: 20px;
+    }
+
+    #tools {
+        display: block;
+        float: left;
+        margin-top: 20px;
+    }
+}
+
+#tools .row {
+    margin-bottom: 15px;
+}
 
 /* CREW LIST PAGE STYLES */
 

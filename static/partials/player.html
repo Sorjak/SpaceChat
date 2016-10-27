@@ -2,33 +2,27 @@
 <div id="player-view" ng-controller="PlayerCtrl" >
     <div id="header" ng-include src="'/static/partials/header.html'"></div>
     <div class="container">
-        <div id="player-controls" ng-controller="ControlAreaCtrl" class="row"></div>
+        <div id="player-controls" ng-controller="ControlAreaCtrl" ></div>
 
-        <div ng-show="player.isTraitor" id="tools" class="row">
-            <div class="col-xs-12" ng-hide="player.room == ''">
-                <button ng-click="sabotage();" class="sabotage-button spacechat-submit" >
-                    Sabotage {{player.room}}
-                </button>
+        <div id="tools">
+            <div id="sabotage" class="row" ng-show="player.isTraitor">
+                <div class="col-xs-12">
+                    <button ng-click="sabotage();" ng-hide="player.room == ''" class="sabotage-button spacechat-submit" >
+                        Sabotage {{player.room}}
+                    </button>
+                </div>
             </div>
-            <div class="col-xs-12" ng-show="player.room == ''" style="height:34px"></div>
+            <!-- <div class="col-xs-12" ng-show="player.room == ''" style="height:34px"></div> -->
+            <div id="messages" class="row">
+                <div class="col-xs-12">
+                    <button ng-click="showPrompt()" class="spacechat-submit" style="width: 100%; padding: 6px 12px;">
+                        Message Everyone
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div id="messages" class="row">
-            <div class="col-xs-12">
-<!--                 <form ng-submit="sendChat();">
-                    <div class="spacechat-input-container">
-                        <input type="text" ng-model="chat" class="chat-input spacechat-input" placeholder="Message Everyone"
-                            ng-change="changeClass();" ng-focus="shrinkControls();">
-                    </div>
-                    <input type="submit" class="chat-submit spacechat-submit col-xs-2" value="Send"
-                            ng-show="chat != ''" />
-                </form> -->
-                <button ng-click="showPrompt()" class="spacechat-submit" style="width: 100%; padding: 6px 12px;">
-                    Message Everyone
-                </button>
-            </div>
 
-        </div>
     </div>
 
 </div>
