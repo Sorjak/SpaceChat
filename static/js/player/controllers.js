@@ -89,6 +89,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
         $cookies.remove('player_name');
         $cookies.remove('player_key');
+	$rootScope.player = null;
         $state.go('index');
 
     });

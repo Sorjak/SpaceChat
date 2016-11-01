@@ -238,7 +238,7 @@ function heartbeat() {
             // }
         });
 
-        console.log("Current game has: " + __game.players.length + " players");
+        //console.log("Current game has: " + __game.players.length + " players");
     } else {
         console.log("Game hasn't started.");
     }
