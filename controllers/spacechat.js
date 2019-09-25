@@ -110,11 +110,13 @@ map.on('connection', function(socket){
     if (__game == null) {
         console.log("starting new game");
         __game = new SpaceChat(64);
+        __io.of('/player').emit('game_started');
     }
 
     socket.on('disconnect', function() {
         console.log("game client disconnected");
         __game = null;
+        __io.of('/player').emit('game_ended');
     });
 
     console.log("Current game has: " + __game.players.length + " players");

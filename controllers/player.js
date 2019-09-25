@@ -49,6 +49,10 @@ playerSocket.on('connection', function(socket) {
         }
     });
 
+    socket.on('is_game_started', function(args, callback) {
+        callback(__game !== null);
+    });
+
     socket.on('register_new_player', function(username, callback) {
         if (__game == null) {
             console.log("error, game hasn't started");
@@ -113,7 +117,7 @@ playerSocket.on('connection', function(socket) {
         }
     });
 
-    socket.on('sabotage_room', function() {
+    socket.on('sabotage_room', function(args, callback) {
         if (__game == null) {
             sendError(0);
 
@@ -122,6 +126,7 @@ playerSocket.on('connection', function(socket) {
                 if (player.room != "") {
                     console.log(player.name + " is sabotaging room: " + player.room);
                     player.isSabotaging = true;
+                    callback(player.room);
                 }
 
             }

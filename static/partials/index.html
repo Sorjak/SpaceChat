@@ -1,6 +1,10 @@
 <div id="index-view" ng-controller="IndexCtrl" class="container">
     <div class="index-title row">
         <h2 class="col-sm-12">SpaceChat</h2>
+        <span class="col-sm-6 connection-status" ng-if="connected">Connected</span>
+        <span class="col-sm-6 connection-status red" ng-if="!connected">Disconnected</span>
+        <span class="col-sm-6 connection-status" ng-if="game_started">Game Started</span>
+        <span class="col-sm-6 connection-status red" ng-if="!game_started">Game Not Started</span>
     </div>
 
     <div class="row">
@@ -23,11 +27,5 @@
         </div>
         <div class="orientation-image col-xs-12">
         </div>
-
-
-
     </div>
-
-
-
 </div>

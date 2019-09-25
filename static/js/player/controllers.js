@@ -6,11 +6,14 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $rootScope.player = null;
     $rootScope.player_list = null;
     $rootScope.connected = false;
-    $rootScope.alert = undefined;
+    $rootScope.game_started = false;
+    $rootScope.alert = null;
+    $rootScope.alertTraitor = null;
 
     $scope.isTraitor = false;
 
     $scope.logout = function() {
+        console.log("Logging out");
         // $cookies.remove("player_name");
         $rootScope.socket.disconnect();
         $interval.cancel($rootScope.heartbeat);
@@ -40,46 +43,64 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
             $mdDialog.show( $rootScope.alert )
             .finally(function() {
-                $rootScope.alert = undefined;
+                $rootScope.alert = null;
             });
         }
     }
 
     $scope.showTraitorMessage = function() {
-        if (!$rootScope.alert) {
-            $rootScope.alert = $mdDialog.alert({
+        if (!$rootScope.alertTraitor) {
+            $rootScope.alertTraitor = $mdDialog.alert({
                 title: 'NOTICE',
                 textContent: "You are now a SABOTEUR!",
                 ok: 'Ok'
             });
 
-            $mdDialog.show( $rootScope.alert )
+            $mdDialog.show( $rootScope.alertTraitor )
             .finally(function() {
-                $rootScope.alert = undefined;
+                $rootScope.alertTraitor = null;
             });
         }
     }
 
-    $scope.connect = function() {
+    $scope.join_game = function() {
         var playerName = $cookies.get('player_name');
         var playerKey  = $cookies.get('player_key');
-
-        return $rootScope.socket.connect(playerName, playerKey).then(
-            function(result) {
-                $rootScope.player = result;
-                $rootScope.connected = true;
-                $rootScope.heartbeat = $interval($scope.sendHeartbeat, 1000);
-            }, function(failure) {
-                $rootScope.connected = false;
-                console.log("Failed to connect");
-            }
-        );
+        if (playerName !== undefined) {
+            return $rootScope.socket.connect(playerName, playerKey).then(
+                function(result) {
+                    $rootScope.player = result;
+                    $rootScope.heartbeat = $interval($scope.sendHeartbeat, 1000);
+                }, function(failure) {
+                    console.log("Failed to connect");
+                }
+            );
+        }
     }
 
+    $rootScope.socket.on('connect', function() {
+        $rootScope.connected = true;
+    });
+
+    $rootScope.socket.on('game_started', function() {
+        console.log("received game started");
+        $rootScope.game_started = true;
+    });
+
+    $rootScope.socket.on('game_ended', function() {
+        console.log("received game ended");
+
+        $cookies.remove('player_name');
+        $cookies.remove('player_key');
+        $rootScope.game_started = false;
+        $rootScope.player = null;
+        $state.go('index');
+    });
+
     $rootScope.socket.on('update_player', function (data) {
+        $rootScope.game_started = false;
         $rootScope.player = data.player;
         $rootScope.player_list = data.players;
-        $rootScope.connected = true;
 
         $scope.isTraitor = $rootScope.player.isTraitor;
     });
@@ -89,7 +110,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
         $cookies.remove('player_name');
         $cookies.remove('player_key');
-	$rootScope.player = null;
+        $rootScope.player = null;
         $state.go('index');
 
     });
@@ -98,17 +119,37 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $rootScope.connected = false;
     });
 
-    $scope.$watch(function() {return $rootScope.connected}, function(oldVal, newVal) {
-        if (!$rootScope.connected) {
-            if (oldVal !== newVal) {
-                $scope.showAlert("Disconnected from server.");
-            }
+    $rootScope.socket.on('disconnect', function() {
+        $scope.showAlert("Disconnected from server.");
+
+        $cookies.remove('player_name');
+        $cookies.remove('player_key');
+        $rootScope.game_started = false;
+        $rootScope.connected = false;
+        $rootScope.player = null;
+        $state.go('index');
+    });
+
+    // $scope.$watch(function() {return $rootScope.connected}, function(oldVal, newVal) {
+    //     if (!$rootScope.connected) {
+    //         if (oldVal !== newVal) {
+    //             $scope.logout();
+    //             $scope.showAlert("Disconnected from server.");
+    //         }
+    //     }
+    // });
+
+    $scope.$watch('isTraitor', function(oldVal, newVal) {
+        if ($scope.isTraitor && (oldVal !== newVal) && !$rootScope.alertTraitor) {
+            $scope.showTraitorMessage();
         }
     });
 
-    $scope.$watch('isTraitor', function(oldVal, newVal) {
-        if ($scope.isTraitor && (oldVal !== newVal)) {
-            $scope.showTraitorMessage();
+    $rootScope.socket.emit('is_game_started', null, function(is_started) {
+        console.log('was game started? ' + is_started);
+        $rootScope.game_started = is_started;
+        if (is_started){
+            $scope.join_game();
         }
     });
 
@@ -127,7 +168,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
             $rootScope.socket.register($scope.player_name).then(
                 function(server_key) {
                     $cookies.put('player_key', server_key);
-                    $scope.connect().then(function() {
+                    $scope.join_game().then(function() {
                         $state.go("crew_list");
                     });
 
@@ -174,7 +215,10 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     });
 
     $scope.sabotage = function() {
-        $rootScope.socket.emit('sabotage_room');
+        $rootScope.socket.emit('sabotage_room', null, function(data) {
+            console.log(data);
+            $rootScope.showAlert("Sabotaging " + data + " !");
+        });
     }
 
     $scope.sendChat = function() {
@@ -221,12 +265,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $mdDialog.show(confirm).then(function(result) {
             $rootScope.socket.emit('player_message', result);
         }, function() {});
-    };
-
-    if (!$rootScope.connected) {
-        $scope.connect();
-    }
-    
+    };   
 
 }])
 
@@ -323,10 +362,6 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $rootScope.socket.emit('get_all_players', null, function(data) {
             $scope.players = data;
         });
-    }
-
-    if (!$rootScope.connected) {
-        $scope.connect();
     }
 
 }])

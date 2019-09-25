@@ -4,6 +4,12 @@
             <div class="logo-text">
                 <a href="#">{{player.name}}</a>
             </div>
+            <div class="connection-status" ng-if="connected">
+                Connected
+            </div>
+            <div class="connection-status red" ng-if="!connected">
+                Disconnected
+            </div>
         </div>
         
         <div class="navbar-actions col-xs-6">

@@ -23,6 +23,7 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
         var playerInfo = {'username' : username, 'key' : key}
         return $q(function(resolve, reject) {
             self.emit('player_connected', playerInfo, function(result) {
+                console.log("connected to server");
                 if (result) {
                     resolve(result);
                 } else {
@@ -49,7 +50,7 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
             });
         })
     },
-    PlayerSocket.prototype.disconnect =function() {
+    PlayerSocket.prototype.disconnect = function() {
         this.socket.disconnect();
     }
     PlayerSocket.prototype.isConnected = function() {
