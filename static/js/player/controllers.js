@@ -130,15 +130,6 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $state.go('index');
     });
 
-    // $scope.$watch(function() {return $rootScope.connected}, function(oldVal, newVal) {
-    //     if (!$rootScope.connected) {
-    //         if (oldVal !== newVal) {
-    //             $scope.logout();
-    //             $scope.showAlert("Disconnected from server.");
-    //         }
-    //     }
-    // });
-
     $scope.$watch('isTraitor', function(oldVal, newVal) {
         if ($scope.isTraitor && (oldVal !== newVal) && !$rootScope.alertTraitor) {
             $scope.showTraitorMessage();
@@ -217,7 +208,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.sabotage = function() {
         $rootScope.socket.emit('sabotage_room', null, function(data) {
             console.log(data);
-            $rootScope.showAlert("Sabotaging " + data + " !");
+            $scope.showAlert("Sabotaging " + data + " !");
         });
     }
 
