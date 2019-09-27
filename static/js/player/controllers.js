@@ -106,6 +106,8 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $rootScope.socket.on('spacechat_error', function(error) {
         $scope.showAlert(error.errorMessage);
 
+        $cookies.remove('player_name');
+        $cookies.remove('player_key');
         $rootScope.player = null;
         $state.go('index');
 
@@ -118,6 +120,8 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $rootScope.socket.on('disconnect', function() {
         $scope.showAlert("Disconnected from server.");
 
+        $cookies.remove('player_name');
+        $cookies.remove('player_key');
         $rootScope.game_started = false;
         $rootScope.connected = false;
         $rootScope.player = null;
@@ -358,6 +362,8 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
             $scope.players = data;
         });
     }
+
+    $scope.showPlayers();
 
 }])
 
