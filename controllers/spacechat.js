@@ -162,6 +162,22 @@ map.on('connection', function(socket){
         }
     });
 
+    socket.on("update_player_repair", function(data){
+        if (__game !== null) {
+            var _data = JSON.parse(data);
+
+            console.log(_data.name + " moving into " + _data.room);
+
+            try {
+                var player = __game.getPlayerByName(_data.name);
+                player.isRepairing = _data.isRepairing;
+            } catch (ex) {
+                console.log("Player " + _data.name + " does not exist.");
+            }
+        }
+
+    });
+
     socket.on("ack_message", function(data) {
         if (__game !== null) {
             var _data = JSON.parse(data);
@@ -204,6 +220,7 @@ map.on('connection', function(socket){
             __game.scramblePlayerFactions();
         }
     });
+    
     socket.on("switch_faction", function(data) {
         if (__game !== null) {
             var _data = JSON.parse(data);

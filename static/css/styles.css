@@ -93,6 +93,10 @@ body a {
     border: none;
 }
 
+#header .navbar-header {
+  float: none;
+}
+
 .navbar-logo {
     height: 50px;
     padding-top: 5px;
@@ -102,7 +106,7 @@ body a {
     display: block;
     /*float: left;*/
     width: 100%;
-    height: 28px;
+    height: 25px;
 }
 
 .navbar-logo .logo-text a{
@@ -129,7 +133,6 @@ body a {
 
 .navbar-actions {
     height: 50px;
-    text-align: right;
 }
 
 .navbar-actions a {

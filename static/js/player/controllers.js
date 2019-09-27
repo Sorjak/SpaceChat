@@ -12,6 +12,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $rootScope.alertTraitor = null;
 
     $scope.isTraitor = false;
+    $scope.isRepairing = false;
 
     $scope.logout = function() {
         console.log("Logging out");
@@ -99,6 +100,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $rootScope.player_list = data.players;
 
         $scope.isTraitor = $rootScope.player.isTraitor;
+        $scope.isRepairing = $rootScope.player.isRepairing;
     });
 
     $rootScope.socket.on('spacechat_error', function(error) {
@@ -125,6 +127,13 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.$watch('isTraitor', function(oldVal, newVal) {
         if ($scope.isTraitor && (oldVal !== newVal) && !$rootScope.alertTraitor) {
             $scope.showTraitorMessage();
+        }
+    });
+
+    $scope.$watch('isRepairing', function(oldVal, newVal) {
+        if ($scope.isRepairing && (oldVal !== newVal)) {
+            var room = $rootScope.player.room;
+            $scope.showAlert('Repairing the ' + room);
         }
     });
 

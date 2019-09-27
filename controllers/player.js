@@ -15,6 +15,7 @@ function Player(id, name) {
 
     this.isTraitor = false;
     this.isSabotaging = false;
+    this.isRepairing = false;
     this.team = "red";
 
 }
