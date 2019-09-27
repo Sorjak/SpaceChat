@@ -30,7 +30,6 @@ app.run(function ($rootScope, $state, $cookies, PlayerSocket) {
                 cancelAnimFrame($rootScope.animFrame);
             }
         }
-        
 
         if (!playerName || !playerKey) {
             if (toState.name != "index") {
@@ -38,7 +37,9 @@ app.run(function ($rootScope, $state, $cookies, PlayerSocket) {
                 $state.go("index");
             }
         } else {
-            if (toState.name == "index") {
+            if ($rootScope.game_started && 
+                $rootScope.connected &&
+                toState.name == "index") {
                 event.preventDefault();
                 $state.go("crew_list");
             }

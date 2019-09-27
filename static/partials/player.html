@@ -1,6 +1,6 @@
-
+<div id="header" ng-include src="'/static/partials/header.html'"></div>
 <div id="player-view" ng-controller="PlayerCtrl" >
-    <div id="header" ng-include src="'/static/partials/header.html'"></div>
+    <!-- <div id="header" ng-include src="'/static/partials/header.html'"></div> -->
     <div class="container">
         <div id="player-controls" ng-controller="ControlAreaCtrl" ></div>
 
@@ -18,6 +18,36 @@
                     <button ng-click="showPrompt()" class="spacechat-submit" style="width: 100%; padding: 6px 12px;">
                         Message Everyone
                     </button>
+                </div>
+            </div>
+            <div id="emoji-buttons" class="row">
+                <div class="emoji-row col-xs-12">
+                    <button ng-repeat="emoji in emojis" 
+                        ng-click="sendEmoji(emoji.shortcode)" 
+                        class="spacechat-emoji col-xs-3">
+                        {{emoji.hex}}
+                    </button>
+<!--                     <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
+                        &#128519;
+                    </button>
+                    <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
+                        &#128070;
+                    </button>
+                    <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
+                        &#128071;
+                    </button>                                    
+                    <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
+                        &#128561;
+                    </button>
+                    <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
+                        &#128520;
+                    </button>
+                    <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
+                        &#128072;
+                    </button>
+                    <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
+                        &#128073;
+                    </button>      -->                                   
                 </div>
             </div>
         </div>

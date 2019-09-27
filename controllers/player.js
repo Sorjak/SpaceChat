@@ -26,6 +26,7 @@ module.exports = Player;
 var playerSocket = __io.of('/player');
 playerSocket.on('connection', function(socket) {
     var player = null;
+    var updateHandler = null;
 
     function sendError(code) {
         if (code == 0) {
@@ -51,6 +52,11 @@ playerSocket.on('connection', function(socket) {
 
     socket.on('is_game_started', function(args, callback) {
         callback(__game !== null);
+    });
+
+    socket.on('game_ended', function() {
+        console.log('player socket got game ended');
+        clearInterval(updateHandler);
     });
 
     socket.on('register_new_player', function(username, callback) {
@@ -91,7 +97,11 @@ playerSocket.on('connection', function(socket) {
                     player.id = socket.id;
                     player.last_updated = new Date();
 
-                    setInterval(updatePlayer, 1000, socket, player);
+                    if (updateHandler) {
+                       clearInterval(updateHandler); 
+                    }
+
+                    updateHandler = setInterval(updatePlayer, 1000, socket, player);
 
                     callback(player);
                 }

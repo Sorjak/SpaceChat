@@ -1,10 +1,11 @@
-app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cookies', 'PlayerSocket', '$mdDialog',
-    function($scope, $rootScope, $interval, $state, $cookies, PlayerSocket, $mdDialog) {
+app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cookies', 'PlayerSocket', '$mdDialog', '$mdToast',
+    function($scope, $rootScope, $interval, $state, $cookies, PlayerSocket, $mdDialog, $mdToast) {
     console.log("loaded app");
 
     $rootScope.socket = new PlayerSocket();
     $rootScope.player = null;
     $rootScope.player_list = null;
+    
     $rootScope.connected = false;
     $rootScope.game_started = false;
     $rootScope.alert = null;
@@ -14,7 +15,6 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
     $scope.logout = function() {
         console.log("Logging out");
-        // $cookies.remove("player_name");
         $rootScope.socket.disconnect();
         $interval.cancel($rootScope.heartbeat);
         
@@ -35,13 +35,14 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
     $scope.showAlert = function(text) {
         if (!$rootScope.alert) {
-            $rootScope.alert = $mdDialog.alert({
-                title: 'Alert',
+            $rootScope.alert = $mdToast.simple({
                 textContent: text,
-                ok: 'Close'
+                position: 'bottom right',
+                hideDelay: 3000,
+                capsule: false
             });
 
-            $mdDialog.show( $rootScope.alert )
+            $mdToast.show( $rootScope.alert )
             .finally(function() {
                 $rootScope.alert = null;
             });
@@ -88,17 +89,12 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     });
 
     $rootScope.socket.on('game_ended', function() {
-        console.log("received game ended");
-
-        $cookies.remove('player_name');
-        $cookies.remove('player_key');
         $rootScope.game_started = false;
         $rootScope.player = null;
         $state.go('index');
     });
 
     $rootScope.socket.on('update_player', function (data) {
-        $rootScope.game_started = false;
         $rootScope.player = data.player;
         $rootScope.player_list = data.players;
 
@@ -108,8 +104,6 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $rootScope.socket.on('spacechat_error', function(error) {
         $scope.showAlert(error.errorMessage);
 
-        $cookies.remove('player_name');
-        $cookies.remove('player_key');
         $rootScope.player = null;
         $state.go('index');
 
@@ -122,8 +116,6 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $rootScope.socket.on('disconnect', function() {
         $scope.showAlert("Disconnected from server.");
 
-        $cookies.remove('player_name');
-        $cookies.remove('player_key');
         $rootScope.game_started = false;
         $rootScope.connected = false;
         $rootScope.player = null;
@@ -137,7 +129,6 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     });
 
     $rootScope.socket.emit('is_game_started', null, function(is_started) {
-        console.log('was game started? ' + is_started);
         $rootScope.game_started = is_started;
         if (is_started){
             $scope.join_game();
@@ -149,14 +140,14 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
 .controller('IndexCtrl', ['$scope', '$rootScope', '$state', '$cookies', 
     function($scope, $rootScope, $state, $cookies) {
-    $scope.player_name = "";
+    $scope.input_name = '';//!!$rootScope.player ? $rootScope.player.name : '';
 
-    $scope.submitName = function() {
-        if ($scope.player_name) {
-            $cookies.put('player_name', $scope.player_name);
+    $scope.submitName = function(player_name) {
+        if (player_name) {
+            $cookies.put('player_name', player_name);
             //$scope.goFullScreen();
 
-            $rootScope.socket.register($scope.player_name).then(
+            $rootScope.socket.register(player_name).then(
                 function(server_key) {
                     $cookies.put('player_key', server_key);
                     $scope.join_game().then(function() {
@@ -164,7 +155,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
                     });
 
                 }, function (failure) {
-                    $scope.showAlert("Could not register player: " + $scope.player_name);
+                    $scope.showAlert("Could not register player: " + player_name);
                 }
             );
         }
@@ -184,7 +175,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.changeClass = function() {
         var result = $(".spacechat-input-container");
         var elem = angular.element(result);
-        if ($scope.player_name == '') {
+        if ($scope.input_name == '') {
             elem.removeClass("col-xs-10 padded");
         } else {
             elem.addClass("col-xs-10 padded");
@@ -197,18 +188,23 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     , function($rootScope, $scope, $state, $interval, $stateParams, $mdDialog) {
 
     $scope.page = $state.current.name;
-    $scope.player = $rootScope.player;
     $scope.chat = "";
     $scope.chatMode = false;
 
-    $scope.$watch(function() {return $rootScope.player}, function() {
-        $scope.player = $rootScope.player;
-    });
+    $scope.emojis = [
+        {hex: String.fromCodePoint(0x1F601), html: "&#128513;", shortcode: ":smile:"},
+        {hex: String.fromCodePoint(0x1F607), html: "&#128519;", shortcode: ":smile:"},
+        {hex: String.fromCodePoint(0x1F446), html: "&#128070;", shortcode: ":hand_point_up:"},
+        {hex: String.fromCodePoint(0x1F447), html: "&#128071;", shortcode: ":hand_point_down:"},
+        {hex: String.fromCodePoint(0x1F631), html: "&#128561;", shortcode: ":smile:"},
+        {hex: String.fromCodePoint(0x1F608), html: "&#128520;", shortcode: ":smile:"},
+        {hex: String.fromCodePoint(0x1F448), html: "&#128072;", shortcode: ":smile:"},
+        {hex: String.fromCodePoint(0x1F449), html: "&#128073;", shortcode: ":smile:"}
+    ];
 
     $scope.sabotage = function() {
         $rootScope.socket.emit('sabotage_room', null, function(data) {
-            console.log(data);
-            $scope.showAlert("Sabotaging " + data + " !");
+            $scope.showAlert("Sabotaging " + data + "!");
         });
     }
 
@@ -243,6 +239,10 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
     $scope.showControls = function() {
         $scope.chatMode = false;
+    }
+
+    $scope.sendEmoji = function(emoji_shortcode) {
+        $rootScope.socket.emit('player_message', emoji_shortcode);
     }
 
     $scope.showPrompt = function(ev) {
@@ -337,12 +337,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     , function($rootScope, $scope, $state, $interval, $cookies, PlayerSocket) {
 
     $scope.players = [];
-    $scope.player = $rootScope.player;
     $scope.page = $state.current.name;
-
-    $scope.$watch(function() {return $rootScope.player}, function() {
-        $scope.player = $rootScope.player;
-    });
 
     $scope.$watch(function() {return $rootScope.player_list}, function() {
         $scope.players = $rootScope.player_list;

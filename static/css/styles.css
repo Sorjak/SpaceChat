@@ -95,18 +95,20 @@ body a {
 
 .navbar-logo {
     height: 50px;
+    padding-top: 5px;
 }
 
 .navbar-logo .logo-text {
     display: block;
-    float: left;
+    /*float: left;*/
     width: 100%;
-    height: 35px;
+    height: 28px;
 }
 
 .navbar-logo .logo-text a{
     font-size: 1.4em;
-    line-height: 50px;
+    font-weight: bold;
+    /*line-height: 50px;*/
     color: #000;
 }
 
@@ -117,7 +119,7 @@ body a {
 }
 
 .connection-status {
-  color: #33A532;
+  color: #FFF;
 }
 
 .connection-status.red {
@@ -246,6 +248,24 @@ body a {
 #tools .row {
     margin-bottom: 15px;
 }
+
+#emoji-buttons .spacechat-emoji {
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid transparent;
+  background-image: none;
+  background-color: rgba(0, 0, 0, 0);
+  font-size: 40px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  margin-bottom: 15px;
+}
+
+#emoji-buttons .spacechat-emoji:after {
+  opacity: 0;
+  transition: all 0.8s
+}
+
 
 /* CREW LIST PAGE STYLES */
 
