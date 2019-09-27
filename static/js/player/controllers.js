@@ -192,14 +192,14 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.chatMode = false;
 
     $scope.emojis = [
-        {hex: String.fromCodePoint(0x1F603), html: "&#128513;", shortcode: ":smile:"},
-        {hex: String.fromCodePoint(0x1F61E), html: "&#128519;", shortcode: ":smile:"},
-        {hex: String.fromCodePoint(0x1F446), html: "&#128070;", shortcode: ":hand_point_up:"},
-        {hex: String.fromCodePoint(0x1F447), html: "&#128071;", shortcode: ":hand_point_down:"},
-        {hex: String.fromCodePoint(0x1F632), html: "&#128561;", shortcode: ":smile:"},
-        {hex: String.fromCodePoint(0x1F62D), html: "&#128520;", shortcode: ":smile:"},
-        {hex: String.fromCodePoint(0x1F448), html: "&#128072;", shortcode: ":smile:"},
-        {hex: String.fromCodePoint(0x1F449), html: "&#128073;", shortcode: ":smile:"}
+        {hex: String.fromCodePoint(0x1F603), shortcode: ":smiley:"},
+        {hex: String.fromCodePoint(0x1F61E), shortcode: ":disappointed:"},
+        {hex: String.fromCodePoint(0x1F446), shortcode: ":point_up_2:"},
+        {hex: String.fromCodePoint(0x1F447), shortcode: ":point_down:"},
+        {hex: String.fromCodePoint(0x1F632), shortcode: ":astonished:"},
+        {hex: String.fromCodePoint(0x1F62D), shortcode: ":sob:"},
+        {hex: String.fromCodePoint(0x1F448), shortcode: ":point_left:"},
+        {hex: String.fromCodePoint(0x1F449), shortcode: ":point_right:"}
     ];
 
     $scope.sabotage = function() {
