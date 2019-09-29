@@ -205,14 +205,14 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.chatMode = false;
 
     $scope.emojis = [
-        {hex: String.fromCodePoint(0x1F603), shortcode: ":smiley:"},
-        {hex: String.fromCodePoint(0x1F61E), shortcode: ":disappointed:"},
-        {hex: String.fromCodePoint(0x1F446), shortcode: ":point_up_2:"},
-        {hex: String.fromCodePoint(0x1F447), shortcode: ":point_down:"},
-        {hex: String.fromCodePoint(0x1F632), shortcode: ":astonished:"},
-        {hex: String.fromCodePoint(0x1F62D), shortcode: ":sob:"},
-        {hex: String.fromCodePoint(0x1F448), shortcode: ":point_left:"},
-        {hex: String.fromCodePoint(0x1F449), shortcode: ":point_right:"}
+        {hex: String.fromCodePoint(0x1F603), shortcode: ":smiling-face:"},
+        {hex: String.fromCodePoint(0x1F61E), shortcode: ":frowning-face:"},
+        {hex: String.fromCodePoint(0x1F446), shortcode: ":up-pointing:"},
+        {hex: String.fromCodePoint(0x1F447), shortcode: ":down-pointing:"},
+        {hex: String.fromCodePoint(0x1F632), shortcode: ":open-mouth:"},
+        {hex: String.fromCodePoint(0x1F62D), shortcode: ":loudly-crying:"},
+        {hex: String.fromCodePoint(0x1F448), shortcode: ":left-pointing:"},
+        {hex: String.fromCodePoint(0x1F449), shortcode: ":right-pointing:"},
     ];
 
     $scope.sabotage = function() {
