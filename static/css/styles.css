@@ -161,9 +161,13 @@ body a {
 }
 
 #index-view .index-title {
-    margin-top: 150px;
+    margin-top: 30%;
     margin-bottom: 20px;
     text-align: right;
+}
+
+#index-view #toaster {
+  top: 0px;
 }
 
 #index-view .index-title h2{
