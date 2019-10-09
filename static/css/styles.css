@@ -53,6 +53,20 @@ body a {
   color: #FFF;
 }
 
+#toaster {
+  position: fixed;
+  top: 50px;
+  height: 48px;
+  left: 0;
+  width: 100%;
+  z-index: 10000;
+}
+
+.vertical-align {
+    display: flex;
+    align-items: center;
+}
+
 .spacechat-submit {
   border-radius: 6px;
   text-align: center;
@@ -99,7 +113,6 @@ body a {
 
 .navbar-logo {
     height: 50px;
-    padding-top: 5px;
 }
 
 .navbar-logo .logo-text {
@@ -116,12 +129,6 @@ body a {
     color: #000;
 }
 
-.navbar-logo .connection-status{
-  display: block;
-  float: left;
-  font-size: 10px;
-}
-
 .connection-status {
   color: #FFF;
 }
@@ -133,26 +140,20 @@ body a {
 
 .navbar-actions {
     height: 50px;
+    justify-content: flex-end;
 }
 
-.navbar-actions a {
+.navbar-actions .navbar-action {
   display: inline-block;
   margin-left: 10px;
   font-size: 16px;
 }
 
-.navbar-actions a i{
-    font-size: 32px;
-    line-height: 50px;
+.navbar-actions .navbar-action.active {
+  padding: 2px 0px;
+  border-bottom: 1px solid #FFF;
 }
 
-.navbar-actions a span {
-    line-height: 50px;
-}
-
-.navbar-header i.logout-icon {
-    transform: rotate(180deg);
-}
 /* INDEX STYLES */
 
 #index-view {
@@ -175,7 +176,7 @@ body a {
 }
 
 #index-view .index-submit {
-  padding: 10px 12px;
+  padding: 6px 6px;
 }
 
 #index-view .index-content p{
@@ -204,9 +205,8 @@ body a {
   text-align: center;
 }
 
-#player-view #tools .sabotage-button {
-  width: 100%;
-  padding: 6px 12px;
+#player-view #messages {
+  height: 70px;
 }
 
 #player-view #messages .chat-input {
@@ -216,6 +216,17 @@ body a {
 #player-view #messages .chat-submit {
   padding: 10px 12px;
 }
+
+#player-view #messages .spacechat-submit {
+  width: 100%;
+  padding: 6px 12px;
+}
+
+#player-view #messages .spacechat-submit:disabled{
+  background-color: rgba(0, 0, 0, .7);
+  color: #AAA;
+}
+
 
 @media only screen and (max-width: 479px) {
     #player-controls {

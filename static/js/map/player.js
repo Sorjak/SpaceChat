@@ -131,6 +131,11 @@ app.factory('Player', function (MovingObject, MapSocket) {
             var tosend = angular.toJson({'name' : this.name});
             MapSocket.emit("ack_message", tosend);
         }
+
+        if (updatedPlayer.isSabotaging) {
+            var tosend = angular.toJson({'room': "ENGINES", 'name' : this.name});
+            MapSocket.emit("ack_sabotage", tosend);
+        }
         
 
         this.team = updatedPlayer.team;
@@ -139,7 +144,7 @@ app.factory('Player', function (MovingObject, MapSocket) {
 
     Player.prototype.onDown = function() {
         console.log('updating player room');
-        var tosend = angular.toJson({'name' : this.name, 'room' : "shah"});
+        var tosend = angular.toJson({'name' : this.name, 'room' : "ENGINES"});
         MapSocket.emit("update_player_room", tosend);
         MapSocket.emit("switch_faction", angular.toJson({'name' : this.name}));
     }

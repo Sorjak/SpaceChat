@@ -1,5 +1,6 @@
 
 function SpaceChat(max) {
+    this.traitor_cutoff = 8;
     this.max_players = max;
     this.players = [];
     this.traitors = [];
@@ -56,9 +57,9 @@ SpaceChat.prototype.getPlayerByName = function(playerName) {
 }
 
 SpaceChat.prototype.assignPlayerFaction = function(playerObj, totalPlayers, totalTraitors) {
-    if (totalTraitors < totalPlayers / 4) {
+    if (totalTraitors < totalPlayers / this.traitor_cutoff) {
         // not enough traitors
-        var ratio = ((totalPlayers % 4) + 1) / 4;
+        var ratio = ((totalPlayers % this.traitor_cutoff) + 1) / this.traitor_cutoff;
         var ran = Math.random();
 
         if (ran < ratio) {
@@ -197,7 +198,7 @@ map.on('connection', function(socket){
         if (__game !== null) {
             var _data = JSON.parse(data);
 
-            console.log(_data.name + " sabotaging " + _data.room);
+            console.log(_data.name + " acknowledging the sabotaging of " + _data.room);
             try {
                 var player = __game.getPlayerByName(_data.name);
                 player.isSabotaging = false;

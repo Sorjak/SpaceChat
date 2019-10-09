@@ -1,11 +1,10 @@
 <div id="index-view" ng-controller="IndexCtrl" class="container">
+    <div id="toaster"></div>
     <div class="index-title row">
         <h2 class="col-sm-12">SpaceChat</h2>
-        <div class="status-strings row">
-            <div class="col-sm-12">
-                <span class="col-sm-6 pull-right connection-status" ng-if="connected">Connected</span>
-                <span class="col-sm-6 pull-right connection-status red" ng-if="!connected">Disconnected</span>
-            </div>
+        <div class="col-sm-12">
+            <span class="connection-status" ng-if="connected">Connected</span>
+            <span class="connection-status red" ng-if="!connected">Disconnected</span>
         </div>
     </div>
 
@@ -22,7 +21,7 @@
             </form>
         </div>
         <div class="index-content col-xs-12" ng-show="player">
-            <p>Continue as {{player.name}}?</p>
+            <span>Continue as {{player.name}}?</span>
             <button ng-click="submitName(player.name)" class="spacechat-submit col-xs-2">Go</button>
         </div>
     </div>

@@ -2,21 +2,18 @@
 <div id="player-view" ng-controller="PlayerCtrl" >
     <!-- <div id="header" ng-include src="'/static/partials/header.html'"></div> -->
     <div class="container">
+        <div id="toaster"></div>
         <div id="player-controls" ng-controller="ControlAreaCtrl" ></div>
-
         <div id="tools">
-            <div id="sabotage" class="row" ng-show="player.isTraitor">
-                <div class="col-xs-12">
-                    <button ng-click="sabotage();" ng-hide="player.room == ''" class="sabotage-button spacechat-submit" >
-                        Sabotage {{player.room}}
+            <div id="messages" class="row">
+                <div ng-class="{ 'col-xs-6': player.isTraitor, 'col-xs-12': !player.isTraitor }">
+                    <button ng-click="showPrompt()" class="spacechat-submit">
+                        Message Everyone
                     </button>
                 </div>
-            </div>
-            <!-- <div class="col-xs-12" ng-show="player.room == ''" style="height:34px"></div> -->
-            <div id="messages" class="row">
-                <div class="col-xs-12">
-                    <button ng-click="showPrompt()" class="spacechat-submit" style="width: 100%; padding: 6px 12px;">
-                        Message Everyone
+                <div class="col-xs-6" ng-show="player.isTraitor">
+                    <button ng-click="sabotage();" ng-disabled="isSabotaging" ng-hide="player.room == ''" class="sabotage-button spacechat-submit" >
+                        Sabotage {{player.room}}
                     </button>
                 </div>
             </div>
@@ -26,34 +23,10 @@
                         ng-click="sendEmoji(emoji.shortcode)" 
                         class="spacechat-emoji col-xs-3">
                         {{emoji.hex}}
-                    </button>
-<!--                     <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
-                        &#128519;
-                    </button>
-                    <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
-                        &#128070;
-                    </button>
-                    <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
-                        &#128071;
-                    </button>                                    
-                    <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
-                        &#128561;
-                    </button>
-                    <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
-                        &#128520;
-                    </button>
-                    <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
-                        &#128072;
-                    </button>
-                    <button ng-click="sendEmoji()" class="spacechat-emoji col-xs-3">
-                        &#128073;
-                    </button>      -->                                   
+                    </button>     
                 </div>
             </div>
         </div>
-
-
     </div>
-
 </div>
 

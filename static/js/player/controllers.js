@@ -26,21 +26,17 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $rootScope.socket.emit('heartbeat');
     }
 
-    $scope.crew_list = function() {
-        $state.go("crew_list");
-    }
-
     $scope.controls = function() {
-        $state.go("player");
+        $state.go('player');
     }
 
     $scope.showAlert = function(text) {
         if (!$rootScope.alert) {
             $rootScope.alert = $mdToast.simple({
                 textContent: text,
-                position: 'bottom right',
-                hideDelay: 3000,
-                capsule: false
+                parent: document.querySelectorAll('#toaster'),
+                position: 'top',
+                hideDelay: 3000
             });
 
             $mdToast.show( $rootScope.alert )
@@ -80,6 +76,8 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         }
     }
 
+
+
     $rootScope.socket.on('connect', function() {
         $rootScope.connected = true;
     });
@@ -99,8 +97,8 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $rootScope.player = data.player;
         $rootScope.player_list = data.players;
 
-        $scope.isTraitor = $rootScope.player.isTraitor;
-        $scope.isRepairing = $rootScope.player.isRepairing;
+        $scope.isTraitor = data.player.isTraitor;
+        $scope.isRepairing = data.player.isRepairing;
     });
 
     $rootScope.socket.on('spacechat_error', function(error) {
@@ -197,12 +195,14 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
 }])
 
-.controller('PlayerCtrl', ['$rootScope', '$scope', '$state', '$interval', '$stateParams', '$mdDialog'
-    , function($rootScope, $scope, $state, $interval, $stateParams, $mdDialog) {
+.controller('PlayerCtrl', ['$rootScope', '$scope', '$state', '$interval', '$timeout', '$stateParams', '$mdDialog'
+    , function($rootScope, $scope, $state, $interval, $timeout, $stateParams, $mdDialog) {
 
     $scope.page = $state.current.name;
     $scope.chat = "";
     $scope.chatMode = false;
+    $scope.isSabotaging = false;
+    $scope.sabotageCooldown = 3000;
 
     $scope.emojis = [
         {hex: String.fromCodePoint(0x1F603), shortcode: ":smiling-face:"},
@@ -216,9 +216,18 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     ];
 
     $scope.sabotage = function() {
+        $scope.startSabotageCooldown();
         $rootScope.socket.emit('sabotage_room', null, function(data) {
             $scope.showAlert("Sabotaging " + data + "!");
         });
+    }
+
+    $scope.startSabotageCooldown = function() {
+        $scope.isSabotaging = true;
+        $timeout(() => {
+            console.log('ending sabotage cooldown');
+            $scope.isSabotaging = false;
+        }, $scope.sabotageCooldown);
     }
 
     $scope.sendChat = function() {

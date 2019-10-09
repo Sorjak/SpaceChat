@@ -1,25 +1,14 @@
 <nav class="navbar navbar-default">
     <div class="navbar-header">
-        <div class="navbar-logo col-xs-4">
+        <div class="navbar-logo col-xs-4 vertical-align">
             <div class="logo-text">
                 <a href="#">{{player.name}}</a>
             </div>
-            <div class="connection-status" ng-if="connected">
-                Connected
-            </div>
-            <div class="connection-status red" ng-if="!connected">
-                Disconnected
-            </div>
         </div>
         
-        <div class="navbar-actions col-xs-8 text-right">
-            <a class="navbar-action" ng-click="crew_list();" ng-hide="page == 'crew_list'">
-                <span>Crew List</span>
-            </a>
-            <a class="navbar-action" ng-click="controls();" ng-hide="page == 'player'">
-                <span>Controls</span>
-            </a>
-
+        <div class="navbar-actions col-xs-8 text-right vertical-align">
+            <a class="navbar-action" ui-sref="crew_list" ui-sref-active="active">Crew List</a>
+            <a class="navbar-action" ui-sref="player" ui-sref-active="active">Controls</a>
         </div>
     </div>
 </nav>
