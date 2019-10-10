@@ -8,12 +8,12 @@
             <div id="messages" class="row">
                 <div ng-class="{ 'col-xs-6': player.isTraitor, 'col-xs-12': !player.isTraitor }">
                     <button ng-click="showPrompt()" class="spacechat-submit">
-                        Message Everyone
+                        Message All
                     </button>
                 </div>
                 <div class="col-xs-6" ng-show="player.isTraitor">
-                    <button ng-click="sabotage();" ng-disabled="isSabotaging" ng-hide="player.room == ''" class="sabotage-button spacechat-submit" >
-                        Sabotage {{player.room}}
+                    <button ng-click="sabotage();" ng-disabled="isSabotaging || !allowSabotage || player.room == ''" class="sabotage-button spacechat-submit" >
+                        Sabotage
                     </button>
                 </div>
             </div>
@@ -21,7 +21,7 @@
                 <div class="emoji-row col-xs-12">
                     <button ng-repeat="emoji in emojis" 
                         ng-click="sendEmoji(emoji.shortcode)" 
-                        class="spacechat-emoji col-xs-3">
+                        class="spacechat-emoji col-xs-4">
                         {{emoji.hex}}
                     </button>     
                 </div>

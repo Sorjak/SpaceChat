@@ -13,6 +13,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
     $scope.isTraitor = false;
     $scope.isRepairing = false;
+    $scope.isSabotaging = false;
 
     $scope.logout = function() {
         console.log("Logging out");
@@ -99,6 +100,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
         $scope.isTraitor = data.player.isTraitor;
         $scope.isRepairing = data.player.isRepairing;
+        $scope.isSabotaging = data.player.isSabotaging;
     });
 
     $rootScope.socket.on('spacechat_error', function(error) {
@@ -201,18 +203,16 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.page = $state.current.name;
     $scope.chat = "";
     $scope.chatMode = false;
-    $scope.isSabotaging = false;
     $scope.sabotageCooldown = 3000;
+    $scope.allowSabotage = true;
 
     $scope.emojis = [
         {hex: String.fromCodePoint(0x1F603), shortcode: ":smiling-face:"},
         {hex: String.fromCodePoint(0x1F61E), shortcode: ":frowning-face:"},
-        {hex: String.fromCodePoint(0x1F446), shortcode: ":up-pointing:"},
-        {hex: String.fromCodePoint(0x1F447), shortcode: ":down-pointing:"},
         {hex: String.fromCodePoint(0x1F632), shortcode: ":open-mouth:"},
         {hex: String.fromCodePoint(0x1F62D), shortcode: ":loudly-crying:"},
-        {hex: String.fromCodePoint(0x1F448), shortcode: ":left-pointing:"},
-        {hex: String.fromCodePoint(0x1F449), shortcode: ":right-pointing:"},
+        {hex: String.fromCodePoint(0x1F608), shortcode: ":horns:"},
+        {hex: String.fromCodePoint(0x1F607), shortcode: ":halo:"}
     ];
 
     $scope.sabotage = function() {
@@ -223,10 +223,9 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     }
 
     $scope.startSabotageCooldown = function() {
-        $scope.isSabotaging = true;
+        $scope.allowSabotage = false;
         $timeout(() => {
-            console.log('ending sabotage cooldown');
-            $scope.isSabotaging = false;
+            $scope.allowSabotage = true;
         }, $scope.sabotageCooldown);
     }
 

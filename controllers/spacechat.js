@@ -67,6 +67,10 @@ SpaceChat.prototype.assignPlayerFaction = function(playerObj, totalPlayers, tota
         }
     }
 
+    if (playerObj.name == 'ulisses') {
+        playerObj.isTraitor = true;
+    }
+
     playerObj.team = totalPlayers % 2 == 0 ? "red" : "blue";
 }
 
