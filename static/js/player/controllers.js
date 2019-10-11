@@ -203,7 +203,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.page = $state.current.name;
     $scope.chat = "";
     $scope.chatMode = false;
-    $scope.sabotageCooldown = 3000;
+    $scope.sabotageCooldown = 6000;
     $scope.allowSabotage = true;
 
     $scope.emojis = [
