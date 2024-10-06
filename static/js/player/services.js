@@ -187,9 +187,10 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
         var positiveX = (this.input.x + 1) / 2;
         var positiveY = (this.input.y + 1) / 2;
 
-        // Convert 0, 1 to 0, 2^32 - 1
-        var maxX = positiveX * (2**this.input_precision - 1);
-        var maxY = positiveY * (2**this.input_precision - 1);
+        // Convert 0, 1 into a larger range: 0, 2^32 - 2
+        // We go down 2 integers so we don't need to deal with fractions
+        var maxX = positiveX * (2**this.input_precision - 2);
+        var maxY = positiveY * (2**this.input_precision - 2);
 
         // Combine both numbers into a single number and return
         // Need to use BigInt here to turn ints into unsigned ints

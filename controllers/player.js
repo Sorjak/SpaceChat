@@ -1,9 +1,9 @@
 
 INPUT_PRECISION = 16
 
-MAX_INPUT = 2**INPUT_PRECISION - 1
+MAX_INPUT = 2**INPUT_PRECISION - 2
 
-INPUT_MASK = BigInt(MAX_INPUT);
+INPUT_MASK = BigInt(2**INPUT_PRECISION - 1);
 
 function Player(id, name) {
     this.positionX = 0;
