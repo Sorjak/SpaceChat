@@ -64,6 +64,7 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
 
     function ControlArea(container, position, size) {
 
+        this.input_precision = 16;
         this.thumb_circle_radius = 40;
 
         this.container = container;
@@ -179,7 +180,23 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
             cappedY
         );
         this.input = vec;
-        
+    }
+
+    ControlArea.prototype.getInputToSend = function() {
+        // Go from -1, 1 to 0, 1
+        var positiveX = (this.input.x + 1) / 2;
+        var positiveY = (this.input.y + 1) / 2;
+
+        // Convert 0, 1 to 0, 2^32 - 1
+        var maxX = positiveX * (2**this.input_precision - 1);
+        var maxY = positiveY * (2**this.input_precision - 1);
+
+        // Combine both numbers into a single number and return
+        // Need to use BigInt here to turn ints into unsigned ints
+        var x = BigInt(parseInt(maxX, 10));
+        var y = BigInt(parseInt(maxY, 10));
+        var o = x ^ (y << BigInt(this.input_precision));
+        return parseInt(o, 10);
     }
 
 

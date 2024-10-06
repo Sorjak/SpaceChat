@@ -338,9 +338,8 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $rootScope.animFrame = requestAnimationFrame($scope.mainLoop);
 
         // $scope.debugText.text = "X: " + $scope.control_area.input.x + ", Y: " + $scope.control_area.input.y;
-        var input = $scope.control_area.input;
-        if (input != null) {
-            var to_send = {'x' : input.x, 'y' : input.y}
+        var to_send = $scope.control_area.getInputToSend();
+        if (to_send != null) {
             if ($rootScope.connected){
                 $rootScope.socket.emit('move_player', to_send);
             }

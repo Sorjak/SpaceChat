@@ -1,4 +1,10 @@
 
+INPUT_PRECISION = 16
+
+MAX_INPUT = 2**INPUT_PRECISION - 1
+
+INPUT_MASK = BigInt(MAX_INPUT);
+
 function Player(id, name) {
     this.positionX = 0;
     this.positionY = 0;
@@ -19,7 +25,6 @@ function Player(id, name) {
     this.team = "red";
 
 }
-// class methods
 
 // export the class
 module.exports = Player;
@@ -116,14 +121,23 @@ playerSocket.on('connection', function(socket) {
 
     });
 
-    // Expects an object with x and y, both floats between (-1, 1)
+    // Expects a single 64bit unsigned integer, which contains
+    // two 32bit integers representing x and y.
     socket.on('move_player', function(playerInput) {
         if (__game == null) {
             sendError(0);
 
         } else {
             if (player != null && player.id == socket.id) {
-                player.currentInput = playerInput;
+                var comboNum = BigInt(playerInput);
+
+                var parsedX = parseInt(comboNum & INPUT_MASK);
+                var parsedY = parseInt((comboNum >> BigInt(INPUT_PRECISION)) & INPUT_MASK);
+
+                var sanitizedX = ((parsedX / MAX_INPUT) * 2) - 1;
+                var sanitizedY = ((parsedY / MAX_INPUT) * 2) - 1;
+
+                player.currentInput = {x: sanitizedX, y: sanitizedY};
             }
         }
     });

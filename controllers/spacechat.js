@@ -27,7 +27,6 @@ SpaceChat.prototype.AddPlayer = function(playerObj) {
 
     return true;
 
-    
 };
 
 SpaceChat.prototype.RemovePlayer = function(playerObj) {
@@ -104,13 +103,17 @@ SpaceChat.prototype.switchPlayerFaction = function(playerObj) {
 
     playerObj.isTraitor = !playerObj.isTraitor;
 }
+
+SpaceChat.prototype.serializePlayers = function() {
+    return {'players': this.players};
+}
     
 
 // export the class
 module.exports = SpaceChat;
 
 var map = __io.of('/map');
-map.on('connection', function(socket){
+map.on('connection', function(map_socket){
     console.log("map_connected");
     if (__game == null) {
         console.log("starting new game");
@@ -118,7 +121,7 @@ map.on('connection', function(socket){
         __io.of('/player').emit('game_started');
     }
 
-    socket.on('disconnect', function() {
+    map_socket.on('disconnect', function() {
         console.log("game client disconnected");
         __game = null;
         __io.of('/player').emit('game_ended');
@@ -126,10 +129,10 @@ map.on('connection', function(socket){
 
     console.log("Current game has: " + __game.players.length + " players");
 
-    setInterval(updateMap, 10, socket);
+    setInterval(updateMap, 10, map_socket);
     setInterval(heartbeat, 30000);
 
-    socket.on("update_player_position", function(data) {
+    map_socket.on("update_player_position", function(data) {
         if (__game !== null) {
             var _data = JSON.parse(data);
 
@@ -143,7 +146,7 @@ map.on('connection', function(socket){
         }
     });
 
-    socket.on("update_max_players", function(data) {
+    map_socket.on("update_max_players", function(data) {
         if (__game !== null) {
             var _data = JSON.parse(data);
 
@@ -152,7 +155,7 @@ map.on('connection', function(socket){
         }
     });
 
-    socket.on("update_player_room", function(data) {
+    map_socket.on("update_player_room", function(data) {
         if (__game !== null) {
             var _data = JSON.parse(data);
 
@@ -167,7 +170,7 @@ map.on('connection', function(socket){
         }
     });
 
-    socket.on("update_player_repair", function(data){
+    map_socket.on("update_player_repair", function(data){
         if (__game !== null) {
             var _data = JSON.parse(data);
 
@@ -183,7 +186,7 @@ map.on('connection', function(socket){
 
     });
 
-    socket.on("ack_message", function(data) {
+    map_socket.on("ack_message", function(data) {
         if (__game !== null) {
             var _data = JSON.parse(data);
 
@@ -198,7 +201,7 @@ map.on('connection', function(socket){
         }
     });
 
-    socket.on("ack_sabotage", function(data) {
+    map_socket.on("ack_sabotage", function(data) {
         if (__game !== null) {
             var _data = JSON.parse(data);
 
@@ -212,21 +215,21 @@ map.on('connection', function(socket){
         }
     });
 
-    socket.on("remove_all_players", function(data) {
+    map_socket.on("remove_all_players", function(data) {
         if (__game !== null) {
             console.log("removing all players");
             __game.RemoveAllPlayers();
         }
     });
 
-    socket.on("scramble_players", function(data) {
+    map_socket.on("scramble_players", function(data) {
         if (__game !== null) {
             console.log("scrambling player factions");
             __game.scramblePlayerFactions();
         }
     });
     
-    socket.on("switch_faction", function(data) {
+    map_socket.on("switch_faction", function(data) {
         if (__game !== null) {
             var _data = JSON.parse(data);
 
@@ -242,9 +245,10 @@ map.on('connection', function(socket){
     })
 });
 
-function updateMap(socket) {
+function updateMap(map_socket) {
     if (__game !== null) {
-        socket.emit('update_players', {'players' : __game.players});
+        serialized_players = __game.serializePlayers()
+        map_socket.emit('update_players', serialized_players);
     }
 }
 
