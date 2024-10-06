@@ -109,7 +109,8 @@ playerSocket.on('connection', function(socket) {
 
                     updateHandler = setInterval(updatePlayer, 1000, socket, player);
 
-                    callback(player);
+                    input_params = {precision: INPUT_PRECISION, max: MAX_INPUT};
+                    callback({player: player, inputParams: input_params});
                 }
 
             } else {

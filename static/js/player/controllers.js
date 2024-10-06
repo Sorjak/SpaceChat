@@ -68,8 +68,9 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         if (playerName !== undefined) {
             return $rootScope.socket.connect(playerName, playerKey).then(
                 function(result) {
-                    $rootScope.player = result;
+                    $rootScope.player = result.player;
                     $rootScope.heartbeat = $interval($scope.sendHeartbeat, 1000);
+                    $rootScope.inputParams = result.inputParams;
                 }, function(failure) {
                     console.log("Failed to connect");
                 }
