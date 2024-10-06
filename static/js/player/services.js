@@ -182,15 +182,16 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
 
     ControlArea.prototype.getInputToSend = function() {
         // Input parameters we got from the server on player connection
-        var precision = $rootScope.inputParams.precision;
-        var max_input = $rootScope.inputParams.max;
+        var precision = this.getInputPrecision();
+        var max_input = this.getInputMax();
 
         // Go from -1, 1 to 0, 1
+        // Do this so we don't need to deal with binary representations
+        // of negative numbers (hehe)
         var positiveX = (this.input.x + 1) / 2;
         var positiveY = (this.input.y + 1) / 2;
 
-        // Convert 0, 1 into a larger range: 0, 2^32 - 2
-        // We go down 2 integers so we don't need to deal with fractions
+        // Convert 0, 1 into a larger range for transport
         var maxX = positiveX * max_input;
         var maxY = positiveY * max_input;
 
@@ -224,6 +225,15 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
         this.thumb_circle.position.x = 0;
         this.thumb_circle.position.y = 0;
         this.thumb_circle.visible = false;
+    }
+
+    ControlArea.prototype.getInputPrecision = function() {
+        return $rootScope.inputParams?.precision || 16;
+
+    }
+
+    ControlArea.prototype.getInputMax = function() {
+        return $rootScope.inputParams?.max || 2**16 - 2;
     }
 
     return ControlArea;

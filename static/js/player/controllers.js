@@ -10,6 +10,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $rootScope.game_started = false;
     $rootScope.alert = null;
     $rootScope.alertTraitor = null;
+    $rootScope.inputParams = null;
 
     $scope.isTraitor = false;
     $scope.isRepairing = false;
