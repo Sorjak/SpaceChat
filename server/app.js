@@ -5,7 +5,7 @@ global.__app = express();
 var server = require('http').Server(__app);
 global.__io = require('socket.io')(server, {
     cors: {
-        origin: "http://localhost:8000",
+        origin: "https://spacechat.lol",
         methods: ["GET", "POST"]
     }
 });
