@@ -10,10 +10,10 @@ global.__game = null;
 var ejs = require('ejs');
 
 var urls = require('./controllers/urls');
-var io = require('./controllers/io');
+var io = require('./server/io');
 
-var SpaceChat = require('./controllers/spacechat');
-var Player = require('./controllers/player');
+var SpaceChat = require('./server/spacechat');
+var Player = require('./server/player');
 
 
 server.listen(3001);

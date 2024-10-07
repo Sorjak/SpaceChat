@@ -1,6 +1,6 @@
 app.factory('MapSocket', function ($rootScope) {
 
-    var socket = io('/map');
+    var socket = io('http://localhost:3000/map');
     return {
         on: function (eventName, callback) {
             socket.on(eventName, function () {  

@@ -1,4 +1,3 @@
-
 function SpaceChat(max) {
     this.traitor_cutoff = 8;
     this.max_players = max;
