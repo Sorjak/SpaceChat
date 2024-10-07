@@ -82,6 +82,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 
 
     $rootScope.socket.on('connect', function() {
+        console.log('received connected')
         $rootScope.connected = true;
     });
 

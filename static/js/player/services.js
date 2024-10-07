@@ -1,7 +1,7 @@
 app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
 
     function PlayerSocket() {
-        this.socket = io('/player');
+        this.socket = io('http://localhost:3000/player');
     }
 
     PlayerSocket.prototype.register = function(playername) {
