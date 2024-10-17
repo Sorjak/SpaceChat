@@ -9,7 +9,8 @@
   "author": "Ulisses Gurgel",
   "license": "ISC",
   "dependencies": {
-    "ejs": "^2.4.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
     "express": "^4.13.4",
     "socket.io": "^4.7.5"
   }
