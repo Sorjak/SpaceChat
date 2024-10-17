@@ -1,11 +1,16 @@
-var fs = require('fs');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+
 var express = require('express')
 global.__app = express();
 
 var server = require('http').Server(__app);
+
+console.log(process.env.SPACECHAT_SERVER_URL);
+
 global.__io = require('socket.io')(server, {
     cors: {
-        origin: "https://spacechat.lol",
+        origin: `${process.env.SPACECHAT_SERVER_URL}`,
         methods: ["GET", "POST"]
     }
 });
