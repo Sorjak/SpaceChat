@@ -1,6 +1,7 @@
 app.factory('MapSocket', function ($rootScope) {
-
-    var socket = io('http://localhost:3000/map');
+    var map_url = document.getElementById('map_url');
+    console.log(`Connecting to game server at ${map_url.innerText}`);
+    var socket = io(map_url.innerText);
     return {
         on: function (eventName, callback) {
             socket.on(eventName, function () {  

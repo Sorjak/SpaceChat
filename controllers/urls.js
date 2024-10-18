@@ -15,10 +15,14 @@ __app.get('/', function(req, res){
     res.header("Pragma", "no-cache");
     res.header("Expires", 0);
     
-    res.render('index', {player_url: process.env.SPACECHAT_PLAYER_URL});
+    res.render('index', {
+        player_url: process.env.SPACECHAT_PLAYER_URL
+    });
 });
 
 __app.get('/map', function(req, res){
-    res.render('map');
+    res.render('map', {
+        map_url: process.env.SPACECHAT_MAP_URL
+    });
 });
 
