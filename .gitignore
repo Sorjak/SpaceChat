@@ -10,3 +10,5 @@ bin/
 bin/*
 
 .env
+
+server/https/*

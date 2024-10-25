@@ -111,7 +111,7 @@ SpaceChat.prototype.serializePlayers = function() {
 // export the class
 module.exports = SpaceChat;
 
-var map = __io.of('/map');
+var map = __mapio.of('/map');
 map.on('connection', function(map_socket){
     console.log("map_connected");
     if (__game == null) {
