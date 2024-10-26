@@ -9,7 +9,7 @@
     </div>
 
     <div class="row">
-        <div class="index-content col-xs-12" ng-show="!player">
+        <div class="index-content col-xs-12" ng-show="!showContinue()">
             <p>What's your name?</p>
             <form ng-submit="submitName(input_name);" >
                 <div class="spacechat-input-container">
@@ -20,9 +20,11 @@
                     ng-show="input_name != ''" />
             </form>
         </div>
-        <div class="index-content col-xs-12" ng-show="player">
-            <span>Continue as {{player.name}}?</span>
-            <button ng-click="submitName(player.name)" class="spacechat-submit col-xs-2">Go</button>
+        <div class="index-content col-xs-12" ng-show="showContinue()">
+            <p class="col-xs-7">Continue as {{getSavedName()}}?</p>
+            <button ng-click="rejoin();" class="spacechat-submit col-xs-2">Yes</button>
+            <span class="col-xs-1">&nbsp;</span>
+            <button ng-click="resetName();" class="spacechat-submit col-xs-2">No</button>
         </div>
     </div>
 
