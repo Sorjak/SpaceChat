@@ -159,22 +159,39 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.input_name = '';//!!$rootScope.player ? $rootScope.player.name : '';
 
     $scope.submitName = function(player_name) {
-        if (player_name) {
-            $cookies.put('player_name', player_name);
-            //$scope.goFullScreen();
-
-            $rootScope.socket.register(player_name).then(
-                function(server_key) {
-                    $cookies.put('player_key', server_key);
-                    $scope.join_game().then(function() {
-                        $state.go("crew_list");
-                    });
-
-                }, function (failure) {
-                    $scope.showAlert("Could not register player: " + player_name);
-                }
-            );
+        if (!$scope.validatePlayerName(player_name)) {
+            return;
         }
+
+        $cookies.put('player_name', player_name);
+        //$scope.goFullScreen();
+
+        $rootScope.socket.register(player_name).then(
+            function(server_key) {
+                $cookies.put('player_key', server_key);
+                $scope.join_game().then(function() {
+                    $state.go("crew_list");
+                });
+
+            }, function (failure) {
+                $scope.showAlert("Could not register player: " + player_name);
+            }
+        );
+    }
+
+    $scope.validatePlayerName = function(name) {
+        if (!name) {
+            console.error('No name provided!');
+            return false;
+        };
+
+        if (name.length > 32) {
+            console.error('Names must be less than 32 characters.');
+            $scope.showAlert("Names must be less than 32 characters");
+            return false;
+        }
+
+        return true;
     }
 
     $scope.goFullScreen = function() {

@@ -90,7 +90,7 @@ playerSocket.on('connection', function(socket) {
 
     socket.on('player_connected', function(playerInfo, callback) {
         if (__game == null) {
-            console.log("error, game hasn't started");
+            console.log("player attempted to connect, but the game hasn't started");
             sendError(0);
             callback(false);
         } else {
