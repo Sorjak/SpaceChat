@@ -22,7 +22,9 @@ SpaceChat.prototype.AddPlayer = function(playerObj) {
     }
 
     this.players.push(playerObj);
-    console.log("Added player " + playerObj.name + " as " + playerObj.isTraitor);
+
+    var faction = playerObj.isTraitor ? 'traitor' : 'crew';
+    console.log("Added player " + playerObj.name + " as " + faction);
 
     return true;
 
@@ -65,7 +67,7 @@ SpaceChat.prototype.assignPlayerFaction = function(playerObj, totalPlayers, tota
         }
     }
 
-    if (playerObj.name == 'ulisses') {
+    if (playerObj.name == 'benedictarnold') {
         playerObj.isTraitor = true;
     }
 
@@ -265,7 +267,10 @@ function heartbeat() {
             // }
         });
 
-        //console.log("Current game has: " + __game.players.length + " players");
+        var num_players = __game.players.length;
+        if (num_players > 0) {
+            console.log("Current game has: " + __game.players.length + " players");
+        }
     } else {
         console.log("Game hasn't started.");
     }

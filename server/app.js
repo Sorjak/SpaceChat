@@ -40,13 +40,11 @@ var SpaceChat = require('./spacechat');
 var Player = require('./player');
 const { Socket } = require('socket.io');
 
-
 map_port = process.env.SPACECHAT_SERVER_MAP_PORT
 console.log(`Server listening for game client at http://${server_host}:${map_port}`)
 
 player_port = process.env.SPACECHAT_SERVER_PLAYER_PORT
 console.log(`Server listening for player clients at https://${server_host}:${player_port}`)
-
 
 map_server.listen(map_port);
 player_server.listen(player_port);
