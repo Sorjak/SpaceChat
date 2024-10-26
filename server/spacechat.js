@@ -119,6 +119,10 @@ SpaceChat.prototype.switchPlayerFaction = function(playerObj) {
     playerObj.isTraitor = !playerObj.isTraitor;
 }
 
+SpaceChat.prototype.getPlayerSocketById = function(player_id) {
+    return __io.of('player').sockets.get(player_id);
+}
+
 SpaceChat.prototype.serializePlayers = function() {
     var serializedPlayers = [];
     for (const player of this.players) {
@@ -129,6 +133,16 @@ SpaceChat.prototype.serializePlayers = function() {
     return {'players': serializedPlayers};
 }
     
+
+SpaceChat.prototype.endGame = function() {
+    var self = this;
+
+    // for (const player of self.players) {
+    //     var player_socket = self.getPlayerSocketById(player.id);
+    //     player_socket.disconnect();
+    // }
+    __io.of('/player').emit('game_ended');
+}
 
 // export the class
 module.exports = SpaceChat;
@@ -144,8 +158,9 @@ map.on('connection', function(map_socket){
 
     map_socket.on('disconnect', function() {
         console.log("game client disconnected");
+        __game.endGame();
         __game = null;
-        __io.of('/player').emit('game_ended');
+        
     });
 
     console.log("Current game has: " + __game.players.length + " players");
@@ -278,14 +293,12 @@ function heartbeat() {
         now = new Date();
 
         // check if all players who have an ID are still active
-        __game.players.forEach(function(player) {
-            // if (player.id != null) {
-                if (now - player.last_updated > (1000 * 30)) {
-                    console.log("Player " + player.name + " timed out.");
-                    __game.RemovePlayer(player);
-                }
-            // }
-        });
+        for (const player of __game.players) {
+            if (now - player.last_updated > (1000 * 30)) {
+                console.log("Player " + player.name + " timed out.");
+                __game.RemovePlayer(player);
+            }
+        };
 
         var num_players = __game.players.length;
         if (num_players > 0) {
