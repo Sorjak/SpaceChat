@@ -119,6 +119,7 @@ playerSocket.on('connection', function(socket) {
             callback(false);
         } else {
 
+            console.log('Player connected with:');
             console.log(playerInfo);
             player = __game.getPlayerByName(playerInfo.username);
             if (player) {
@@ -130,7 +131,7 @@ playerSocket.on('connection', function(socket) {
                        clearInterval(updateHandler); 
                     }
 
-                    updateHandler = setInterval(updatePlayer, 1000, socket, player);
+                    updateHandler = setInterval(updatePlayer, 1000, socket);
 
                     input_params = {precision: INPUT_PRECISION, max: MAX_INPUT};
                     callback({player: player, inputParams: input_params});
