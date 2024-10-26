@@ -66,6 +66,8 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $scope.join_game = function() {
         var playerName = $cookies.get('player_name');
         var playerKey  = $cookies.get('player_key');
+        console.log(`Attempting to join game as ${playerName} with key ${playerKey}`);
+
         if (playerName !== undefined) {
             return $rootScope.socket.connect(playerName, playerKey).then(
                 function(result) {
@@ -92,6 +94,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     });
 
     $rootScope.socket.on('game_ended', function() {
+        console.log('received game ended');
         $rootScope.game_started = false;
         $rootScope.player = null;
         $state.go('index');
@@ -107,6 +110,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     });
 
     $rootScope.socket.on('spacechat_error', function(error) {
+        console.error(`Server error: ${error.errorMessage}`);
         $scope.showAlert(error.errorMessage);
 
         $cookies.remove('player_name');
@@ -177,6 +181,35 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
                 $scope.showAlert("Could not register player: " + player_name);
             }
         );
+    }
+
+    $scope.rejoin = function() {
+        var existing_name = $cookies.get('player_name');
+        if (existing_name) {
+            $scope.submitName(existing_name);
+        }
+    }
+
+    $scope.resetName = function() {
+        $cookies.remove('player_name');
+        $cookies.remove('player_key');
+        $rootScope.player = null;
+        $state.go('index');
+    }
+
+    $scope.showContinue = function() {
+        var name_cookie =  $cookies.get('player_name');
+        var key_cookie =  $cookies.get('player_key');
+
+        if (name_cookie && key_cookie) {
+            return true;
+        }
+
+        return false;
+    }
+
+    $scope.getSavedName = function() {
+        return $cookies.get('player_name');
     }
 
     $scope.validatePlayerName = function(name) {
@@ -295,9 +328,17 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
             .cancel('Cancel');
 
         $mdDialog.show(confirm).then(function(result) {
-            $rootScope.socket.emit('player_message', result);
+            $scope.sendMessage(result);
         }, function() {});
-    };   
+    };
+
+    $scope.sendMessage = function(message) {
+        if (message.length > 500) {
+            $scope.showAlert('Message failed, above 500 characters');
+            return;
+        }
+        $rootScope.socket.emit('player_message', message);
+    }
 
 }])
 

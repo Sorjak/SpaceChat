@@ -48,10 +48,24 @@ SpaceChat.prototype.RemoveAllPlayers = function() {
 
 SpaceChat.prototype.getPlayerByName = function(playerName) {
     var output = null;
-    this.players.forEach(function(player) {
-        if (player.name == playerName)
+    for (const player of this.players) {
+        if (player.name == playerName) {
             output = player;
-    });
+            break;
+        }
+    };
+
+    return output;
+}
+
+SpaceChat.prototype.getPlayerById = function(socketId) {
+    var output = null;
+    for (const player of this.players) {
+        if (player.id == socketId) {
+            output = player;
+            break;
+        }
+    };
 
     return output;
 }
@@ -106,7 +120,13 @@ SpaceChat.prototype.switchPlayerFaction = function(playerObj) {
 }
 
 SpaceChat.prototype.serializePlayers = function() {
-    return {'players': this.players};
+    var serializedPlayers = [];
+    for (const player of this.players) {
+        serializedPlayers.push(player.serialize());
+    }
+
+    // console.log(serializedPlayers);
+    return {'players': serializedPlayers};
 }
     
 

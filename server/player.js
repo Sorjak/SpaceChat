@@ -22,7 +22,29 @@ function Player(id, name) {
     this.isSabotaging = false;
     this.isRepairing = false;
     this.team = "red";
+}
 
+
+Player.prototype.serialize = function() {
+    return {
+        positionX: this.positionX,
+        positionY: this.positionY,
+        last_updated: this.last_updated,
+
+        currentInput: this.currentInput,
+
+        name: this.name,
+        id: this.id,
+        key: this.key,
+
+        room: this.room,
+        message: this.message,
+
+        isTraitor: this.isTraitor,
+        isSabotaging: this.isSabotaging,
+        isRepairing: this.isRepairing,
+        team: this.team,
+    }
 }
 
 // export the class
@@ -61,7 +83,9 @@ playerSocket.on('connection', function(socket) {
 
     socket.on('game_ended', function() {
         console.log('player socket got game ended');
-        clearInterval(updateHandler);
+        if (player != null) {
+            clearInterval(updateHandler);
+        }
     });
 
     socket.on('register_new_player', function(username, callback) {
@@ -110,10 +134,14 @@ playerSocket.on('connection', function(socket) {
 
                     input_params = {precision: INPUT_PRECISION, max: MAX_INPUT};
                     callback({player: player, inputParams: input_params});
+                } else {
+                    console.log(`Player ${playerInfo.username} has a mismatched unique key.`);
+                    sendError(3);
+                    callback(false);
                 }
 
             } else {
-                console.log("player " + playerInfo.username + " not registered");
+                console.log(`Player ${playerInfo.username} not registered`);
                 sendError(3);
                 callback(false);
             }
@@ -187,8 +215,13 @@ playerSocket.on('connection', function(socket) {
 
 });
 
-function updatePlayer(socket, player) {
-    if (__game !== null) {
+function updatePlayer(socket) {
+    if (__game == null) {
+        return;
+    }
+
+    var player = __game.getPlayerById(socket.id);
+    if (player !== null) {
         socket.emit('update_player', {'player' : player,  'players' : __game.players});
     }
 }
