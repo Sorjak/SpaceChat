@@ -129,7 +129,7 @@ SpaceChat.prototype.serializePlayers = function() {
         serializedPlayers.push(player.serialize());
     }
 
-    // console.log(serializedPlayers);
+    // console.log(`Updating map with players: ${serializedPlayers.map(({ name, id }) => `${name} (${id})`)}`);
     return {'players': serializedPlayers};
 }
     
@@ -302,7 +302,7 @@ function heartbeat() {
 
         var num_players = __game.players.length;
         if (num_players > 0) {
-            console.log("Current game has: " + __game.players.length + " players");
+            console.log(`Current players: ${__game.players.map(({ name }) => name)}`);
         }
     } else {
         console.log("Game hasn't started.");

@@ -91,6 +91,13 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         }
     }
 
+    $scope.resetPlayerInfo = function() {
+        $cookies.remove('player_name');
+        $cookies.remove('player_key');
+        $rootScope.player = null;
+        $state.go('index');
+    }
+
     $rootScope.socket.on('connect', function() {
         console.log('received connected')
         $rootScope.connected = true;
@@ -99,16 +106,19 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $rootScope.socket.on('game_started', function() {
         console.log("received game started");
         $rootScope.game_started = true;
+
+        $scope.resetPlayerInfo();
     });
 
     $rootScope.socket.on('game_ended', function() {
         console.log('received game ended');
         $rootScope.game_started = false;
-        $rootScope.player = null;
-        $state.go('index');
+
+        $scope.resetPlayerInfo();
     });
 
     $rootScope.socket.on('update_player', function (data) {
+        $rootScope.game_started = true;
         $rootScope.player = data.player;
         $rootScope.player_list = data.players;
 
@@ -121,11 +131,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         console.error(`Server error: ${error.errorMessage}`);
         $scope.showAlert(error.errorMessage);
 
-        $cookies.remove('player_name');
-        $cookies.remove('player_key');
-        $rootScope.player = null;
-        $state.go('index');
-
+        $scope.resetPlayerInfo();
     });
 
     $rootScope.socket.on('connect_error', function(error) {
@@ -135,12 +141,9 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $rootScope.socket.on('disconnect', function() {
         $scope.showAlert("Disconnected from server.");
 
-        $cookies.remove('player_name');
-        $cookies.remove('player_key');
         $rootScope.game_started = false;
         $rootScope.connected = false;
-        $rootScope.player = null;
-        $state.go('index');
+        $scope.resetPlayerInfo();
     });
 
     $scope.$watch('isTraitor', function(oldVal, newVal) {
@@ -180,9 +183,14 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $rootScope.socket.register(player_name).then(
             function(server_key) {
                 $cookies.put('player_key', server_key);
-                $scope.join_game().then(function() {
-                    $state.go("crew_list");
-                });
+                $scope.join_game().then(
+                    function(success) {
+                        console.log('successfully joined game');
+                        $state.go("crew_list");
+                    }, function(failure) {
+                        console.error('join game failed');
+                    }
+                );
 
             }, function (failure) {
                 $scope.showAlert("Could not register player: " + player_name);
