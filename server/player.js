@@ -107,6 +107,7 @@ playerSocket.on('connection', function(socket) {
                 
             } else {
                 console.log("player " + username + " already exists");
+                sendError(1);
                 callback(false);
             }
         }

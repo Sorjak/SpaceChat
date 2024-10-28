@@ -1,10 +1,14 @@
 <div id="index-view" ng-controller="IndexCtrl" class="container">
     <div id="toaster"></div>
     <div class="index-title row">
-        <h2 class="col-sm-12">SpaceChat</h2>
-        <div class="col-sm-12">
+        <h2 class="col-xs-12">SpaceChat</h2>
+        <div class="col-xs-12">
             <span class="connection-status" ng-if="connected">Connected</span>
             <span class="connection-status red" ng-if="!connected">Disconnected</span>
+        </div>
+        <div class="col-xs-12">
+            <span class="game-status" ng-if="game_started">Game Started</span>
+            <span class="game-status red" ng-if="!game_started">Game Not Started</span>
         </div>
     </div>
 
@@ -20,11 +24,10 @@
                     ng-show="input_name != ''" />
             </form>
         </div>
-        <div class="index-content col-xs-12" ng-show="showContinue()">
-            <p class="col-xs-7">Continue as {{getSavedName()}}?</p>
-            <button ng-click="rejoin();" class="spacechat-submit col-xs-2">Yes</button>
-            <span class="col-xs-1">&nbsp;</span>
-            <button ng-click="resetName();" class="spacechat-submit col-xs-2">No</button>
+        <div class="index-continue col-xs-12" ng-show="showContinue()">
+            <!-- <p class="col-xs-6">Continue as {{getSavedName()}}?</p> -->
+            <button ng-click="rejoin();" class="btn btn-primary col-xs-12">Continue as {{getSavedName()}}</button>
+            <button ng-click="resetName();" class="btn btn-default col-xs-12">Pick new name</button>
         </div>
     </div>
 
