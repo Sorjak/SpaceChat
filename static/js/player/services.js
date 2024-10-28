@@ -19,14 +19,14 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
         });
     }
 
-    PlayerSocket.prototype.connect = function(username, key) {
+    PlayerSocket.prototype.join = function(username, key) {
         var self = this;
 
         var playerInfo = {'username' : username, 'key' : key}
         return $q(function(resolve, reject) {
             self.emit('player_connected', playerInfo, function(result) {
-                console.log("connected to server");
                 if (result) {
+                    console.log("joined game server");
                     resolve(result);
                 } else {
                     reject(false);

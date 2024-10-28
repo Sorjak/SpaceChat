@@ -69,19 +69,27 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         console.log(`Attempting to join game as ${playerName} with key ${playerKey}`);
 
         if (playerName !== undefined) {
-            return $rootScope.socket.connect(playerName, playerKey).then(
+            return $rootScope.socket.join(playerName, playerKey).then(
                 function(result) {
                     $rootScope.player = result.player;
                     $rootScope.heartbeat = $interval($scope.sendHeartbeat, 1000);
                     $rootScope.inputParams = result.inputParams;
                 }, function(failure) {
-                    console.log("Failed to connect");
+                    console.log("Failed to join game");
                 }
             );
         }
     }
 
-
+    $scope.rejoin = function() {
+        var existing_name = $cookies.get('player_name');
+        if (existing_name) {
+            // $scope.submitName(existing_name);
+            $scope.join_game().then(function() {
+                $state.go("crew_list");
+            });
+        }
+    }
 
     $rootScope.socket.on('connect', function() {
         console.log('received connected')
@@ -151,7 +159,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     $rootScope.socket.emit('is_game_started', null, function(is_started) {
         $rootScope.game_started = is_started;
         if (is_started){
-            $scope.join_game();
+            $scope.rejoin();
         }
     });
 
@@ -162,10 +170,9 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     function($scope, $rootScope, $state, $cookies) {
     $scope.input_name = '';//!!$rootScope.player ? $rootScope.player.name : '';
 
-    $scope.submitName = function(player_name) {
-        if (!$scope.validatePlayerName(player_name)) {
-            return;
-        }
+    $scope.submitName = function(player_name_input) {
+        // Cap player names to 32 characters.
+        var player_name = player_name_input.substring(0, 32);
 
         $cookies.put('player_name', player_name);
         //$scope.goFullScreen();
@@ -183,13 +190,6 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         );
     }
 
-    $scope.rejoin = function() {
-        var existing_name = $cookies.get('player_name');
-        if (existing_name) {
-            $scope.submitName(existing_name);
-        }
-    }
-
     $scope.resetName = function() {
         $cookies.remove('player_name');
         $cookies.remove('player_key');
@@ -198,33 +198,15 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
     }
 
     $scope.showContinue = function() {
+        var showContinue = $scope.game_started;
         var name_cookie =  $cookies.get('player_name');
         var key_cookie =  $cookies.get('player_key');
 
-        if (name_cookie && key_cookie) {
-            return true;
-        }
-
-        return false;
+        return showContinue && name_cookie && key_cookie;
     }
 
     $scope.getSavedName = function() {
         return $cookies.get('player_name');
-    }
-
-    $scope.validatePlayerName = function(name) {
-        if (!name) {
-            console.error('No name provided!');
-            return false;
-        };
-
-        if (name.length > 32) {
-            console.error('Names must be less than 32 characters.');
-            $scope.showAlert("Names must be less than 32 characters");
-            return false;
-        }
-
-        return true;
     }
 
     $scope.goFullScreen = function() {
