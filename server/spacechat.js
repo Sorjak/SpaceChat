@@ -26,6 +26,7 @@ SpaceChat.prototype.AddPlayer = function(playerObj) {
     var faction = playerObj.isTraitor ? 'traitor' : 'crew';
     console.log("Added player " + playerObj.name + " as " + faction);
 
+    __mapio.of('/map').emit('player_joined', {players: [playerObj.serialize()]});
     return true;
 
 };
@@ -126,7 +127,9 @@ SpaceChat.prototype.getPlayerSocketById = function(player_id) {
 SpaceChat.prototype.serializePlayers = function() {
     var serializedPlayers = [];
     for (const player of this.players) {
-        serializedPlayers.push(player.serialize());
+        if (player.id !== null) {
+            serializedPlayers.push(player.serialize());
+        }
     }
 
     // console.log(`Updating map with players: ${serializedPlayers.map(({ name, id }) => `${name} (${id})`)}`);
