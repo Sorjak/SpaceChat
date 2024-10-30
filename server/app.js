@@ -9,7 +9,7 @@ var map_server = require('http').Server(__app);
 
 https_key = process.env.SPACECHAT_SERVER_HTTPS_KEY
 https_cert = process.env.SPACECHAT_SERVER_HTTPS_CERT
-console.log(`Using key: ${https_key} and cert ${https_cert} for https`);
+console.log(`Using key: ${https_key} and cert: ${https_cert} for https`);
 const options = {
     key: fs.readFileSync(`./https/${https_key}`),
     cert: fs.readFileSync(`./https/${https_cert}`)
