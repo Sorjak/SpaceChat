@@ -348,7 +348,19 @@ body a {
   left:20px;
 }
 
+#crewlist-view .crew-list-controls {
+  margin-bottom: 20px;
+}
+
 #crewlist-view .crew-list-controls .controls-button{
   width: 100%;
   padding: 6px 12px;
+}
+
+#crewlist-view .crew-list-info .crewmate {
+  color: #0080ff
+}
+
+#crewlist-view .crew-list-info .saboteur {
+  color: #FF0000
 }

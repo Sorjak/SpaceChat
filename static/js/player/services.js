@@ -3,7 +3,9 @@ app.factory('PlayerSocket', function ($rootScope, $interval, $q) {
     function PlayerSocket() {
         var player_url = document.getElementById('player_url');
         console.log(`Connecting to game server at ${player_url.innerText}`);
-        this.socket = io(player_url.innerText);
+        this.socket = io(player_url.innerText, {
+            transports: ["websocket"]
+        });
     }
 
     PlayerSocket.prototype.register = function(playername) {

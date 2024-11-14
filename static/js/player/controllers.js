@@ -172,6 +172,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
 .controller('IndexCtrl', ['$scope', '$rootScope', '$state', '$cookies', 
     function($scope, $rootScope, $state, $cookies) {
     $scope.input_name = '';//!!$rootScope.player ? $rootScope.player.name : '';
+    $scope.joining = false;
 
     $scope.submitName = function(player_name_input) {
         // Cap player names to 32 characters.
@@ -180,6 +181,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         $cookies.put('player_name', player_name);
         //$scope.goFullScreen();
 
+        $scope.joining = true;
         $rootScope.socket.register(player_name).then(
             function(server_key) {
                 $cookies.put('player_key', server_key);
@@ -187,8 +189,10 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
                     function(success) {
                         console.log('successfully joined game');
                         $state.go("crew_list");
+                        $scope.joining = false;
                     }, function(failure) {
                         console.error('join game failed');
+                        $scope.joining = false;
                     }
                 );
 
@@ -210,7 +214,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         var name_cookie =  $cookies.get('player_name');
         var key_cookie =  $cookies.get('player_key');
 
-        return showContinue && name_cookie && key_cookie;
+        return showContinue && name_cookie && key_cookie && !$scope.joining;
     }
 
     $scope.getSavedName = function() {
