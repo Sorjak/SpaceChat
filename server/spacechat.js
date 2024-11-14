@@ -50,7 +50,7 @@ SpaceChat.prototype.RemoveAllPlayers = function() {
 SpaceChat.prototype.getPlayerByName = function(playerName) {
     var output = null;
     for (const player of this.players) {
-        if (player.name == playerName) {
+        if (player.name.toLowerCase() == playerName.toLowerCase()) {
             output = player;
             break;
         }
@@ -305,7 +305,7 @@ function heartbeat() {
 
         var num_players = __game.players.length;
         if (num_players > 0) {
-            console.log(`Current players: ${__game.players.map(({ name }) => name)}`);
+            console.log(`Current players (${num_players}): ${__game.players.map(({ name }) => name)}`);
         }
     } else {
         console.log("Game hasn't started.");
