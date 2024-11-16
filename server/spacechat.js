@@ -1,6 +1,11 @@
-function SpaceChat(max) {
-    this.traitor_cutoff = 8;
-    this.max_players = max;
+TRAITOR_CUTOFF = process.env.SPACECHAT_SERVER_TRAITOR_CUTOFF ?? 6;
+MAX_PLAYERS = process.env.SPACECHAT_SERVER_MAX_PLAYERS ?? 64;
+UPDATE_TICK = process.env.SPACECHAT_SERVER_UPDATE_TICK ?? 100;
+HEARTBEAT_TICK = process.env.SPACECHAT_SERVER_HEARTBEAT_TICK ?? 20000;
+
+function SpaceChat() {
+    this.traitor_cutoff = TRAITOR_CUTOFF;
+    this.max_players = MAX_PLAYERS;
     this.players = [];
     this.traitors = [];
 }
@@ -23,13 +28,17 @@ SpaceChat.prototype.AddPlayer = function(playerObj) {
 
     this.players.push(playerObj);
 
-    var faction = playerObj.isTraitor ? 'traitor' : 'crew';
+    var faction = this.GetFactionName(playerObj);
     console.log("Added player " + playerObj.name + " as " + faction);
 
     __mapio.of('/map').emit('player_joined', {players: [playerObj.serialize()]});
     return true;
 
 };
+
+SpaceChat.prototype.GetFactionName = function (playerObj) {
+    return playerObj.isTraitor ? 'traitor' : 'crew';
+}
 
 SpaceChat.prototype.RemovePlayer = function(playerObj) {
     var index = this.players.indexOf(playerObj);
@@ -154,8 +163,8 @@ var map = __mapio.of('/map');
 map.on('connection', function(map_socket){
     console.log("map_connected");
     if (__game == null) {
-        console.log("starting new game");
-        __game = new SpaceChat(64);
+        __game = new SpaceChat();
+        console.log(`starting new game with max players ${MAX_PLAYERS}, tick ${UPDATE_TICK}`);
         __io.of('/player').emit('game_started');
     }
 
@@ -168,8 +177,8 @@ map.on('connection', function(map_socket){
 
     console.log("Current game has: " + __game.players.length + " players");
 
-    setInterval(updateMap, 10, map_socket);
-    setInterval(heartbeat, 30000);
+    setInterval(updateMap, UPDATE_TICK, map_socket);
+    setInterval(heartbeat, HEARTBEAT_TICK);
 
     map_socket.on("update_player_position", function(data) {
         if (__game !== null) {
@@ -198,8 +207,6 @@ map.on('connection', function(map_socket){
         if (__game !== null) {
             var _data = JSON.parse(data);
 
-            console.log(_data.name + " moving into " + _data.room);
-
             try {
                 var player = __game.getPlayerByName(_data.name);
                 player.room = _data.room;
@@ -212,8 +219,6 @@ map.on('connection', function(map_socket){
     map_socket.on("update_player_repair", function(data){
         if (__game !== null) {
             var _data = JSON.parse(data);
-
-            console.log(_data.name + " moving into " + _data.room);
 
             try {
                 var player = __game.getPlayerByName(_data.name);
@@ -229,8 +234,6 @@ map.on('connection', function(map_socket){
         if (__game !== null) {
             var _data = JSON.parse(data);
 
-            console.log(_data.name + " acknowledged message");
-
             try {
                 var player = __game.getPlayerByName(_data.name);
                 player.message = "";
@@ -244,7 +247,6 @@ map.on('connection', function(map_socket){
         if (__game !== null) {
             var _data = JSON.parse(data);
 
-            console.log(_data.name + " acknowledging the sabotaging of " + _data.room);
             try {
                 var player = __game.getPlayerByName(_data.name);
                 player.isSabotaging = false;
@@ -305,7 +307,11 @@ function heartbeat() {
 
         var num_players = __game.players.length;
         if (num_players > 0) {
-            console.log(`Current players (${num_players}): ${__game.players.map(({ name }) => name)}`);
+            var player_names = __game.players.map((p) => {
+                console.log(p.last_moved);
+                return `${p.name}(${__game.GetFactionName(p)[0]})`
+            });
+            console.log(`Current players (${num_players}): ${player_names}`);
         }
     } else {
         console.log("Game hasn't started.");

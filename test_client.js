@@ -1,19 +1,26 @@
 const { io } = require("socket.io-client");
+const { faker } = require("@faker-js/faker");
 
 TEST_PLAYERS = process.argv[2] ?? 10;
 console.log(`Starting test with ${TEST_PLAYERS} players.`);
 
-// const map_socket = io('http://localhost:3001/map');
+START_MAP = process.argv[3] ?? false;
 
-// map_socket.on('connect', () => {
-//     spawnPlayers(TEST_PLAYERS);
-// })
+PLAYER_HOST = 'https://localhost:3000/player'
+MAP_HOST = 'http://localhost:3001/map'
 
-spawnPlayers(TEST_PLAYERS);
+
+function startMap() {
+    const map_socket = io(MAP_HOST);
+
+    // map_socket.on('connect', () => {
+    //     spawnPlayers(TEST_PLAYERS);
+    // });
+}
 
 function spawnPlayers(num_players) {
     for (var i = 0; i < num_players; i++) {
-        var playerID = `test${i}`;
+        var playerID = faker.person.firstName().toLowerCase();
         connectPlayer(playerID);
     }
 }
@@ -34,7 +41,7 @@ function connectPlayer(playerID) {
     var updateHandler = null;
     var heartbeat = null;
 
-    const socket = io('https://localhost:3000/player', {rejectUnauthorized: false});
+    const socket = io(PLAYER_HOST, {rejectUnauthorized: false});
 
     socket.on("connect", () => {
         console.log(`Connected to player server with ID: ${socket.id}`);
@@ -66,3 +73,6 @@ function connectPlayer(playerID) {
         updateHandler = null;
     });
 }
+
+if (START_MAP) startMap();
+spawnPlayers(TEST_PLAYERS);

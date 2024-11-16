@@ -8,6 +8,7 @@ function Player(id, name) {
     this.positionX = 0;
     this.positionY = 0;
     this.last_updated = new Date();
+    this.last_moved = new Date();
 
     this.currentInput = null;
 
@@ -30,6 +31,7 @@ Player.prototype.serialize = function() {
         positionX: this.positionX,
         positionY: this.positionY,
         last_updated: this.last_updated,
+        last_moved: this.last_moved,
 
         currentInput: this.currentInput,
 
@@ -168,6 +170,7 @@ playerSocket.on('connection', function(socket) {
                 var sanitizedY = ((parsedY / MAX_INPUT) * 2) - 1;
 
                 player.currentInput = {x: sanitizedX, y: sanitizedY};
+                player.last_moved = new Date();
             }
         }
     });
@@ -179,7 +182,6 @@ playerSocket.on('connection', function(socket) {
         } else {
             if (player != null && player.id == socket.id) {
                 if (player.room != "") {
-                    console.log(player.name + " is sabotaging room: " + player.room);
                     player.isSabotaging = true;
                     callback(player.room);
                 }
@@ -194,7 +196,6 @@ playerSocket.on('connection', function(socket) {
 
         } else {        
             if (player != null && player.id == socket.id) {
-                console.log(player.name + " set message to: " + message);
                 player.message = message;
             }
         }
