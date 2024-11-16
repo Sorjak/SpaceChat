@@ -52,7 +52,7 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
         if (!$rootScope.alertTraitor) {
             $rootScope.alertTraitor = $mdDialog.alert({
                 title: 'NOTICE',
-                textContent: "You are now a SABOTEUR!",
+                textContent: "You are now a SABOTEUR! Press the SABOTAGE button to plant bombs.",
                 ok: 'Ok'
             });
 
@@ -188,8 +188,9 @@ app.controller('AppCtrl', ['$scope', '$rootScope', '$interval', '$state', '$cook
                 $scope.join_game().then(
                     function(success) {
                         console.log('successfully joined game');
-                        $state.go("crew_list");
-                        $scope.joining = false;
+                        $state.go("crew_list").then(() => {
+                            $scope.joining = false;
+                        });
                     }, function(failure) {
                         console.error('join game failed');
                         $scope.joining = false;
