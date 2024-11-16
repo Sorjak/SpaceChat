@@ -308,7 +308,6 @@ function heartbeat() {
         var num_players = __game.players.length;
         if (num_players > 0) {
             var player_names = __game.players.map((p) => {
-                console.log(p.last_moved);
                 return `${p.name}(${__game.GetFactionName(p)[0]})`
             });
             console.log(`Current players (${num_players}): ${player_names}`);

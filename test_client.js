@@ -6,8 +6,8 @@ console.log(`Starting test with ${TEST_PLAYERS} players.`);
 
 START_MAP = process.argv[3] ?? false;
 
-PLAYER_HOST = 'https://localhost:3000/player'
-MAP_HOST = 'http://localhost:3001/map'
+PLAYER_HOST = 'https://local.spacechat.lol:3000/player'
+MAP_HOST = 'http://local.spacechat.lol:3001/map'
 
 
 function startMap() {
