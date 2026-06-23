@@ -3,7 +3,7 @@ service:
   port: 80
   targetPort: 3001
   type: NodePort
-  host: spacechat.lol
+  host: game.spacechat.lol
   tag: f6ca222d841e5d9c2ca16517bca23ca5a26419ef
   image: ghcr.io/sorjak/spacechat
 env:
