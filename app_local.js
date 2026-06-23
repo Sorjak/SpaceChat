@@ -15,8 +15,7 @@ var io = require('./controllers/io');
 var SpaceChat = require('./controllers/spacechat');
 var Player = require('./controllers/player');
 
-// check for socket file and delete if exists
 
-server.listen(8000);
-
+server.listen(3001);
+console.log('Listening on port 3001')
 

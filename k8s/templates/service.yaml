@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.name }}-service"
+spec:
+  selector:
+    app: {{ .Values.name }} # Matches the label in the Deployment template
+  ports:
+  - protocol: TCP
+    port: {{ .Values.service.port }} # The port the service itself exposes
+    targetPort: {{ .Values.service.targetPort }} # The container port to forward traffic to
+  type: {{ .Values.service.type }}
