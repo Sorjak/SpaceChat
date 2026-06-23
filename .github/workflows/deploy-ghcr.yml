@@ -28,12 +28,17 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Set lower case environment variables
+        run: |
+          # Convert github.repository to lowercase
+          echo "REPO_LC=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: ./source-repo
           push: true
-          tags: ghcr.io/sorjak/${GITHUB_REPOSITORY#*/}:${{ github.sha }}
+          tags: ghcr.io/sorjak/${{ env.REPO_LC }}:${{ github.sha }}
 
       - name: Update values.yaml in source repo
         uses: fjogeleit/yaml-update-action@main
