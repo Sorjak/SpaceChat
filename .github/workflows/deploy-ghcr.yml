@@ -33,7 +33,7 @@ jobs:
         with:
           context: ./source-repo
           push: true
-          tags: ghcr.io/sorjak/${{ github.event.repository.name }}:${{ github.sha }}
+          tags: ghcr.io/sorjak/${GITHUB_REPOSITORY#*/}:${{ github.sha }}
 
       - name: Update values.yaml in source repo
         uses: fjogeleit/yaml-update-action@main
