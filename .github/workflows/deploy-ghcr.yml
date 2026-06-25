@@ -3,7 +3,7 @@ name: Build and Push Docker Image to GHCR
 on:
   push:
     branches:
-      - dockerize # Triggers the workflow on pushes to the dockerize branch
+      - master # Triggers the workflow on pushes to the master branch
 
 jobs:
   build-and-push:
