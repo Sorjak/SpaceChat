@@ -137,6 +137,14 @@ body a {
   color: #A53332;
 }
 
+.game-status {
+  color: #FFF;
+}
+
+.game-status.red {
+  color: #A53332;
+}
+
 
 .navbar-actions {
     height: 50px;
@@ -185,6 +193,10 @@ body a {
 
 #index-view .index-content p{
   font-weight: bold;
+}
+
+#index-view .index-continue button {
+  margin-bottom: 10px;
 }
 
 #index-view .index-orientation {
@@ -336,7 +348,19 @@ body a {
   left:20px;
 }
 
+#crewlist-view .crew-list-controls {
+  margin-bottom: 20px;
+}
+
 #crewlist-view .crew-list-controls .controls-button{
   width: 100%;
   padding: 6px 12px;
+}
+
+#crewlist-view .crew-list-info .crewmate {
+  color: #0080ff
+}
+
+#crewlist-view .crew-list-info .saboteur {
+  color: #FF0000
 }

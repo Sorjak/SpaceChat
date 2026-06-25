@@ -4,17 +4,21 @@
         <div id="toaster"></div>
         <div class="crew-list-header row">
             <div class="crew-list-info col-xs-12" ng-if="!player.isTraitor">
-                <h3>You are a Crewmate.</h3>
+                <h3>You are a <span class='crewmate'>Crewmate.</span></h3>
                 <p>Prevent the saboteurs from destroying the ship.</p>
             </div>
             <div class="crew-list-info col-xs-12" ng-if="player.isTraitor">
-                <h3>You are a Saboteur.</h3>
+                <h3>You are a <span class='saboteur'>Saboteur.</span></h3>
                 <p>Sabotage the ship to destroy it.</p>
             </div>
         </div>
+        <div class="crew-list-controls">
+            <button ng-click="controls();" class="controls-button spacechat-submit">
+                Go To Controls >>>
+            </button>
+        </div>
         <div class="crew-list row">
-        
-            <h4 class="col-xs-offset-4 col-xs-8">Crew List</h4>
+            <h4 class="col-xs-12">Crew List</h4>
             <div class="player-container col-xs-12" ng-show="player.isTraitor">
                 <div class="crew row" ng-repeat="p in players">
                     <span class="traitor-tag col-xs-4" ng-show="p.isTraitor">[SABOTEUR]</span>
@@ -30,13 +34,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="crew-list-controls">
-            <button ng-click="controls();" class="controls-button spacechat-submit">
-                Got it
-            </button>
-        </div>
-
     </div>
 </div>
 

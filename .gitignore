@@ -8,3 +8,7 @@ logs/*
 
 bin/
 bin/*
+
+.env
+
+server/https/*
