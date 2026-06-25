@@ -13,7 +13,7 @@ COPY --from=builder /app/node_modules /app/node_modules
 COPY controllers /app/controllers
 COPY static /app/static
 COPY templates /app/templates
-COPY app_local.js .
+COPY server /app/server
 
 EXPOSE 3001
-CMD ["node", "app_local.js"]
+CMD ["node", "/app/server/app.js"]

@@ -3,7 +3,7 @@ services:
     build:
       context: .
     ports:
-      - "8000:3001"
+      - "3000:3000"
 
-    # env_file:
-    #   - .env
+    env_file:
+      - .env

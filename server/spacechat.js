@@ -31,7 +31,7 @@ SpaceChat.prototype.AddPlayer = function(playerObj) {
     var faction = this.GetFactionName(playerObj);
     console.log("Added player " + playerObj.name + " as " + faction);
 
-    __mapio.of('/map').emit('player_joined', {players: [playerObj.serialize()]});
+    __io.of('/map').emit('player_joined', {players: [playerObj.serialize()]});
     return true;
 
 };
@@ -159,7 +159,7 @@ SpaceChat.prototype.endGame = function() {
 // export the class
 module.exports = SpaceChat;
 
-var map = __mapio.of('/map');
+var map = __io.of('/map');
 map.on('connection', function(map_socket){
     console.log("map_connected");
     if (__game == null) {
