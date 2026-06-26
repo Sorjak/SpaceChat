@@ -14,6 +14,7 @@ COPY controllers /app/controllers
 COPY static /app/static
 COPY templates /app/templates
 COPY server /app/server
+COPY test_client.js /app/test_client.js
 
 EXPOSE 3001
 CMD ["node", "/app/server/app.js"]

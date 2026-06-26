@@ -6,7 +6,7 @@ console.log(`Starting test with ${TEST_PLAYERS} players.`);
 
 START_MAP = process.argv[3] ?? false;
 
-PLAYER_HOST = 'https://local.spacechat.lol:3000/player'
+PLAYER_HOST = 'https://spacechat.lol:443/player'
 MAP_HOST = 'http://local.spacechat.lol:3001/map'
 
 
@@ -41,7 +41,7 @@ function connectPlayer(playerID) {
     var updateHandler = null;
     var heartbeat = null;
 
-    const socket = io(PLAYER_HOST, {rejectUnauthorized: false});
+    const socket = io(PLAYER_HOST, {transports: ['websocket'], rejectUnauthorized: false});
 
     socket.on("connect", () => {
         console.log(`Connected to player server with ID: ${socket.id}`);
@@ -76,3 +76,4 @@ function connectPlayer(playerID) {
 
 if (START_MAP) startMap();
 spawnPlayers(TEST_PLAYERS);
+console.log('players spawned')
