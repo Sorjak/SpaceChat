@@ -23,9 +23,14 @@ const { Socket } = require('socket.io');
 
 var urls = require('../controllers/urls');
 
+global.__log = function(message) {
+    const now = new Date().toLocaleString();
+    console.log(`[${now}] ${message}`);
+}
+
 protocol = process.env.SPACECHAT_SERVER_PROTOCOL;
 server_host = process.env.SPACECHAT_SERVER_HOST;
 server_port = process.env.SPACECHAT_SERVER_PORT;
-console.log(`Server listening for clients at ${protocol}://${server_host}:${server_port}`);
+__log(`Server listening for clients at ${protocol}://${server_host}:${server_port}`);
 
 player_server.listen(server_port);

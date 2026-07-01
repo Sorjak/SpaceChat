@@ -29,7 +29,7 @@ SpaceChat.prototype.AddPlayer = function(playerObj) {
     this.players.push(playerObj);
 
     var faction = this.GetFactionName(playerObj);
-    console.log("Added player " + playerObj.name + " as " + faction);
+    __log("Added player " + playerObj.name + " as " + faction);
 
     __io.of('/map').emit('player_joined', {players: [playerObj.serialize()]});
     return true;
@@ -141,7 +141,7 @@ SpaceChat.prototype.serializePlayers = function() {
         }
     }
 
-    // console.log(`Updating map with players: ${serializedPlayers.map(({ name, id }) => `${name} (${id})`)}`);
+    // __log(`Updating map with players: ${serializedPlayers.map(({ name, id }) => `${name} (${id})`)}`);
     return {'players': serializedPlayers};
 }
     
@@ -161,21 +161,21 @@ module.exports = SpaceChat;
 
 var map = __io.of('/map');
 map.on('connection', function(map_socket){
-    console.log("map_connected");
+    __log("map_connected");
     if (__game == null) {
         __game = new SpaceChat();
-        console.log(`starting new game with max players ${MAX_PLAYERS}, tick ${UPDATE_TICK}`);
+        __log(`starting new game with max players ${MAX_PLAYERS}, tick ${UPDATE_TICK}`);
         __io.of('/player').emit('game_started');
     }
 
     map_socket.on('disconnect', function() {
-        console.log("game client disconnected");
+        __log("game client disconnected");
         __game.endGame();
         __game = null;
         
     });
 
-    console.log("Current game has: " + __game.players.length + " players");
+    __log("Current game has: " + __game.players.length + " players");
 
     setInterval(updateMap, UPDATE_TICK, map_socket);
     setInterval(heartbeat, HEARTBEAT_TICK);
@@ -189,7 +189,7 @@ map.on('connection', function(map_socket){
                 player.positionX = _data.index.x;
                 player.positionY = _data.index.y;
             } catch (ex) {
-                console.log("Player " + _data.name + " does not exist.");
+                __log("Player " + _data.name + " does not exist.");
             }
         }
     });
@@ -198,7 +198,7 @@ map.on('connection', function(map_socket){
         if (__game !== null) {
             var _data = JSON.parse(data);
 
-            console.log("changing max players to: " + _data.max);
+            __log("changing max players to: " + _data.max);
             __game.max_players = _data.max;
         }
     });
@@ -211,7 +211,7 @@ map.on('connection', function(map_socket){
                 var player = __game.getPlayerByName(_data.name);
                 player.room = _data.room;
             } catch (ex) {
-                console.log("Player " + _data.name + " does not exist.");
+                __log("Player " + _data.name + " does not exist.");
             }
         }
     });
@@ -224,7 +224,7 @@ map.on('connection', function(map_socket){
                 var player = __game.getPlayerByName(_data.name);
                 player.isRepairing = _data.isRepairing;
             } catch (ex) {
-                console.log("Player " + _data.name + " does not exist.");
+                __log("Player " + _data.name + " does not exist.");
             }
         }
 
@@ -238,7 +238,7 @@ map.on('connection', function(map_socket){
                 var player = __game.getPlayerByName(_data.name);
                 player.message = "";
             } catch (ex) {
-                console.log("Player " + _data.name + " does not exist.");
+                __log("Player " + _data.name + " does not exist.");
             }
         }
     });
@@ -251,21 +251,21 @@ map.on('connection', function(map_socket){
                 var player = __game.getPlayerByName(_data.name);
                 player.isSabotaging = false;
             } catch (ex) {
-                console.log("Player " + _data.name + " does not exist.");
+                __log("Player " + _data.name + " does not exist.");
             }
         }
     });
 
     map_socket.on("remove_all_players", function(data) {
         if (__game !== null) {
-            console.log("removing all players");
+            __log("removing all players");
             __game.RemoveAllPlayers();
         }
     });
 
     map_socket.on("scramble_players", function(data) {
         if (__game !== null) {
-            console.log("scrambling player factions");
+            __log("scrambling player factions");
             __game.scramblePlayerFactions();
         }
     });
@@ -274,12 +274,12 @@ map.on('connection', function(map_socket){
         if (__game !== null) {
             var _data = JSON.parse(data);
 
-            console.log(_data.name + " switching factions");
+            __log(_data.name + " switching factions");
             try {
                 var player = __game.getPlayerByName(_data.name);
                 __game.switchPlayerFaction(player);
             } catch (ex) {
-                console.log("Player " + _data.name + " does not exist.");
+                __log("Player " + _data.name + " does not exist.");
             }
         }
 
@@ -300,7 +300,7 @@ function heartbeat() {
         // check if all players who have an ID are still active
         for (const player of __game.players) {
             if (now - player.last_updated > (1000 * 30)) {
-                console.log("Player " + player.name + " timed out.");
+                __log("Player " + player.name + " timed out.");
                 __game.RemovePlayer(player);
             }
         };
@@ -310,10 +310,10 @@ function heartbeat() {
             var player_names = __game.players.map((p) => {
                 return `${p.name}(${__game.GetFactionName(p)[0]})`
             });
-            console.log(`Current players (${num_players}): ${player_names}`);
+            __log(`Current players (${num_players}): ${player_names}`);
         }
     } else {
-        console.log("Game hasn't started.");
+        __log("Game hasn't started.");
     }
     
 }

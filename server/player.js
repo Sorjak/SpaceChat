@@ -74,7 +74,7 @@ playerSocket.on('connection', function(socket) {
     socket.on('disconnect', function() {
 
         if (player != null && player.id == socket.id) {
-            console.log("player " + player.name + " disconnected");
+            __log("player " + player.name + " disconnected");
             player.id = null;
         }
     });
@@ -84,7 +84,7 @@ playerSocket.on('connection', function(socket) {
     });
 
     socket.on('game_ended', function() {
-        console.log('player socket got game ended');
+        __log('player socket got game ended');
         if (player != null) {
             clearInterval(updateHandler);
         }
@@ -92,11 +92,11 @@ playerSocket.on('connection', function(socket) {
 
     socket.on('register_new_player', function(username, callback) {
         if (__game == null) {
-            console.log("error, game hasn't started");
+            __log("error, game hasn't started");
             sendError(0);
             callback(false);
         } else {
-            console.log("registering " + username);
+            __log("registering " + username);
 
             if (!__game.PlayerExists(username)) {
                 player = new Player(null, username);
@@ -108,7 +108,7 @@ playerSocket.on('connection', function(socket) {
                 }
                 
             } else {
-                console.log("player " + username + " already exists");
+                __log("player " + username + " already exists");
                 sendError(1);
                 callback(false);
             }
@@ -117,13 +117,13 @@ playerSocket.on('connection', function(socket) {
 
     socket.on('player_connected', function(playerInfo, callback) {
         if (__game == null) {
-            console.log("player attempted to connect, but the game hasn't started");
+            __log("player attempted to connect, but the game hasn't started");
             sendError(0);
             callback(false);
         } else {
 
-            console.log('Player connected with:');
-            console.log(playerInfo);
+            __log('Player connected with:');
+            __log(playerInfo);
             player = __game.getPlayerByName(playerInfo.username);
             if (player) {
                 if (player.key == playerInfo.key) {
@@ -139,13 +139,13 @@ playerSocket.on('connection', function(socket) {
                     input_params = {precision: INPUT_PRECISION, max: MAX_INPUT};
                     callback({player: player, inputParams: input_params});
                 } else {
-                    console.log(`Player ${playerInfo.username} has a mismatched unique key.`);
+                    __log(`Player ${playerInfo.username} has a mismatched unique key.`);
                     sendError(3);
                     callback(false);
                 }
 
             } else {
-                console.log(`Player ${playerInfo.username} not registered`);
+                __log(`Player ${playerInfo.username} not registered`);
                 sendError(3);
                 callback(false);
             }
