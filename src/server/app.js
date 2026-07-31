@@ -21,8 +21,8 @@ var SpaceChat = require('./spacechat');
 var Player = require('./player');
 const { Socket } = require('socket.io');
 
-var urls = require('../controllers/urls');
-
+var urls = require('./urls');
+           
 global.__log = function(message) {
     const now = new Date().toLocaleString();
     console.log(`[${now}] ${message}`);
