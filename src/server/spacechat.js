@@ -175,7 +175,7 @@ map.on('connection', function(map_socket){
         
     });
 
-    __log("Current game has: " + __game.players.length + " players");
+    __log(`Current game has: ${__game.players.length} players`);
 
     setInterval(updateMap, UPDATE_TICK, map_socket);
     setInterval(heartbeat, HEARTBEAT_TICK);

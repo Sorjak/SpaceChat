@@ -122,8 +122,7 @@ playerSocket.on('connection', function(socket) {
             callback(false);
         } else {
 
-            __log('Player connected with:');
-            __log(playerInfo);
+            __log(`Player connected with: ${JSON.stringify(playerInfo)}`);
             player = __game.getPlayerByName(playerInfo.username);
             if (player) {
                 if (player.key == playerInfo.key) {
